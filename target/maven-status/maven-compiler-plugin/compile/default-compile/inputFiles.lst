@@ -1,1 +1,15 @@
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/persistence/TranscriptionDao.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/persistence/InMemoryTranscriptionDao.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/boundary/ConfigurationBoundary.java
 /home/maverick/Scrivania/audio-transcriptor/src/main/java/view/MainApp.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/persistence/TranscriptionDaoFactory.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/control/LoadAudioBean.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/boundary/TranscriptionOutputBoundary.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/boundary/AudioInputBoundary.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/Driver.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/persistence/PersistenceProvider.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/control/TranscriptionController.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/control/SpeechToTextController.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/control/AudioTranscriptionController.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/control/SaveTranscriptionBean.java
+/home/maverick/Scrivania/audio-transcriptor/src/main/java/entity/Transcription.java

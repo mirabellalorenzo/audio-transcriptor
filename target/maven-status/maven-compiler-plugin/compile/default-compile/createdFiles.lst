@@ -1,1 +1,15 @@
+control/SaveTranscriptionBean.class
+control/AudioTranscriptionController.class
+boundary/ConfigurationBoundary.class
+persistence/TranscriptionDao.class
+persistence/InMemoryTranscriptionDao.class
+control/TranscriptionController.class
+persistence/PersistenceProvider.class
+Driver.class
+persistence/TranscriptionDaoFactory.class
+entity/Transcription.class
+control/SpeechToTextController.class
 view/MainApp.class
+boundary/AudioInputBoundary.class
+boundary/TranscriptionOutputBoundary.class
+control/LoadAudioBean.class

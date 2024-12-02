@@ -26,7 +26,33 @@
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <!-- Dipendenza Vosk (speech-to-text) -->
+        <dependency>
+            <groupId>com.alphacephei</groupId>
+            <artifactId>vosk</artifactId>
+            <version>0.3.45</version>
+        </dependency>
+        <!-- javazoom libreria per lettura dei file MP3 e WAV -->
+        <dependency>
+            <groupId>javazoom</groupId>
+            <artifactId>jlayer</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <!-- Repository Maven per Vosk -->
+        <repository>
+            <id>alphacephei-repo</id>
+            <url>https://alphacephei.com/maven/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -36,10 +62,14 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <!-- Main class del progetto -->
                     <mainClass>view.MainApp</mainClass>
+                    <jvmArgs>
+                        -Xms512m
+                        -Xmx2048m
+                    </jvmArgs>
                 </configuration>
             </plugin>
+
 
             <!-- Plugin Maven Compiler -->
             <plugin>
