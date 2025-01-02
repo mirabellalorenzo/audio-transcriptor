@@ -1,22 +1,25 @@
 package entity;
 
 public class Transcription {
-    private String filePath;
     private String text;
+    private int duration; // Durata in secondi
+    private long createdAt; // Timestamp
 
-    public Transcription(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public String getFilePath() {
-        return filePath;
+    public Transcription(String text, int duration, long createdAt) {
+        this.text = text;
+        this.duration = duration;
+        this.createdAt = createdAt;
     }
 
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public int getDuration() {
+        return duration;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
     }
 }

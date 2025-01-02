@@ -1,42 +1,67 @@
 package control;
 
 import entity.Transcription;
-import persistence.TranscriptionDao;
-import persistence.TranscriptionDaoFactory;
+import org.vosk.Model;
+import org.vosk.Recognizer;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 
 public class TranscriptionController {
+    private Transcription transcription;
 
-    private TranscriptionDao transcriptionDao = TranscriptionDaoFactory.getInstance().getTranscriptionDao();
-    private Transcription currentTranscription;
-
-    public void loadAudio(LoadAudioBean bean) {
-        if (bean == null || bean.getFilePath() == null || bean.getFilePath().isEmpty()) {
-            throw new IllegalArgumentException("Invalid audio file path.");
+    public boolean processAudio(String filePath) {
+        File audioFile = new File(filePath);
+        if (!audioFile.exists() || !audioFile.canRead()) {
+            System.err.println("Errore: il file audio non esiste o non può essere letto.");
+            return false;
         }
-        // Simula il caricamento di un file audio associandolo a una nuova trascrizione
-        currentTranscription = new Transcription(bean.getFilePath());
+
+        try (Model model = new Model("src/main/resources/models/vosk-model-small-it-0.22");
+            FileInputStream audioStream = new FileInputStream(audioFile);
+            Recognizer recognizer = new Recognizer(model, 16000)) {
+
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            StringBuilder result = new StringBuilder();
+            while ((bytesRead = audioStream.read(buffer)) != -1) {
+                if (recognizer.acceptWaveForm(buffer, bytesRead)) {
+                    JsonObject jsonResult = JsonParser.parseString(recognizer.getResult()).getAsJsonObject();
+                    result.append(jsonResult.get("text").getAsString()).append(" ");
+                }
+            }
+
+            JsonObject finalResult = JsonParser.parseString(recognizer.getFinalResult()).getAsJsonObject();
+            result.append(finalResult.get("text").getAsString());
+
+            transcription = new Transcription(result.toString().trim(), 120, System.currentTimeMillis());
+            System.out.println("Trascrizione completata con successo.");
+            return true;
+
+        } catch (IOException e) {
+            System.err.println("Errore durante la trascrizione: " + e.getMessage());
+            return false;
+        }
     }
 
-    public void transcribeAudio() {
-        if (currentTranscription == null) {
-            throw new IllegalStateException("No audio file loaded to transcribe.");
-        }
-        // Simula il processo di trascrizione
-        String dummyTranscription = "This is a dummy transcription for file: " + currentTranscription.getFilePath();
-        currentTranscription.setText(dummyTranscription);
+    public Transcription getTranscription() {
+        return transcription;
     }
 
-    public void saveTranscription(SaveTranscriptionBean bean) {
-        if (currentTranscription == null || currentTranscription.getText() == null) {
-            throw new IllegalStateException("No transcription available to save.");
+    public boolean saveTranscription(String filePath) {
+        // Metodo richiesto da TranscriptionBoundary (potremmo estenderlo in futuro per il salvataggio)
+        if (transcription != null) {
+            System.out.println("Simulazione del salvataggio: " + transcription.getText());
+            return true;
+        } else {
+            System.err.println("Errore: nessuna trascrizione disponibile.");
+            return false;
         }
-        transcriptionDao.storeTranscription(currentTranscription);
-    }
-
-    public String getTranscriptionText() {
-        if (currentTranscription == null || currentTranscription.getText() == null) {
-            throw new IllegalStateException("No transcription available.");
-        }
-        return currentTranscription.getText();
     }
 }
