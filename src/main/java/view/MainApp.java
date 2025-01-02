@@ -10,23 +10,44 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 
 public class MainApp extends Application {
+    String lastSavedText = ""; // Memorizza l'ultima versione salvata del testo
+    String originalText = ""; // Memorizza il testo originale trascritto
+
+
     @Override
     public void start(Stage primaryStage) {
         // Crea il controller e la boundary
         TranscriptionController controller = new TranscriptionController();
         TranscriptionBoundary boundary = new TranscriptionBoundary(controller);
 
-        // Elementi della GUI
-        Button uploadButton = new Button("Carica File Audio");
-        TextArea transcriptionArea = new TextArea();
-        transcriptionArea.setWrapText(true); // Abilita il word wrapping
-        transcriptionArea.setEditable(false); // Non modificabile
-        transcriptionArea.setPromptText("Il testo trascritto apparirà qui...");
 
-        // Layout della GUI
-        VBox root = new VBox(10, uploadButton, transcriptionArea);
+        // Unica TextArea per visualizzare e modificare il testo
+        TextArea editableTextArea = new TextArea();
+        editableTextArea.setWrapText(true);
+        editableTextArea.setEditable(false); // Non modificabile all'inizio
+        editableTextArea.setPromptText("Il testo trascritto apparirà qui...");
+
+        // Pulsanti
+        Button uploadButton = new Button("Carica File Audio");
+        Button editButton = new Button("Modifica");
+        Button saveAndExitButton = new Button("Salva e Esci");
+        Button saveChangesButton = new Button("Salva Modifiche");
+        Button cancelEditButton = new Button("Annulla");
+        Button restoreOriginalButton = new Button("Ripristina Originale");
+
+
+        // Configurazione pulsanti iniziale
+        editButton.setVisible(false);
+        saveAndExitButton.setVisible(false);
+        saveChangesButton.setVisible(false);
+        cancelEditButton.setVisible(false);
+        restoreOriginalButton.setVisible(false);
+
+        // Layout
+        VBox root = new VBox(10, uploadButton, editableTextArea, editButton, saveAndExitButton, saveChangesButton, cancelEditButton, restoreOriginalButton);
         root.setStyle("-fx-padding: 10; -fx-alignment: center; -fx-spacing: 10;");
         Scene scene = new Scene(root, 600, 400);
 
@@ -44,26 +65,91 @@ public class MainApp extends Application {
                 String audioFilePath = audioFile.getAbsolutePath();
                 System.out.println("File selezionato: " + audioFilePath);
 
-                transcriptionArea.setText("Trascrizione in corso...");
+                editableTextArea.setText("Trascrizione in corso...");
 
                 // Esegui la trascrizione in un thread separato
                 new Thread(() -> {
                     boolean success = boundary.uploadAudio(audioFilePath);
-
-                    // Aggiorna la GUI dopo la trascrizione
+                
                     javafx.application.Platform.runLater(() -> {
                         if (success) {
-                            transcriptionArea.setText(controller.getTranscription().getText());
+                            // Aggiorna il testo originale dopo la trascrizione
+                            originalText = controller.getTranscription().getText();
+                            lastSavedText = originalText; // Inizialmente anche lastSavedText è il testo originale
+                
+                            editableTextArea.setText(originalText);
+                            editableTextArea.setEditable(false);
+                
+                            // Mostra i pulsanti di revisione
+                            editButton.setVisible(true);
+                            saveAndExitButton.setVisible(true);
                         } else {
-                            transcriptionArea.setText("Errore durante la trascrizione.");
+                            editableTextArea.setText("Errore durante la trascrizione.");
                         }
                     });
-                }).start();
+                }).start();                
             } else {
-                transcriptionArea.setText("Nessun file selezionato.");
+                editableTextArea.setText("Nessun file selezionato.");
                 System.out.println("Nessun file selezionato.");
             }
         });
+
+        // Modifica Testo
+        editButton.setOnAction(event -> {
+            editableTextArea.setEditable(true);
+            saveChangesButton.setVisible(true);
+            cancelEditButton.setVisible(true);
+            editButton.setVisible(false);
+            saveAndExitButton.setVisible(false);
+        });
+
+        // Salva Modifiche
+        saveChangesButton.setOnAction(event -> {
+            lastSavedText = editableTextArea.getText(); // Aggiorna l'ultima versione salvata
+            editableTextArea.setEditable(false);
+        
+            saveChangesButton.setVisible(false);
+            cancelEditButton.setVisible(false);
+            editButton.setVisible(true);
+            saveAndExitButton.setVisible(true);
+            restoreOriginalButton.setVisible(true);
+        });
+        
+        // Annulla Modifiche
+        cancelEditButton.setOnAction(event -> {
+            editableTextArea.setText(lastSavedText); // Ripristina l'ultima versione salvata
+            editableTextArea.setEditable(false);
+        
+            saveChangesButton.setVisible(false);
+            cancelEditButton.setVisible(false);
+            editButton.setVisible(true);
+            saveAndExitButton.setVisible(true);
+        });        
+
+        // Salva e Esci
+        saveAndExitButton.setOnAction(event -> {
+            try {
+                // Salva il testo modificato in un file
+                java.nio.file.Files.writeString(
+                    java.nio.file.Path.of("nota_finale.txt"),
+                    editableTextArea.getText()
+                );
+                System.out.println("Nota salvata con successo!");
+
+                // Mostra messaggio di completamento
+                editableTextArea.setText("Nota salvata con successo!");
+                editButton.setVisible(false);
+                saveAndExitButton.setVisible(false);
+            } catch (IOException e) {
+                System.err.println("Errore durante il salvataggio della nota: " + e.getMessage());
+            }
+        });
+
+        // Ripristina Testo Originale
+        restoreOriginalButton.setOnAction(event -> {
+            editableTextArea.setText(originalText); // Ripristina il testo originale
+            editableTextArea.setEditable(false); // Non modificabile
+        });           
 
         // Configura lo stage e avvia l'applicazione
         primaryStage.setTitle("Audio Transcriptor");
