@@ -4,8 +4,11 @@ import java.awt.Desktop;
 import java.net.URI;
 import java.util.Scanner;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class GoogleAuthProvider {
-    private static final String CLIENT_ID = System.getenv("CLIENT_ID");
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String CLIENT_ID = dotenv.get("CLIENT_ID");
     private static final String REDIRECT_URI = "http://localhost";  // URL di reindirizzamento
 
     public static String getGoogleIdToken() {

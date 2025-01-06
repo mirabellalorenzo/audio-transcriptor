@@ -8,9 +8,12 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class AuthController {
-    private static final String FIREBASE_API_KEY = System.getenv("FIREBASE_API_KEY");
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String FIREBASE_API_KEY = dotenv.get("FIREBASE_API_KEY");
+
 
     public static boolean signUp(String email, String password) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
