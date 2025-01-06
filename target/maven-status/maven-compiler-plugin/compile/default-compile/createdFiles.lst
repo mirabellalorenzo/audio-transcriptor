@@ -1,4 +1,5 @@
 view/LoginView.class
+control/GoogleAuthServer.class
 view/TranscriptionView.class
 boundary/TranscriptionBoundary.class
 control/TranscriptionController.class

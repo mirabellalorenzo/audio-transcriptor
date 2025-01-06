@@ -4,6 +4,7 @@
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/GoogleAuthProvider.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/view/LoginView.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/view/TranscriptionView.java
+/home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/GoogleAuthServer.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/TranscriptionController.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/FirebaseConfig.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/AuthController.java
