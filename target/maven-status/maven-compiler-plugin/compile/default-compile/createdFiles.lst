@@ -1,4 +1,9 @@
-entity/Transcription.class
-view/MainApp.class
+view/LoginView.class
+view/TranscriptionView.class
 boundary/TranscriptionBoundary.class
 control/TranscriptionController.class
+control/AuthController.class
+entity/Transcription.class
+view/MainApp.class
+control/GoogleAuthProvider.class
+control/FirebaseConfig.class

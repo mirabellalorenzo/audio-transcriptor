@@ -1,5 +1,10 @@
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/entity/Transcription.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/Driver.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/view/MainApp.java
+/home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/GoogleAuthProvider.java
+/home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/view/LoginView.java
+/home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/view/TranscriptionView.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/TranscriptionController.java
+/home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/FirebaseConfig.java
+/home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/AuthController.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/boundary/TranscriptionBoundary.java
