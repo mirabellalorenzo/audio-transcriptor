@@ -14,6 +14,10 @@ public class AuthController {
     private static final Dotenv dotenv = Dotenv.load();
     private static final String FIREBASE_API_KEY = dotenv.get("FIREBASE_API_KEY");
 
+    // Variabili per memorizzare i dettagli dell'utente
+    private static String userToken = null;
+    private static String userEmail = null;
+    private static String userPhotoUrl = null;
 
     public static boolean signUp(String email, String password) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
@@ -83,7 +87,20 @@ public class AuthController {
             JSONObject responseObject = new JSONObject(responseBody);
     
             if (responseObject.has("idToken")) {
-                System.out.println("✅ Token ricevuto: " + responseObject.getString("idToken"));
+                String token = responseObject.getString("idToken");
+                System.out.println("✅ Token ricevuto: " + token);
+    
+                // Salva il token e i dettagli dell'utente (email e foto)
+                setUserToken(token);
+                setUserEmail(responseObject.optString("email", "Email non disponibile"));
+    
+                // Se photoUrl è vuoto o null, assegna l'immagine di fallback
+                String photoUrl = responseObject.optString("photoUrl", null);
+                if (photoUrl == null || photoUrl.isEmpty()) {
+                    photoUrl = "/images/avatar.png"; // Percorso dell'immagine di fallback
+                }
+                setUserPhotoUrl(photoUrl); // Usa il percorso dell'immagine di fallback
+    
                 return true;
             } else {
                 System.err.println("❌ Errore nel login: " + responseObject.toString());
@@ -121,22 +138,18 @@ public class AuthController {
     
                     if (responseObject.has("idToken")) {
                         String token = responseObject.getString("idToken");
-                        System.out.println("✅ Token ricevuto da Firebase: " + token);
+                        System.out.println("Token ricevuto da Firebase: " + token);
                         
-                        // 🔥 SALVA IL TOKEN
+                        // SALVA IL TOKEN E I DETTAGLI
                         setUserToken(token);
+                        setUserEmail(responseObject.optString("email", "Email non disponibile"));
+                        setUserPhotoUrl(responseObject.optString("photoUrl", "URL foto non disponibile"));
     
-                        // 🔥 Verifica che il token sia stato salvato correttamente
-                        if (isLoggedIn()) {
-                            System.out.println("✅ Login riconosciuto: isLoggedIn() = true");
-                        } else {
-                            System.err.println("❌ ERRORE: Token salvato, ma isLoggedIn() è ancora false.");
-                        }
                         return true;
                     }
                 } else {
-                    System.err.println("❌ Errore nel login con Firebase. Codice: " + status);
-                    System.err.println("❌ Risposta Firebase: " + responseBody);
+                    System.err.println("Errore nel login con Firebase. Codice: " + status);
+                    System.err.println("Risposta Firebase: " + responseBody);
                 }
                 return false;
             };
@@ -144,29 +157,43 @@ public class AuthController {
             return client.execute(request, responseHandler);
     
         } catch (Exception e) {
-            System.err.println("❌ Errore nel login con Firebase: " + e.getMessage());
+            System.err.println("Errore nel login con Firebase: " + e.getMessage());
             return false;
         }
     }    
 
-    private static String userToken = null;
+    // Metodi per ottenere e impostare i dettagli dell'utente
+    private static void setUserToken(String token) {
+        userToken = token;
+    }
 
-    public static void setUserToken(String token) {
-        if (token != null && !token.isEmpty()) {
-            userToken = token;
-            System.out.println("✅ Token salvato in AuthController: " + userToken);
-        } else {
-            System.err.println("❌ Tentativo di salvare un token nullo!");
-        }
-    }    
-    
+    private static void setUserEmail(String email) {
+        userEmail = email;
+    }
+
+    private static void setUserPhotoUrl(String photoUrl) {
+        userPhotoUrl = photoUrl;
+    }
+
+    public static String getUserEmail() {
+        return userEmail;
+    }
+
+    public static String getUserPhotoUrl() {
+        return userPhotoUrl;
+    }
+
     public static boolean isLoggedIn() {
-        boolean loggedIn = userToken != null;
-        System.out.println("🔹 Controllo login: " + loggedIn);  // 🔥 Debug
-        return loggedIn;
+        return userToken != null;
     }
     
     public static String getUserToken() {
         return userToken;
+    }
+
+    public static void logout() {
+        userToken = null;
+        userEmail = null;
+        userPhotoUrl = null;
     }
 }

@@ -1,5 +1,4 @@
 view/LoginView.class
-control/GoogleAuthServer.class
 view/TranscriptionView.class
 boundary/TranscriptionBoundary.class
 control/TranscriptionController.class
@@ -7,4 +6,5 @@ control/AuthController.class
 entity/Transcription.class
 view/MainApp.class
 control/GoogleAuthProvider.class
+view/HomeView.class
 control/FirebaseConfig.class

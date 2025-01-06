@@ -12,7 +12,7 @@ public class GoogleAuthProvider {
     private static final Dotenv dotenv = Dotenv.load();
     private static final String CLIENT_ID = dotenv.get("CLIENT_ID");
     private static final String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
-    private static final String REDIRECT_URI = "http://localhost:5000/callback"; // Callback locale
+    private static final String REDIRECT_URI = "http://localhost:5000/callback";
 
     public static void openGoogleLogin() {
         new Thread(() -> {
@@ -25,7 +25,7 @@ public class GoogleAuthProvider {
                         + "&access_type=offline"
                         + "&prompt=consent";
 
-                System.out.println("🌍 Aprendo il browser per l'autenticazione Google: " + authUrl);
+                System.out.println("Aprendo il browser per l'autenticazione Google: " + authUrl);
 
                 if (System.getProperty("os.name").toLowerCase().contains("win")) {
                     Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + authUrl);
@@ -35,7 +35,7 @@ public class GoogleAuthProvider {
                     Runtime.getRuntime().exec("xdg-open " + authUrl);
                 }
             } catch (IOException e) {
-                System.err.println("❌ Errore nell'aprire il browser: " + e.getMessage());
+                System.err.println("Errore nell'aprire il browser: " + e.getMessage());
             }
         }).start();
     }
@@ -65,7 +65,7 @@ public class GoogleAuthProvider {
             System.out.println("🔹 Risposta Google: " + responseBody);
             return new org.json.JSONObject(responseBody).optString("id_token", null);
         } catch (Exception e) {
-            System.err.println("❌ Errore nel recupero del token da Google: " + e.getMessage());
+            System.err.println("Errore nel recupero del token da Google: " + e.getMessage());
             return null;
         }
     }
