@@ -60,7 +60,17 @@ public class TranscriptionView extends Application {
         editButtonsBar.getStyleClass().add("hbox");
         editButtonsBar.getChildren().addAll(saveChangesButton, cancelEditButton, restoreOriginalButton);
 
-        VBox root = new VBox(20, titleLabel, uploadButton, editableTextArea, buttonBar, editButtonsBar);
+        // Pulsante per tornare alla Home
+        Button backButton = new Button("← Back to Home");
+        backButton.getStyleClass().add("button");
+        backButton.setOnAction(event -> controller.openHome(primaryStage));
+
+        // Contenitore per il pulsante freccia
+        HBox backButtonBar = new HBox(backButton);
+        backButtonBar.getStyleClass().add("back-button-bar");
+
+        // Aggiungi il pulsante freccia in cima al layout
+        VBox root = new VBox(20, backButtonBar, titleLabel, uploadButton, editableTextArea, buttonBar, editButtonsBar);
         root.getStyleClass().add("vbox");
 
         Scene scene = new Scene(root, 700, 500);
@@ -140,9 +150,9 @@ public class TranscriptionView extends Application {
 
         // Evento: Salvare e uscire
         saveAndExitButton.setOnAction(event -> {
-            System.out.println("💾 Testo salvato: " + lastSavedText);
-            primaryStage.close();
-        });
+            boundary.saveTranscription(primaryStage); 
+            controller.openHome(primaryStage);     
+        });        
 
         primaryStage.setTitle("Audio Transcriptor");
         primaryStage.setScene(scene);

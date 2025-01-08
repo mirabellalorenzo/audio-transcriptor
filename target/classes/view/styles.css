@@ -30,7 +30,7 @@
 }
 
 .text-area:focused {
-    border-color: #0078d7;
+    border-color: #0BB61F;
     outline: none;
 }
 
@@ -55,13 +55,13 @@
 }
 
 .text-field:focused, .password-field:focused {
-    border-color: #0078d7;
+    border-color: #0BB61F;
     outline: none;
 }
 
 .button {
-    background-color: #0078d7;
-    -fx-background-color: #0078d7;
+    background-color: #0BB61F;
+    -fx-background-color: #0BB61F;
     color: white;
     -fx-text-fill: white;
     font-size: 14px;
@@ -80,13 +80,13 @@
 }
 
 .button:hover {
-    background-color: #005fa0;
-    -fx-background-color: #005fa0;
+    background-color: #048e14;
+    -fx-background-color: #048e14;
 }
 
 .button:pressed {
-    background-color: #003f6e;
-    -fx-background-color: #003f6e;
+    background-color: #079117;
+    -fx-background-color: #079117;
 }
 
 .google-button {
@@ -183,8 +183,8 @@ label {
 a {
     text-decoration: none;
     -fx-text-decoration: none;
-    color: #0078d7;
-    -fx-text-fill: #0078d7;
+    color: #0BB61F;
+    -fx-text-fill: #0BB61F;
     font-weight: bold;
     -fx-font-weight: bold;
 }
@@ -192,4 +192,10 @@ a {
 a:hover {
     text-decoration: underline;
     -fx-text-decoration: underline;
+}
+
+.back-button-bar {
+    -fx-alignment: top-left;
+    padding: 10;
+    -fx-padding: 10;
 }

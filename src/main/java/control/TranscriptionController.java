@@ -1,11 +1,15 @@
 package control;
 
 import entity.Transcription;
+import javafx.stage.Stage;
+import view.HomeView;
+
 import org.vosk.Model;
 import org.vosk.Recognizer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
@@ -55,13 +59,26 @@ public class TranscriptionController {
     }
 
     public boolean saveTranscription(String filePath) {
-        // Metodo richiesto da TranscriptionBoundary (potremmo estenderlo in futuro per il salvataggio)
         if (transcription != null) {
-            System.out.println("Simulazione del salvataggio: " + transcription.getText());
-            return true;
+            File file = new File(filePath);
+    
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write(transcription.getText()); // Scrive il testo della trascrizione
+                writer.flush();
+                System.out.println("Trascrizione salvata in: " + filePath);
+                return true;
+            } catch (IOException e) {
+                System.err.println("Errore durante il salvataggio della trascrizione: " + e.getMessage());
+                return false;
+            }
         } else {
             System.err.println("Errore: nessuna trascrizione disponibile.");
             return false;
         }
+    }
+
+    public void openHome(Stage primaryStage) {
+        HomeView homeView = new HomeView();
+        homeView.start(primaryStage);
     }
 }

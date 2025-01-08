@@ -1,10 +1,13 @@
+boundary/HomeBoundary.class
 view/LoginView.class
 view/TranscriptionView.class
 boundary/TranscriptionBoundary.class
 control/TranscriptionController.class
+control/HomeController.class
 control/AuthController.class
 entity/Transcription.class
 view/MainApp.class
+boundary/LoginBoundary.class
 control/GoogleAuthProvider.class
 view/HomeView.class
 control/FirebaseConfig.class

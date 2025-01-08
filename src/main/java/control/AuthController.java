@@ -23,15 +23,15 @@ public class AuthController {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + FIREBASE_API_KEY;
             HttpPost request = new HttpPost(url);
-
+    
             JSONObject json = new JSONObject();
             json.put("email", email);
             json.put("password", password);
             json.put("returnSecureToken", true);
-
+    
             request.setHeader("Content-Type", "application/json");
             request.setEntity(new StringEntity(json.toString(), StandardCharsets.UTF_8));
-
+    
             HttpClientResponseHandler<String> responseHandler = response -> {
                 int status = response.getCode();
                 if (status >= 200 && status < 300) {
@@ -40,13 +40,15 @@ public class AuthController {
                     throw new IOException("❌ Errore nella registrazione: codice " + status);
                 }
             };
-
+    
             String responseBody = client.execute(request, responseHandler);
             JSONObject responseObject = new JSONObject(responseBody);
-
+    
             if (responseObject.has("idToken")) {
                 System.out.println("✅ Registrazione riuscita! Token ricevuto: " + responseObject.getString("idToken"));
-                return true;
+    
+                // Effettua automaticamente il login
+                return login(email, password);
             } else {
                 System.err.println("❌ Errore nella registrazione: " + responseObject.toString());
                 return false;
@@ -55,7 +57,7 @@ public class AuthController {
             System.err.println("❌ Errore nella registrazione: " + e.getMessage());
             return false;
         }
-    }
+    }    
 
     public static boolean login(String email, String password) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
