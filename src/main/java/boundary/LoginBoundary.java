@@ -2,6 +2,8 @@ package boundary;
 
 import control.AuthController;
 import control.GoogleAuthProvider;
+
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import view.HomeView;
 
@@ -24,13 +26,13 @@ public class LoginBoundary {
     }
 
     public void loginWithGoogle(Stage primaryStage) {
-        GoogleAuthProvider.openGoogleLogin();
+        GoogleAuthProvider.openGoogleLogin(); // Avvia il processo di login
         new Thread(() -> {
             try {
                 while (!AuthController.isLoggedIn()) {
-                    Thread.sleep(2000);
+                    Thread.sleep(2000); // Attendi che l'utente completi il login
                 }
-                openHomeView(primaryStage);
+                Platform.runLater(() -> openHomeView(primaryStage)); // Passa alla home nel thread JavaFX
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }

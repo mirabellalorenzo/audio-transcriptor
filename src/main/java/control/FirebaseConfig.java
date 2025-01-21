@@ -18,6 +18,7 @@ public class FirebaseConfig {
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setDatabaseUrl("https://audio-transcriptor-24e9e.firebaseio.com")
                     .build();
 
             FirebaseApp.initializeApp(options);

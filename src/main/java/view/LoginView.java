@@ -2,7 +2,6 @@ package view;
 
 import boundary.LoginBoundary;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -10,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import util.AppConfig;
 
 public class LoginView extends Application {
     private Stage primaryStage;
@@ -21,31 +21,30 @@ public class LoginView extends Application {
         this.primaryStage = primaryStage;
         LoginBoundary boundary = new LoginBoundary();
 
-        // Layout per Login
+        // Layout per Login e Register
         VBox loginLayout = createLoginLayout(boundary);
         loginScene = new Scene(loginLayout, 400, 500);
         loginScene.getStylesheets().add(getClass().getResource("/view/styles.css").toExternalForm());
 
-        // Layout per Register
         VBox registerLayout = createRegisterLayout(boundary);
         registerScene = new Scene(registerLayout, 400, 500);
         registerScene.getStylesheets().add(getClass().getResource("/view/styles.css").toExternalForm());
 
         primaryStage.setTitle("Login");
-        primaryStage.setScene(loginScene);
+        primaryStage.setScene(loginScene); // Imposta direttamente la scena del login
         primaryStage.show();
     }
 
     private VBox createLoginLayout(LoginBoundary boundary) {
         Label title = new Label("Login");
         title.getStyleClass().add("title");
-
+    
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
-
+    
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-
+    
         Button loginButton = new Button("Login");
         loginButton.getStyleClass().add("button");
         loginButton.setOnAction(e -> {
@@ -57,10 +56,10 @@ public class LoginView extends Application {
                 System.out.println("❌ Error logging in");
             }
         });
-
+    
         // Pulsante Google
         Button googleSignInButton = createGoogleSignInButton(boundary);
-
+    
         // Barra con "or"
         Label orLabel = new Label("or");
         Separator separatorLeft = new Separator();
@@ -68,19 +67,38 @@ public class LoginView extends Application {
         HBox orBox = new HBox(separatorLeft, orLabel, separatorRight);
         orBox.setAlignment(Pos.CENTER);
         orBox.setSpacing(10);
-
+    
         // Link per registrarsi
         Label registerLabel = new Label("Don't have an account?");
         Hyperlink registerLink = new Hyperlink("Register");
         registerLink.setOnAction(e -> switchToRegisterPage());
         HBox registerBox = new HBox(registerLabel, registerLink);
         registerBox.setAlignment(Pos.CENTER);
-
-        VBox layout = new VBox(15, title, emailField, passwordField, loginButton, orBox, googleSignInButton, registerBox);
+    
+        // Selettore della modalità
+        ChoiceBox<String> modeSelector = new ChoiceBox<>();
+        modeSelector.getItems().addAll("File System", "Database");
+        modeSelector.setValue("Database"); // Imposta il valore predefinito
+        modeSelector.setOnAction(e -> {
+            String selectedMode = modeSelector.getValue();
+            if ("File System".equals(selectedMode)) {
+                AppConfig.setStorageMode(AppConfig.StorageMode.FILE_SYSTEM);
+            } else {
+                AppConfig.setStorageMode(AppConfig.StorageMode.DATABASE);
+            }
+            System.out.println("Modalità selezionata: " + AppConfig.getStorageMode());
+        });
+    
+        Label modeLabel = new Label("Select Storage Mode:");
+        VBox modeBox = new VBox(5, modeLabel, modeSelector);
+        modeBox.setAlignment(Pos.CENTER);
+    
+        // Composizione del layout
+        VBox layout = new VBox(15, title, emailField, passwordField, loginButton, orBox, googleSignInButton, registerBox, modeBox);
         layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
         return layout;
     }
-
+    
     private VBox createRegisterLayout(LoginBoundary boundary) {
         Label title = new Label("Register");
         title.getStyleClass().add("title");

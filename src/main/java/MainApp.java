@@ -1,15 +1,20 @@
-package view;
+
 
 import static spark.Spark.*;
 
 import control.AuthController;
+import control.FirebaseConfig;
 import control.GoogleAuthProvider;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import view.LoginView;
 
 public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
+        // Inizializza Firebase
+        FirebaseConfig.initializeFirebase();
+
         // Avvio il mini-server OAuth
         startServerOAuth();
 

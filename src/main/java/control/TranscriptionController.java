@@ -1,22 +1,22 @@
 package control;
 
+import util.AppConfig;
 import entity.Transcription;
-import javafx.stage.Stage;
-import view.HomeView;
+import entity.Note;
+import entity.User;
+import persistence.FirebaseNotesDAO;
 
 import org.vosk.Model;
 import org.vosk.Recognizer;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-
 public class TranscriptionController {
+    private final FirebaseNotesDAO notesDAO = new FirebaseNotesDAO(); // Iniezione del DAO
     private Transcription transcription;
 
     public boolean processAudio(String filePath) {
@@ -27,8 +27,8 @@ public class TranscriptionController {
         }
 
         try (Model model = new Model("src/main/resources/models/vosk-model-small-it-0.22");
-            FileInputStream audioStream = new FileInputStream(audioFile);
-            Recognizer recognizer = new Recognizer(model, 16000)) {
+             FileInputStream audioStream = new FileInputStream(audioFile);
+             Recognizer recognizer = new Recognizer(model, 16000)) {
 
             byte[] buffer = new byte[8192];
             int bytesRead;
@@ -54,31 +54,61 @@ public class TranscriptionController {
         }
     }
 
-    public Transcription getTranscription() {
-        return transcription;
-    }
-
     public boolean saveTranscription(String filePath) {
-        if (transcription != null) {
-            File file = new File(filePath);
-    
-            try (FileWriter writer = new FileWriter(file)) {
-                writer.write(transcription.getText()); // Scrive il testo della trascrizione
-                writer.flush();
-                System.out.println("Trascrizione salvata in: " + filePath);
-                return true;
-            } catch (IOException e) {
-                System.err.println("Errore durante il salvataggio della trascrizione: " + e.getMessage());
+        if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
+            if (filePath == null) {
+                System.err.println("Errore: file path mancante per il salvataggio in modalità File System.");
                 return false;
             }
+            return saveTranscriptionToFile(filePath);
+        } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
+            // Usa un titolo predefinito se il titolo non è fornito
+            String defaultTitle = "Trascrizione " + System.currentTimeMillis();
+            return saveTranscriptionToFirebase(defaultTitle);
         } else {
-            System.err.println("Errore: nessuna trascrizione disponibile.");
+            System.err.println("Errore: modalità di archiviazione non supportata.");
+            return false;
+        }
+    }    
+
+    private boolean saveTranscriptionToFile(String filePath) {
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(transcription.getText());
+            writer.flush();
+            System.out.println("Trascrizione salvata in modalità File System in: " + filePath);
+            return true;
+        } catch (IOException e) {
+            System.err.println("Errore durante il salvataggio in modalità File System: " + e.getMessage());
             return false;
         }
     }
 
-    public void openHome(Stage primaryStage) {
-        HomeView homeView = new HomeView();
-        homeView.start(primaryStage);
+    public boolean saveTranscriptionToFirebase(String title) {
+        User user = AuthController.getCurrentUser(); 
+        if (user == null) {
+            System.err.println("Errore: utente non autenticato.");
+            return false;
+        }
+    
+        Note note = new Note(
+            transcription.getId(),    // id
+            user.getId(),             // uid
+            title,                    // title
+            transcription.getText()   // content
+        );
+    
+        try {
+            notesDAO.save(note);
+            System.out.println("Nota salvata nel database Firebase con successo!");
+            return true;
+        } catch (Exception e) {
+            System.err.println("Errore durante il salvataggio della nota nel database Firebase.");
+            e.printStackTrace();
+            return false;
+        }
+    }    
+
+    public Transcription getTranscription() {
+        return transcription;
     }
 }

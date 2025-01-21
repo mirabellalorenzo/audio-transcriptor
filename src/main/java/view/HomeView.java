@@ -69,7 +69,7 @@ public class HomeView {
         centerPanel.setVgap(20);
         centerPanel.setAlignment(Pos.CENTER);
 
-        String[] toolNames = {"Transcribe Audio", "Upload File", "Tool 3", "Tool 4"};
+        String[] toolNames = {"Transcribe Audio", "Tool 2", "Tool 3", "Tool 4"};
 
         for (int i = 0; i < 4; i++) {
             final int index = i;

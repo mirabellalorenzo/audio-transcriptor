@@ -1,6 +1,7 @@
 package view;
 
 import boundary.TranscriptionBoundary;
+import control.HomeController;
 import control.TranscriptionController;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ public class TranscriptionView extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        System.out.println("TranscriptionView avviata.");
         TranscriptionController controller = new TranscriptionController();
         TranscriptionBoundary boundary = new TranscriptionBoundary(controller);
 
@@ -63,7 +65,8 @@ public class TranscriptionView extends Application {
         // Pulsante per tornare alla Home
         Button backButton = new Button("← Back to Home");
         backButton.getStyleClass().add("button");
-        backButton.setOnAction(event -> controller.openHome(primaryStage));
+        HomeController homeController = new HomeController();
+        backButton.setOnAction(event -> homeController.openHome(primaryStage));
 
         // Contenitore per il pulsante freccia
         HBox backButtonBar = new HBox(backButton);
@@ -151,8 +154,8 @@ public class TranscriptionView extends Application {
         // Evento: Salvare e uscire
         saveAndExitButton.setOnAction(event -> {
             boundary.saveTranscription(primaryStage); 
-            controller.openHome(primaryStage);     
-        });        
+            homeController.openHome(primaryStage);     
+        });
 
         primaryStage.setTitle("Audio Transcriptor");
         primaryStage.setScene(scene);

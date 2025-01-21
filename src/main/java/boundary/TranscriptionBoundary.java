@@ -1,8 +1,11 @@
 package boundary;
 
 import control.TranscriptionController;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import util.AppConfig;
+
 import java.io.File;
 
 
@@ -25,34 +28,49 @@ public class TranscriptionBoundary {
     }
 
     public void saveTranscription(Stage primaryStage) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Transcription");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("File di Testo", "*.txt"));
-    
-        fileChooser.setInitialFileName("transcription.txt");
-    
-        String homePath = System.getProperty("user.home");
-        File homeDir = new File(homePath);
-        if (homeDir.exists() && homeDir.isDirectory()) {
-            fileChooser.setInitialDirectory(homeDir);
+        TextInputDialog titleDialog = new TextInputDialog("Nuova Nota");
+        titleDialog.setTitle("Inserisci Titolo");
+        titleDialog.setHeaderText("Crea una nuova nota");
+        titleDialog.setContentText("Titolo:");
+
+        String title = titleDialog.showAndWait().orElse(null);
+        if (title == null || title.isBlank()) {
+            System.out.println("Salvataggio annullato dall'utente (titolo mancante).");
+            return;
         }
-    
-        File file = fileChooser.showSaveDialog(primaryStage);
-    
-        if (file != null) {
-            String filePath = file.getAbsolutePath();
-            if (!filePath.endsWith(".txt")) {
-                filePath += ".txt";
-            }
-    
-            boolean saved = controller.saveTranscription(filePath);
+
+        if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
+            boolean saved = controller.saveTranscriptionToFirebase(title);
             if (saved) {
-                System.out.println("Trascrizione salvata in: " + filePath);
+                System.out.println("Trascrizione salvata nel database Firebase con titolo: " + title);
             } else {
-                System.err.println("Errore durante il salvataggio della trascrizione.");
+                System.err.println("Errore durante il salvataggio nel database Firebase.");
+            }
+        } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Transcription");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("File di Testo", "*.txt"));
+
+            fileChooser.setInitialFileName(title + ".txt");
+            String homePath = System.getProperty("user.home");
+            File homeDir = new File(homePath);
+            if (homeDir.exists() && homeDir.isDirectory()) {
+                fileChooser.setInitialDirectory(homeDir);
+            }
+
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null) {
+                boolean saved = controller.saveTranscription(file.getAbsolutePath());
+                if (saved) {
+                    System.out.println("Trascrizione salvata in: " + file.getAbsolutePath());
+                } else {
+                    System.err.println("Errore durante il salvataggio della trascrizione.");
+                }
+            } else {
+                System.out.println("Salvataggio annullato dall'utente.");
             }
         } else {
-            System.out.println("Salvataggio annullato dall'utente.");
+            System.err.println("Modalità di archiviazione non supportata.");
         }
     }
 }

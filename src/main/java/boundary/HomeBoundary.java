@@ -8,11 +8,11 @@ import view.TranscriptionView;
 public class HomeBoundary {
 
     public String getUserEmail() {
-        return AuthController.getUserEmail();
+        return AuthController.getCurrentUser() != null ? AuthController.getCurrentUser().getEmail() : "Email non disponibile";
     }
 
     public String getUserPhotoUrl() {
-        return AuthController.getUserPhotoUrl();
+        return AuthController.getCurrentUser() != null ? AuthController.getCurrentUser().getPhotoUrl() : "/images/avatar.png";
     }
 
     public void logout(Stage primaryStage) {
@@ -21,20 +21,18 @@ public class HomeBoundary {
     }
 
     public void openToolView(Stage primaryStage, String toolName) {
+        System.out.println("openToolView chiamato con: " + toolName);
         if ("Transcribe Audio".equals(toolName)) {
-            openTranscriptionView(primaryStage);
+            System.out.println("Apertura di TranscriptionView...");
+            TranscriptionView transcriptionView = new TranscriptionView();
+            transcriptionView.start(primaryStage);
         } else {
-            System.out.println(toolName + " selected");
+            System.out.println(toolName + " non gestito.");
         }
-    }
+    }    
 
     private void openLoginView(Stage primaryStage) {
         LoginView loginView = new LoginView();
         loginView.start(primaryStage);
-    }
-
-    private void openTranscriptionView(Stage primaryStage) {
-        TranscriptionView transcriptionView = new TranscriptionView();
-        transcriptionView.start(primaryStage);
     }
 }
