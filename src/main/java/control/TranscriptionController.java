@@ -25,34 +25,39 @@ public class TranscriptionController {
             System.err.println("Errore: il file audio non esiste o non può essere letto.");
             return false;
         }
-
+    
+        long startTime = System.currentTimeMillis(); // Inizio del timer
+    
         try (Model model = new Model("src/main/resources/models/vosk-model-small-it-0.22");
              FileInputStream audioStream = new FileInputStream(audioFile);
              Recognizer recognizer = new Recognizer(model, 16000)) {
-
+    
             byte[] buffer = new byte[8192];
             int bytesRead;
-
             StringBuilder result = new StringBuilder();
+    
             while ((bytesRead = audioStream.read(buffer)) != -1) {
                 if (recognizer.acceptWaveForm(buffer, bytesRead)) {
                     JsonObject jsonResult = JsonParser.parseString(recognizer.getResult()).getAsJsonObject();
                     result.append(jsonResult.get("text").getAsString()).append(" ");
                 }
             }
-
+    
             JsonObject finalResult = JsonParser.parseString(recognizer.getFinalResult()).getAsJsonObject();
             result.append(finalResult.get("text").getAsString());
-
-            transcription = new Transcription(result.toString().trim(), 120, System.currentTimeMillis());
-            System.out.println("Trascrizione completata con successo.");
+    
+            long endTime = System.currentTimeMillis(); // Fine del timer
+            long processingTime = endTime - startTime; // Calcolo tempo impiegato
+    
+            transcription = new Transcription(result.toString().trim(), 120, System.currentTimeMillis(), processingTime);
+            System.out.println("Trascrizione completata con successo in " + processingTime + " ms.");
             return true;
-
+    
         } catch (IOException e) {
             System.err.println("Errore durante la trascrizione: " + e.getMessage());
             return false;
         }
-    }
+    }    
 
     public boolean saveTranscription(String filePath) {
         if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
