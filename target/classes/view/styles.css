@@ -29,7 +29,7 @@
     transition: border-color 0.3s ease;
 }
 
-.text-area:focused {
+.text-area:focus {
     border-color: #0BB61F;
     outline: none;
 }
@@ -54,7 +54,7 @@
     margin-bottom: 15px;
 }
 
-.text-field:focused, .password-field:focused {
+.text-field:focus, .password-field:focus {
     border-color: #0BB61F;
     outline: none;
 }
