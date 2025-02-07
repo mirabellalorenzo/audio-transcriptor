@@ -18,6 +18,12 @@ public class AuthController {
     private static final String FIREBASE_API_KEY = dotenv.get("FIREBASE_API_KEY");
 
     private static User currentUser;
+    private static final String EMAIL_KEY = "email";
+    private static final String PASSWORD_KEY = "password";
+    private static final String RETURN_SECURE_TOKEN_KEY = "returnSecureToken";
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String APPLICATION_JSON = "application/json";
+
 
     public static User getCurrentUser() {
         return currentUser;
@@ -29,12 +35,12 @@ public class AuthController {
             HttpPost request = new HttpPost(url);
 
             JSONObject json = new JSONObject();
-            json.put("email", email);
-            json.put("password", password);
-            json.put("returnSecureToken", true);
-
-            request.setHeader("Content-Type", "application/json");
+            json.put(EMAIL_KEY, email);
+            json.put(PASSWORD_KEY, password);
+            json.put(RETURN_SECURE_TOKEN_KEY, true);
+            request.setHeader(CONTENT_TYPE, APPLICATION_JSON);
             request.setEntity(new StringEntity(json.toString(), StandardCharsets.UTF_8));
+
 
             HttpClientResponseHandler<String> responseHandler = response -> {
                 int status = response.getCode();
@@ -70,11 +76,11 @@ public class AuthController {
             HttpPost request = new HttpPost(url);
 
             JSONObject json = new JSONObject();
-            json.put("email", email);
-            json.put("password", password);
-            json.put("returnSecureToken", true);
+            json.put(EMAIL_KEY, email);
+            json.put(PASSWORD_KEY, password);
+            json.put(RETURN_SECURE_TOKEN_KEY, true);
 
-            request.setHeader("Content-Type", "application/json");
+            request.setHeader(CONTENT_TYPE, APPLICATION_JSON);
             request.setEntity(new StringEntity(json.toString(), StandardCharsets.UTF_8));
 
             HttpClientResponseHandler<String> responseHandler = response -> {
@@ -115,9 +121,9 @@ public class AuthController {
             JSONObject json = new JSONObject();
             json.put("postBody", "id_token=" + idToken + "&providerId=google.com");
             json.put("requestUri", "http://localhost");
-            json.put("returnSecureToken", true);
+            json.put(RETURN_SECURE_TOKEN_KEY, true);
 
-            request.setHeader("Content-Type", "application/json");
+            request.setHeader(CONTENT_TYPE, APPLICATION_JSON);
             request.setEntity(new StringEntity(json.toString(), StandardCharsets.UTF_8));
 
             HttpClientResponseHandler<Boolean> responseHandler = response -> {
