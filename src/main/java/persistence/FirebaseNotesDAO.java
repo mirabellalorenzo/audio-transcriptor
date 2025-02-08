@@ -9,11 +9,12 @@ import java.util.List;
 
 public class FirebaseNotesDAO implements NotesDAO {
     private final Firestore db = FirestoreClient.getFirestore();
+    private static final String NOTES_KEY = "notes";
 
     @Override
     public void save(Note note) {
         try {
-            db.collection("notes").document(note.getId()).set(note).get();
+            db.collection(NOTES_KEY).document(note.getId()).set(note).get();
         } catch (Exception e) {
             throw new RuntimeException("Error saving note", e);
         }
@@ -23,7 +24,7 @@ public class FirebaseNotesDAO implements NotesDAO {
     public List<Note> getAll() {
         List<Note> notes = new ArrayList<>();
         try {
-            for (DocumentSnapshot doc : db.collection("notes").get().get().getDocuments()) {
+            for (DocumentSnapshot doc : db.collection(NOTES_KEY).get().get().getDocuments()) {
                 notes.add(doc.toObject(Note.class));
             }
         } catch (Exception e) {
@@ -35,7 +36,7 @@ public class FirebaseNotesDAO implements NotesDAO {
     @Override
     public Note getById(String id) {
         try {
-            DocumentSnapshot doc = db.collection("notes").document(id).get().get();
+            DocumentSnapshot doc = db.collection(NOTES_KEY).document(id).get().get();
             return doc.toObject(Note.class);
         } catch (Exception e) {
             throw new RuntimeException("Error fetching note by ID", e);
@@ -45,7 +46,7 @@ public class FirebaseNotesDAO implements NotesDAO {
     @Override
     public void delete(String id) {
         try {
-            db.collection("notes").document(id).delete().get();
+            db.collection(NOTES_KEY).document(id).delete().get();
         } catch (Exception e) {
             throw new RuntimeException("Error deleting note", e);
         }
