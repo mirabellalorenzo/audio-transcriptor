@@ -82,7 +82,7 @@ public class AuthController {
     
             JSONObject responseObject = sendFirebaseRequest(url, json);
     
-            if (responseObject.has("idToken")) {
+            if (responseObject.has(ID_TOKEN_KEY)) {
                 currentUser = new User(
                     responseObject.getString("localId"),
                     responseObject.getString("email"),
@@ -110,7 +110,7 @@ public class AuthController {
             if (responseObject.has(ID_TOKEN_KEY)) {
                 currentUser = new User(
                     responseObject.getString("localId"),
-                    responseObject.getString("email"),
+                    responseObject.getString(EMAIL_KEY),
                     responseObject.optString("photoUrl", "/images/avatar.png")
                 );
     
