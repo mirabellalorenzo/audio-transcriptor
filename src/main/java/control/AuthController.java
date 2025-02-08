@@ -18,6 +18,7 @@ public class AuthController {
     private static final String FIREBASE_API_KEY = dotenv.get("FIREBASE_API_KEY");
 
     private static User currentUser;
+    private static final String ID_TOKEN_KEY = "idToken";
     private static final String EMAIL_KEY = "email";
     private static final String PASSWORD_KEY = "password";
     private static final String RETURN_SECURE_TOKEN_KEY = "returnSecureToken";
@@ -61,7 +62,7 @@ public class AuthController {
     
             JSONObject responseObject = sendFirebaseRequest(url, json);
     
-            if (responseObject.has("idToken")) {
+            if (responseObject.has(ID_TOKEN_KEY)) {
                 return login(email, password);
             }
         } catch (Exception e) {
@@ -100,13 +101,13 @@ public class AuthController {
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=" + FIREBASE_API_KEY;
     
             JSONObject json = new JSONObject();
-            json.put("postBody", "id_token=" + idToken + "&providerId=google.com");
+            json.put("postBody", ID_TOKEN_KEY + "=" + idToken + "&providerId=google.com");
             json.put("requestUri", "http://localhost");
             json.put(RETURN_SECURE_TOKEN_KEY, true);
     
             JSONObject responseObject = sendFirebaseRequest(url, json);
     
-            if (responseObject.has("idToken")) {
+            if (responseObject.has(ID_TOKEN_KEY)) {
                 currentUser = new User(
                     responseObject.getString("localId"),
                     responseObject.getString("email"),
