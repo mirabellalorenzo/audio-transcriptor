@@ -16,6 +16,7 @@ import java.io.File;
 public class TranscriptionView extends Application {
     private String lastSavedText = "";
     private String originalText = "";
+    private static final String BUTTON_KEY = "button";
 
     @Override
     public void start(Stage primaryStage) {
@@ -43,12 +44,12 @@ public class TranscriptionView extends Application {
         Button restoreOriginalButton = new Button("Ripristina Originale");
 
         // Stili per i pulsanti
-        uploadButton.getStyleClass().add("button");
-        editButton.getStyleClass().add("button");
-        saveAndExitButton.getStyleClass().add("button");
-        saveChangesButton.getStyleClass().add("button");
-        cancelEditButton.getStyleClass().add("button");
-        restoreOriginalButton.getStyleClass().add("button");
+        uploadButton.getStyleClass().add(BUTTON_KEY);
+        editButton.getStyleClass().add(BUTTON_KEY);
+        saveAndExitButton.getStyleClass().add(BUTTON_KEY);
+        saveChangesButton.getStyleClass().add(BUTTON_KEY);
+        cancelEditButton.getStyleClass().add(BUTTON_KEY);
+        restoreOriginalButton.getStyleClass().add(BUTTON_KEY);
 
         // Inizialmente i pulsanti di modifica sono nascosti
         editButton.setVisible(false);
@@ -80,7 +81,7 @@ public class TranscriptionView extends Application {
 
         // Pulsante per tornare alla Home
         Button backButton = new Button("← Back to Home");
-        backButton.getStyleClass().add("button");
+        backButton.getStyleClass().add(BUTTON_KEY);
         HomeController homeController = new HomeController();
         backButton.setOnAction(event -> homeController.openHome(primaryStage));
 

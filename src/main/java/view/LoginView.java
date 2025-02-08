@@ -15,6 +15,8 @@ public class LoginView extends Application {
     private Stage primaryStage;
     private Scene loginScene;
     private Scene registerScene;
+    private static final String LOGIN_KEY = "Login";
+    private static final String REGISTER_KEY = "Register";
 
     @Override
     public void start(Stage primaryStage) {
@@ -30,13 +32,13 @@ public class LoginView extends Application {
         registerScene = new Scene(registerLayout, 400, 500);
         registerScene.getStylesheets().add(getClass().getResource("/view/styles.css").toExternalForm());
 
-        primaryStage.setTitle("Login");
+        primaryStage.setTitle(LOGIN_KEY);
         primaryStage.setScene(loginScene); // Imposta direttamente la scena del login
         primaryStage.show();
     }
 
     private VBox createLoginLayout(LoginBoundary boundary) {
-        Label title = new Label("Login");
+        Label title = new Label(LOGIN_KEY);
         title.getStyleClass().add("title");
     
         TextField emailField = new TextField();
@@ -45,7 +47,7 @@ public class LoginView extends Application {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
     
-        Button loginButton = new Button("Login");
+        Button loginButton = new Button(LOGIN_KEY);
         loginButton.getStyleClass().add("button");
         loginButton.setOnAction(e -> {
             String email = emailField.getText();
@@ -70,7 +72,7 @@ public class LoginView extends Application {
     
         // Link per registrarsi
         Label registerLabel = new Label("Don't have an account?");
-        Hyperlink registerLink = new Hyperlink("Register");
+        Hyperlink registerLink = new Hyperlink(REGISTER_KEY);
         registerLink.setOnAction(e -> switchToRegisterPage());
         HBox registerBox = new HBox(registerLabel, registerLink);
         registerBox.setAlignment(Pos.CENTER);
@@ -100,7 +102,7 @@ public class LoginView extends Application {
     }
     
     private VBox createRegisterLayout(LoginBoundary boundary) {
-        Label title = new Label("Register");
+        Label title = new Label(REGISTER_KEY);
         title.getStyleClass().add("title");
 
         TextField emailField = new TextField();
@@ -109,7 +111,7 @@ public class LoginView extends Application {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
 
-        Button registerButton = new Button("Register");
+        Button registerButton = new Button(REGISTER_KEY);
         registerButton.getStyleClass().add("button");
         registerButton.setOnAction(e -> {
             String email = emailField.getText();
@@ -134,7 +136,7 @@ public class LoginView extends Application {
 
         // Link per tornare al login
         Label loginLabel = new Label("Already have an account?");
-        Hyperlink loginLink = new Hyperlink("Login");
+        Hyperlink loginLink = new Hyperlink(LOGIN_KEY);
         loginLink.setOnAction(e -> switchToLoginPage());
         HBox loginBox = new HBox(loginLabel, loginLink);
         loginBox.setAlignment(Pos.CENTER);

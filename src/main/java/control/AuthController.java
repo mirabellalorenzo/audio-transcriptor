@@ -85,7 +85,7 @@ public class AuthController {
             if (responseObject.has(ID_TOKEN_KEY)) {
                 currentUser = new User(
                     responseObject.getString("localId"),
-                    responseObject.getString("email"),
+                    responseObject.getString(EMAIL_KEY),
                     responseObject.optString("photoUrl", "/images/avatar.png")
                 );
                 return true;
