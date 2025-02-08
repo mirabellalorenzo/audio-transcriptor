@@ -101,7 +101,7 @@ public class AuthController {
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=" + FIREBASE_API_KEY;
     
             JSONObject json = new JSONObject();
-            json.put("postBody", ID_TOKEN_KEY + "=" + idToken + "&providerId=google.com");
+            json.put("postBody", "id_token=" + idToken + "&providerId=google.com");
             json.put("requestUri", "http://localhost");
             json.put(RETURN_SECURE_TOKEN_KEY, true);
     

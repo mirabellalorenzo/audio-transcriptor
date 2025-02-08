@@ -6,9 +6,13 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class FirebaseConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
     private static boolean initialized = false;
 
     public static void initializeFirebase() {
@@ -23,10 +27,10 @@ public class FirebaseConfig {
 
             FirebaseApp.initializeApp(options);
             initialized = true;
-            System.out.println("Firebase inizializzato con successo!");
+            logger.info("Firebase inizializzato con successo!"); // INFO invece di System.out.println
 
         } catch (IOException e) {
-            System.err.println("Errore durante l'inizializzazione di Firebase: " + e.getMessage());
+            logger.error("Errore durante l'inizializzazione di Firebase", e); // ERROR invece di System.err.println
         }
     }
 
