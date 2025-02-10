@@ -1,12 +1,15 @@
 package boundary;
 
 import control.TranscriptionController;
+import entity.Transcription;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import util.AppConfig;
+import view.TranscriptionView;
 
 import java.io.File;
+
+import config.AppConfig;
 
 
 public class TranscriptionBoundary {
@@ -40,9 +43,10 @@ public class TranscriptionBoundary {
         }
     
         boolean saved = false; // Inizialmente supponiamo che il salvataggio fallisca
+        File file = null; // Definisci file all'inizio
     
         if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
-            saved = controller.saveTranscriptionToFirebase(title);
+            saved = controller.saveTranscription(title, null); // Passiamo null per il database
             if (saved) {
                 System.out.println("✅ Trascrizione salvata nel database Firebase con titolo: " + title);
             } else {
@@ -61,9 +65,9 @@ public class TranscriptionBoundary {
                 fileChooser.setInitialDirectory(homeDir);
             }
     
-            File file = fileChooser.showSaveDialog(primaryStage);
+            file = fileChooser.showSaveDialog(primaryStage);
             if (file != null) {
-                saved = controller.saveTranscription(file.getAbsolutePath());
+                saved = controller.saveTranscription(title, file.getAbsolutePath());
                 if (saved) {
                     System.out.println("✅ Trascrizione salvata in: " + file.getAbsolutePath());
                 } else {
@@ -78,4 +82,12 @@ public class TranscriptionBoundary {
     
         return saved;
     }    
+
+    public void openTranscriptionView(Stage primaryStage) {
+        TranscriptionView transcriptionView = new TranscriptionView();
+        transcriptionView.start(primaryStage);
+    }
+    public Transcription getTranscription() {
+        return controller.getTranscription();
+    }
 }

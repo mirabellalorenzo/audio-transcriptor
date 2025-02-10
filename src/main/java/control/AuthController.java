@@ -15,9 +15,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 public class AuthController {
     private static final Dotenv dotenv = Dotenv.load();
-    private static final String FIREBASE_API_KEY = dotenv.get("FIREBASE_API_KEY");
-
     private static User currentUser;
+
+    private static final String FIREBASE_API_KEY = dotenv.get("FIREBASE_API_KEY");
     private static final String ID_TOKEN_KEY = "idToken";
     private static final String EMAIL_KEY = "email";
     private static final String PASSWORD_KEY = "password";

@@ -1,10 +1,10 @@
 package control;
 
-import util.AppConfig;
 import entity.Transcription;
 import entity.Note;
 import entity.User;
-import persistence.FirebaseNotesDAO;
+import persistence.NotesDAO;
+import persistence.NotesDAOFactory;
 
 import org.vosk.Model;
 import org.vosk.Recognizer;
@@ -15,8 +15,10 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import config.AppConfig;
+
 public class TranscriptionController {
-    private final FirebaseNotesDAO notesDAO = new FirebaseNotesDAO(); // Iniezione del DAO
+    private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
     private Transcription transcription;
 
     public boolean processAudio(String filePath) {
@@ -59,7 +61,7 @@ public class TranscriptionController {
         }
     }    
 
-    public boolean saveTranscription(String filePath) {
+    public boolean saveTranscription(String title, String filePath) {
         if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
             if (filePath == null) {
                 System.err.println("Errore: file path mancante per il salvataggio in modalità File System.");
@@ -67,9 +69,7 @@ public class TranscriptionController {
             }
             return saveTranscriptionToFile(filePath);
         } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
-            // Usa un titolo predefinito se il titolo non è fornito
-            String defaultTitle = "Trascrizione " + System.currentTimeMillis();
-            return saveTranscriptionToFirebase(defaultTitle);
+            return saveTranscriptionToFirebase(title);
         } else {
             System.err.println("Errore: modalità di archiviazione non supportata.");
             return false;
@@ -88,7 +88,7 @@ public class TranscriptionController {
         }
     }
 
-    public boolean saveTranscriptionToFirebase(String title) {
+    private boolean saveTranscriptionToFirebase(String title) {
         User user = AuthController.getCurrentUser(); 
         if (user == null) {
             System.err.println("Errore: utente non autenticato.");

@@ -1,38 +1,31 @@
 package boundary;
 
-import control.AuthController;
+import control.HomeController;
+import control.TranscriptionController;
 import javafx.stage.Stage;
-import view.LoginView;
-import view.TranscriptionView;
 
 public class HomeBoundary {
+    private HomeController homeController = new HomeController();
 
     public String getUserEmail() {
-        return AuthController.getCurrentUser() != null ? AuthController.getCurrentUser().getEmail() : "Email non disponibile";
+        return homeController.getUserEmail();
     }
 
     public String getUserPhotoUrl() {
-        return AuthController.getCurrentUser() != null ? AuthController.getCurrentUser().getPhotoUrl() : "/images/avatar.png";
+        return homeController.getUserPhotoUrl();
     }
 
     public void logout(Stage primaryStage) {
-        AuthController.logout();
-        openLoginView(primaryStage);
+        homeController.logout(primaryStage);
     }
 
     public void openToolView(Stage primaryStage, String toolName) {
         System.out.println("openToolView chiamato con: " + toolName);
         if ("Transcribe Audio".equals(toolName)) {
-            System.out.println("Apertura di TranscriptionView...");
-            TranscriptionView transcriptionView = new TranscriptionView();
-            transcriptionView.start(primaryStage);
+            TranscriptionBoundary transcriptionBoundary = new TranscriptionBoundary(new TranscriptionController());
+            transcriptionBoundary.openTranscriptionView(primaryStage);
         } else {
             System.out.println(toolName + " non gestito.");
         }
-    }    
-
-    private void openLoginView(Stage primaryStage) {
-        LoginView loginView = new LoginView();
-        loginView.start(primaryStage);
     }
 }

@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class TranscriptionView extends Application {
+    private TranscriptionBoundary boundary;
     private String lastSavedText = "";
     private String originalText = "";
     private static final String BUTTON_KEY = "button";
@@ -21,8 +22,7 @@ public class TranscriptionView extends Application {
     @Override
     public void start(Stage primaryStage) {
         System.out.println("TranscriptionView avviata.");
-        TranscriptionController controller = new TranscriptionController();
-        TranscriptionBoundary boundary = new TranscriptionBoundary(controller);
+        boundary = new TranscriptionBoundary(new TranscriptionController());
 
         Label titleLabel = new Label("Audio Transcriptor");
         titleLabel.getStyleClass().add("title");
@@ -110,7 +110,7 @@ public class TranscriptionView extends Application {
                     boolean success = boundary.uploadAudio(audioFilePath);
                     javafx.application.Platform.runLater(() -> {
                         if (success) {
-                            originalText = controller.getTranscription().getText();
+                            originalText = boundary.getTranscription().getText();
                             lastSavedText = originalText;
                             editableTextArea.setText(originalText);
                             editableTextArea.setEditable(false);
@@ -118,7 +118,7 @@ public class TranscriptionView extends Application {
                             saveAndExitButton.setVisible(true);
 
                             // Recupera i dati della trascrizione
-                            Transcription t = controller.getTranscription();
+                            Transcription t = boundary.getTranscription();
                             durationLabel.setText("🎵 Durata Audio: " + t.getDuration() + " sec");
                             timeLabel.setText("⏳ Tempo di Trascrizione: " + (t.getProcessingTime() / 1000.0) + " sec");
                             wordsLabel.setText("📝 Parole: " + t.getWordCount());
@@ -179,9 +179,9 @@ public class TranscriptionView extends Application {
             boolean saved = boundary.saveTranscription(primaryStage);
             
             if (saved) {
-                showSummaryDialog(primaryStage, controller.getTranscription());
+                showSummaryDialog(primaryStage, boundary.getTranscription());
             } else {
-                System.err.println("❌ Errore nel salvataggio della trascrizione.");
+                System.err.println("Errore nel salvataggio della trascrizione.");
             }
         });
         
@@ -192,7 +192,7 @@ public class TranscriptionView extends Application {
 
     private void showSummaryDialog(Stage primaryStage, Transcription transcription) {
         Alert summaryDialog = new Alert(Alert.AlertType.INFORMATION);
-        summaryDialog.setTitle("📊 Resoconto della Trascrizione");
+        summaryDialog.setTitle("Resoconto della Trascrizione");
         summaryDialog.setHeaderText("Trascrizione completata con successo!");
         
         // Testo del resoconto

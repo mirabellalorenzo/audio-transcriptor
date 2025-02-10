@@ -16,6 +16,9 @@ public class HomeView {
         HomeBoundary boundary = new HomeBoundary();
 
         String email = boundary.getUserEmail();
+        if (email == null || email.isEmpty()) {
+            email = "Unknown User";
+        }
         String photoUrl = boundary.getUserPhotoUrl();
         
         BorderPane root = new BorderPane();
