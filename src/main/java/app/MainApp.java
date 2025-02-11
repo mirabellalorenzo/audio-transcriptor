@@ -2,12 +2,13 @@ package app;
 import static spark.Spark.*;
 
 import control.AuthController;
-import control.FirebaseConfig;
-import control.GoogleAuthProvider;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import view.LoginView;
 import java.util.logging.Logger;
+
+import config.FirebaseConfig;
+import config.GoogleAuthProvider;
 
 
 public class MainApp extends Application {

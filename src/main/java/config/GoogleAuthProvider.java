@@ -1,4 +1,4 @@
-package control;
+package config;
 
 import java.io.IOException;
 import java.io.OutputStream;

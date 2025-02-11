@@ -1,8 +1,7 @@
 package boundary;
 
+import config.GoogleAuthProvider;
 import control.AuthController;
-import control.GoogleAuthProvider;
-
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import view.HomeView;
