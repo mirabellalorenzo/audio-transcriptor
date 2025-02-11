@@ -1,6 +1,7 @@
 package view;
 
 import boundary.HomeBoundary;
+import entity.Note;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -9,8 +10,13 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import java.util.List;
 
 public class HomeView {
+    private TextArea noteTextArea;
+    private Button saveNoteButton;
+    private Note selectedNote;
+
 
     public void start(Stage primaryStage) {
         HomeBoundary boundary = new HomeBoundary();
@@ -20,11 +26,15 @@ public class HomeView {
             email = "Unknown User";
         }
         String photoUrl = boundary.getUserPhotoUrl();
+        List<Note> savedNotes = boundary.getSavedNotes();
+
         
         BorderPane root = new BorderPane();
+        root.setStyle("-fx-padding: 0;");
         
         HBox topBar = new HBox(10);
-        topBar.setStyle("-fx-padding: 10; -fx-alignment: center;");
+        topBar.setStyle("-fx-padding: 10; -fx-background-color: #f8f9fa; -fx-border-width: 0 0 1 0; -fx-border-color: #ddd; -fx-alignment: center;");
+
 
         // Immagine del profilo 
         ImageView profileImage = new ImageView(new Image(photoUrl));
@@ -61,10 +71,11 @@ public class HomeView {
         root.setCenter(separator);
 
         VBox centerContent = new VBox(20);
-        centerContent.setAlignment(Pos.CENTER);
+        centerContent.setAlignment(Pos.TOP_CENTER);
 
-        Label titleLabel = new Label("Hi, choose an action to start");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;");
+
+        Label titleLabel = new Label("Hi, click here to transcribe an audio");
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #444; -fx-padding: 30 0 5 0;");
         titleLabel.setAlignment(Pos.CENTER);
 
         GridPane centerPanel = new GridPane();
@@ -72,23 +83,120 @@ public class HomeView {
         centerPanel.setVgap(20);
         centerPanel.setAlignment(Pos.CENTER);
 
-        String[] toolNames = {"Transcribe Audio", "Tool 2", "Tool 3", "Tool 4"};
+        Button transcribeButton = new Button("Transcribe Audio");
+        transcribeButton.getStyleClass().add("card-button");
+        transcribeButton.setMaxWidth(150);
+        transcribeButton.setOnAction(e -> boundary.openToolView(primaryStage, "Transcribe Audio"));
 
-        for (int i = 0; i < 4; i++) {
-            final int index = i;
+        centerPanel.add(transcribeButton, 0, 0);
 
-            Button toolButton = new Button(toolNames[index]);
-            toolButton.getStyleClass().add("card-button");
-            toolButton.setMaxWidth(150);
 
-            int row = index / 2;
-            int col = index % 2;
+        // **Sezione per mostrare le note**
+        VBox notesContainer = new VBox(10);
+        notesContainer.setAlignment(Pos.TOP_CENTER);
+        notesContainer.setStyle("-fx-padding: 20; -fx-max-width: 400px;");
 
-            toolButton.setOnAction(e -> boundary.openToolView(primaryStage, toolNames[index]));
-            centerPanel.add(toolButton, col, row);
+
+        // Pulsante per salvare le modifiche alla nota
+        saveNoteButton = new Button("Save Note");
+        saveNoteButton.setVisible(false);
+        saveNoteButton.setOnAction(e -> {
+            if (selectedNote != null) {
+                selectedNote.setContent(noteTextArea.getText());
+                boundary.updateNote();
+                System.out.println("✅ Nota aggiornata: " + selectedNote.getTitle());
+            }
+        });               
+
+        // Pulsante per deselezionare la nota e chiudere la textarea
+        Button deselectNoteButton = new Button("Deselect");
+        deselectNoteButton.setVisible(false);
+        deselectNoteButton.setOnAction(e -> {
+            selectedNote = null;
+            noteTextArea.clear();
+            noteTextArea.setVisible(false);
+            saveNoteButton.setVisible(false);
+            deselectNoteButton.setVisible(false);
+        });
+
+
+
+        Label notesTitle = new Label("Your saved notes:");
+        notesTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 15 0 5 0;");
+
+        notesContainer.getChildren().add(notesTitle);
+
+        if (savedNotes.isEmpty()) {
+            notesContainer.getChildren().add(new Label("❌ Nessuna nota salvata."));
+        } else {
+            for (Note note : savedNotes) {
+                VBox noteBox = new VBox(5); // Un contenitore per titolo e anteprima
+                noteBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px; -fx-padding: 10; -fx-spacing: 5;");
+
+                Label noteTitle = new Label(note.getTitle());
+                noteTitle.setStyle("-fx-font-weight: bold; -fx-text-fill: #333;");
+
+                // Mostra solo le prime 2 righe della nota
+                String previewText = note.getContent().split("\n").length > 2 ? 
+                                    note.getContent().split("\n")[0] + "\n" + note.getContent().split("\n")[1] + "..." : 
+                                    note.getContent();
+
+                Label notePreview = new Label(previewText);
+                notePreview.setStyle("-fx-text-fill: #666; -fx-font-size: 12px;");
+
+                // Aggiunge un effetto hover per migliorare la UI
+                noteBox.setOnMouseEntered(e -> noteBox.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #bbb; -fx-border-radius: 5px; -fx-padding: 10; -fx-spacing: 5;"));
+                noteBox.setOnMouseExited(e -> noteBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px; -fx-padding: 10; -fx-spacing: 5;"));
+
+                noteBox.getChildren().addAll(noteTitle, notePreview);
+
+                
+                noteBox.setOnMouseClicked(e -> {
+                    Stage modalStage = new Stage();
+                    modalStage.setTitle("Edit Note");
+            
+                    // TextArea per modificare il contenuto della nota
+                    TextArea modalTextArea = new TextArea(note.getContent());
+                    modalTextArea.setWrapText(true);
+                    modalTextArea.getStyleClass().add("text-area"); // Applica stile CSS
+            
+                    // Pulsante per chiudere il modal senza salvare
+                    Button closeButton = new Button("Close");
+                    closeButton.getStyleClass().add("button-secondary"); // Stile secondario
+                    closeButton.setOnAction(ev -> modalStage.close());
+
+                    // Pulsante per salvare le modifiche
+                    Button saveButton = new Button("Save");
+                    saveButton.getStyleClass().add("button-primary"); // Stile principale
+                    saveButton.setOnAction(ev -> {
+                        note.setContent(modalTextArea.getText());
+                        boundary.updateNote();
+                        System.out.println("✅ Nota aggiornata: " + note.getTitle());
+                        modalStage.close(); // Chiude il modal
+                    });
+            
+                    // Layout dei pulsanti
+                    HBox buttonBox = new HBox(15, closeButton, saveButton);
+                    buttonBox.setAlignment(Pos.CENTER);
+            
+                    // Layout principale del modal
+                    VBox modalLayout = new VBox(15, modalTextArea, buttonBox);
+                    modalLayout.setAlignment(Pos.CENTER);
+                    modalLayout.setStyle("-fx-padding: 20; -fx-background-color: #ffffff; -fx-border-radius: 10px; -fx-border-color: #cccccc;");
+            
+                    Scene modalScene = new Scene(modalLayout, 400, 300);
+                    modalScene.getStylesheets().add(getClass().getResource("/view/styles.css").toExternalForm()); // Applica il CSS
+                    modalStage.setScene(modalScene);
+                    modalStage.showAndWait();
+                });
+            
+                notesContainer.getChildren().add(noteBox);
+            }            
         }
 
-        centerContent.getChildren().addAll(titleLabel, centerPanel);
+        // **Ora aggiungiamo notesContainer dopo che è stato dichiarato**
+        centerContent.getChildren().addAll(titleLabel, centerPanel, notesContainer);
+
         root.setCenter(centerContent);
 
         Scene scene = new Scene(root, 600, 500);

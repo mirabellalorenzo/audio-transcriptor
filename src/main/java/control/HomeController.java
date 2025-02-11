@@ -10,6 +10,7 @@ import view.LoginView;
 import view.TranscriptionView;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeController {
     private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
@@ -49,12 +50,36 @@ public class HomeController {
 
     public List<Note> getSavedNotes() {
         try {
-            return notesDAO.getAll(); // Recupera tutte le note
+            User currentUser = AuthController.getCurrentUser();
+            if (currentUser == null) {
+                System.err.println("Errore: nessun utente autenticato.");
+                return List.of();
+            }
+
+            String currentUserId = currentUser.getId();
+            List<Note> allNotes = notesDAO.getAll();
+            
+            // Filtra solo le note dell'utente attuale (compatibile con Java 11 e precedenti)
+            List<Note> userNotes = allNotes.stream()
+                    .filter(note -> note.getUid().equals(currentUserId))
+                    .collect(Collectors.toList());  // ✅ Use Collectors.toList()
+
+            return userNotes;
         } catch (Exception e) {
             System.err.println("Errore durante il recupero delle note: " + e.getMessage());
-            return List.of(); // Ritorna una lista vuota in caso di errore
+            return List.of();
         }
     }
+
+    public void updateNote(Note note) {
+        try {
+            notesDAO.save(note);
+            System.out.println("✅ Nota aggiornata nel database Firebase!");
+        } catch (Exception e) {
+            System.err.println("❌ Errore durante l'aggiornamento della nota.");
+            e.printStackTrace();
+        }
+    }    
 
     public void logout(Stage primaryStage) {
         AuthController.logout();
