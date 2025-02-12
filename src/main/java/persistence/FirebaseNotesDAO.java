@@ -6,6 +6,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class FirebaseNotesDAO implements NotesDAO {
     private final Firestore db = FirestoreClient.getFirestore();
@@ -15,8 +16,11 @@ public class FirebaseNotesDAO implements NotesDAO {
     public void save(Note note) {
         try {
             db.collection(NOTES_KEY).document(note.getId()).set(note).get();
-        } catch (Exception e) {
-            throw new RuntimeException("Error saving note", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            throw new IllegalStateException("Thread interrupted while saving note", e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("Error saving note", e);
         }
     }
 
@@ -27,8 +31,11 @@ public class FirebaseNotesDAO implements NotesDAO {
             for (DocumentSnapshot doc : db.collection(NOTES_KEY).get().get().getDocuments()) {
                 notes.add(doc.toObject(Note.class));
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Error fetching notes", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            throw new IllegalStateException("Thread interrupted while fetching notes", e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("Error fetching notes", e);
         }
         return notes;
     }
@@ -38,8 +45,11 @@ public class FirebaseNotesDAO implements NotesDAO {
         try {
             DocumentSnapshot doc = db.collection(NOTES_KEY).document(id).get().get();
             return doc.toObject(Note.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Error fetching note by ID", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            throw new IllegalStateException("Thread interrupted while fetching note by ID", e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("Error fetching note by ID", e);
         }
     }
 
@@ -47,8 +57,11 @@ public class FirebaseNotesDAO implements NotesDAO {
     public void delete(String id) {
         try {
             db.collection(NOTES_KEY).document(id).delete().get();
-        } catch (Exception e) {
-            throw new RuntimeException("Error deleting note", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            throw new IllegalStateException("Thread interrupted while deleting note", e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("Error deleting note", e);
         }
     }
 }

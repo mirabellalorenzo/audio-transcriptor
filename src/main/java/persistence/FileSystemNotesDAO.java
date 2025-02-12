@@ -85,8 +85,7 @@ public class FileSystemNotesDAO implements NotesDAO {
                 Files.delete(noteFile.toPath());
                 logger.info("Note deleted successfully: {}", id);
             } catch (IOException e) {
-                logger.error("Error deleting note: {}", id, e);
-                throw e;
+                throw new IOException("Error deleting note: " + id, e); // ✅ Nessun doppio log
             }
         } else {
             logger.warn("Attempted to delete a note that does not exist: {}", id);
