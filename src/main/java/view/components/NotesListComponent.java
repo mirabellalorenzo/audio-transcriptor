@@ -7,12 +7,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import javafx.scene.paint.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class NotesListComponent extends VBox {
     public interface NoteSelectionListener {
@@ -20,15 +21,18 @@ public class NotesListComponent extends VBox {
     }
 
     private final VBox notesContainer;
+    private VBox selectedNoteCard = null;
+    private final NoteSelectionListener listener;
+    private final List<Note> notes;
 
     public NotesListComponent(List<Note> notes, NoteSelectionListener listener) {
+        this.notes = notes;
+        this.listener = listener;
         this.setStyle("-fx-padding: 20; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
         
-        // **Titolo "Notes"**
         Label titleLabel = new Label("Notes");
         titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #222;");
 
-        // **Barra di ricerca**
         TextField searchField = new TextField();
         searchField.setPromptText("Search notes...");
         searchField.setMaxWidth(Double.MAX_VALUE);
@@ -43,12 +47,11 @@ public class NotesListComponent extends VBox {
             "-fx-prompt-text-fill: #999;"
         );
 
-        // 🔥 Fai in modo che il TextField cresca dentro HBox
-        HBox.setHgrow(searchField, Priority.ALWAYS);  
-
         FontIcon searchIcon = new FontIcon(FontAwesomeSolid.SEARCH);
         searchIcon.setIconSize(16);
         searchIcon.setIconColor(Color.web("#888"));
+
+        HBox.setHgrow(searchField, Priority.ALWAYS);  
 
         HBox searchBox = new HBox(10, searchIcon, searchField);
         searchBox.setAlignment(Pos.CENTER_LEFT);
@@ -58,17 +61,14 @@ public class NotesListComponent extends VBox {
             "-fx-border-color: #E0E0E0; " +
             "-fx-padding: 8px 16px; " +
             "-fx-pref-width: 100%; "
-        );        
+        );
 
-        // **Container per le note**
         notesContainer = new VBox(10);
         notesContainer.setStyle("-fx-spacing: 10; -fx-padding: 5;");
         loadNotes(notes, listener);
 
-        // **Aggiungiamo gli elementi al layout**
         this.getChildren().addAll(titleLabel, searchBox, notesContainer);
 
-        // **Filtraggio note con la barra di ricerca**
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             List<Note> filteredNotes = notes.stream()
                 .filter(note -> note.getTitle().toLowerCase().contains(newText.toLowerCase()))
@@ -80,54 +80,105 @@ public class NotesListComponent extends VBox {
 
     private void loadNotes(List<Note> notes, NoteSelectionListener listener) {
         for (Note note : notes) {
-            VBox noteCard = new VBox();
-            noteCard.setStyle(
-                "-fx-background-color: #ffffff; " +
-                "-fx-padding: 12; " +
-                "-fx-border-radius: 20px; " +
-                "-fx-border-color: #E0E0E0; " +
-                "-fx-spacing: 6; " +
-                "-fx-cursor: hand;"
-            );
+            VBox noteCard = createNoteCard(note);
 
-            // **Icona della nota**
-            FontIcon noteIcon = new FontIcon(FontAwesomeSolid.STICKY_NOTE);
-            noteIcon.setIconSize(16);
-            noteIcon.setIconColor(Color.web("#0078D7")); // Blu
+            noteCard.setOnMouseEntered(e -> {
+                if (selectedNoteCard != noteCard) {
+                    noteCard.setStyle(
+                        "-fx-background-color: #EEEEEE; " +
+                        "-fx-padding: 20px; " +
+                        "-fx-border-radius: 20px; " +
+                        "-fx-border-color: #DADADA; " +
+                        "-fx-background-insets: 0; " + 
+                        "-fx-background-radius: 20px; " +
+                        "-fx-spacing: 10px; " +
+                        "-fx-cursor: hand;"
+                    );
+                }
+            });
 
-            Label title = new Label(note.getTitle());
-            title.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #333;");
+            noteCard.setOnMouseExited(e -> {
+                if (selectedNoteCard != noteCard) {
+                    noteCard.setStyle(
+                        "-fx-background-color: #fcfbfc; " +
+                        "-fx-padding: 20px; " +
+                        "-fx-border-radius: 20px; " +
+                        "-fx-border-color: #E0E0E0; " +
+                        "-fx-background-insets: 0; " + 
+                        "-fx-background-radius: 20px; " +
+                        "-fx-spacing: 10px; " +
+                        "-fx-cursor: hand;"
+                    );
+                }
+            });
 
-            Label preview = new Label(note.getContent().length() > 80 ? note.getContent().substring(0, 80) + "..." : note.getContent());
-            preview.setStyle("-fx-text-fill: #666; -fx-font-size: 13px;");
+            noteCard.setOnMouseClicked(e -> {
+                if (selectedNoteCard != null) {
+                    selectedNoteCard.setStyle(
+                        "-fx-background-color: #fcfbfc; " +
+                        "-fx-padding: 20px; " +
+                        "-fx-border-radius: 20px; " +
+                        "-fx-border-color: #E0E0E0; " +
+                        "-fx-background-insets: 0; " + 
+                        "-fx-background-radius: 20px; " +
+                        "-fx-spacing: 10px; " +
+                        "-fx-cursor: hand;"
+                    );
+                }
 
+                selectedNoteCard = noteCard;
 
-            HBox titleRow = new HBox(10, noteIcon, title);
-            noteCard.getChildren().addAll(titleRow, preview);
+                selectedNoteCard.setStyle(
+                    "-fx-background-color: #edf6ff; " +
+                    "-fx-padding: 20px; " +
+                    "-fx-border-radius: 20px; " +
+                    "-fx-border-color: #99c9ef; " +
+                    "-fx-background-insets: 0; " + 
+                    "-fx-background-radius: 20px; " +
+                    "-fx-spacing: 10px; " +
+                    "-fx-cursor: hand;"
+                );
 
-            
-            noteCard.setOnMouseEntered(e -> noteCard.setStyle(
-                "-fx-background-color: #EEE; " + 
-                "-fx-padding: 12; " +
-                "-fx-border-radius: 20px; " +
-                "-fx-border-color: #DADADA; " +
-                "-fx-spacing: 6; " +
-                "-fx-cursor: hand;"
-            ));
-
-            noteCard.setOnMouseExited(e -> noteCard.setStyle(
-                "-fx-background-color: #ffffff; " +
-                "-fx-padding: 12; " +
-                "-fx-border-radius: 20px; " +
-                "-fx-border-color: #E0E0E0; " +
-                "-fx-spacing: 6; " +
-                "-fx-cursor: hand;"
-            ));
-
-            // **Selezione della nota**
-            noteCard.setOnMouseClicked(e -> listener.onNoteSelected(note));
+                listener.onNoteSelected(note);
+            });
 
             notesContainer.getChildren().add(noteCard);
         }
+    }    
+
+    public void addNoteAndSelect(Note newNote) {
+        notes.add(newNote);
+    
+        VBox noteCard = createNoteCard(newNote);
+        notesContainer.getChildren().add(0, noteCard);
+        listener.onNoteSelected(newNote);
+    }
+    
+    private VBox createNoteCard(Note note) {
+        VBox noteCard = new VBox();
+        noteCard.setStyle(
+            "-fx-background-color: #fcfbfc; " +
+            "-fx-padding: 20px; " +
+            "-fx-border-radius: 20px; " +
+            "-fx-border-color: #E0E0E0; " +
+            "-fx-background-insets: 0; " +
+            "-fx-background-radius: 20px; " +
+            "-fx-spacing: 10px; " +
+            "-fx-cursor: hand;"
+        );
+
+        Label title = new Label(note.getTitle());
+        title.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #333;");
+        title.setMaxWidth(Double.MAX_VALUE);
+        title.setWrapText(true);
+
+        Label preview = new Label(note.getContent());
+        preview.setWrapText(true);
+        preview.setMaxWidth(Double.MAX_VALUE);
+        preview.setPrefHeight(34);
+        preview.setStyle("-fx-text-fill: #666; -fx-font-size: 13px;");
+
+        noteCard.getChildren().addAll(title, preview);
+        return noteCard;
     }
 }

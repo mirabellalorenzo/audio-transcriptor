@@ -47,9 +47,11 @@ public class LoginView extends Application {
 
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
+        emailField.setMaxWidth(300);
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
+        passwordField.setMaxWidth(300);
 
         // Label per gli errori
         Label errorLabel = new Label();
@@ -104,9 +106,11 @@ public class LoginView extends Application {
     
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
+        emailField.setMaxWidth(300);
     
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
+        passwordField.setMaxWidth(300);
     
         Label errorLabel = new Label();
         errorLabel.getStyleClass().add("error-label");

@@ -77,21 +77,23 @@ public class HomeController {
         }
     }
 
-    public void createNewNote() {
+    public Note createNewNote() {
         try {
             User currentUser = AuthController.getCurrentUser();
             if (currentUser == null) {
                 logger.warn("Attempted to create a note but no user is logged in.");
-                return;
+                return null;
             }
     
             Note newNote = new Note(null, currentUser.getId(), "New Note", "");
             notesDAO.save(newNote);
             logger.info("New note created: {}", newNote.getTitle());
+            return newNote;
         } catch (Exception e) {
             logger.error("Error creating new note: {}", e.getMessage(), e);
+            return null;
         }
-    }
+    }    
     
     public void updateNote(Note note) {
         try {

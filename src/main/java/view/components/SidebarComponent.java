@@ -1,6 +1,7 @@
 package view.components;
 
 import boundary.HomeBoundary;
+import entity.Note;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -9,13 +10,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.List;
 
 public class SidebarComponent extends VBox {
     private final HomeBoundary boundary;
     private final Stage primaryStage;
     private static final Logger logger = LoggerFactory.getLogger(SidebarComponent.class);
 
-    public SidebarComponent(HomeBoundary boundary, Stage primaryStage, String userEmail, String userPhotoUrl) {
+    public SidebarComponent(HomeBoundary boundary, Stage primaryStage, String userEmail, String userPhotoUrl, List<Note> notes, NotesListComponent notesList) {
         this.boundary = boundary;
         this.primaryStage = primaryStage;
 
@@ -27,7 +29,7 @@ public class SidebarComponent extends VBox {
         profileImage.setFitWidth(60);
         profileImage.setFitHeight(60);
         profileImage.setPreserveRatio(true);
-        profileImage.setStyle("-fx-background-radius: 50%; -fx-border-radius: 50%;"); // 🔥 Arrotondato
+        profileImage.setStyle("-fx-background-radius: 50%; -fx-border-radius: 50%;");
 
         // **Email Utente**
         Label emailLabel = new Label(userEmail);
@@ -42,13 +44,18 @@ public class SidebarComponent extends VBox {
             "-fx-min-width: 180px; " +
             "-fx-font-size: 14px; " +
             "-fx-border-radius: 8px; " +
-            "-fx-cursor: hand;" // 🔥 Cursor Pointer
+            "-fx-cursor: hand;"
         );
 
         newNoteButton.setOnAction(e -> {
-            logger.info("New Note button clicked"); // ✅ Debug log
-            boundary.createNewNote();
-        });
+            logger.info("New Note button clicked");
+            Note newNote = boundary.createNewNote();
+            
+            if (newNote != null) {
+                notes.add(newNote);
+                notesList.addNoteAndSelect(newNote);
+            }
+        });          
 
         // **Pulsante "Transcribe Audio"**
         Button transcribeButton = new Button("Transcribe Audio");
@@ -59,11 +66,11 @@ public class SidebarComponent extends VBox {
             "-fx-min-width: 180px; " +
             "-fx-font-size: 14px; " +
             "-fx-border-radius: 8px; " +
-            "-fx-cursor: hand;" // 🔥 Cursor Pointer
+            "-fx-cursor: hand;"
         );
 
         transcribeButton.setOnAction(e -> {
-            logger.info("Transcribe button clicked"); // ✅ Debug log
+            logger.info("Transcribe button clicked");
             boundary.openToolView(primaryStage, "Transcribe Audio");
         });
 

@@ -25,6 +25,7 @@ public class MainApp extends Application {
         // Avvio la schermata di login
         LoginView loginView = new LoginView();
         loginView.start(primaryStage);
+        primaryStage.setMaximized(true);
     }
 
     private void startServerOAuth() {
@@ -33,33 +34,33 @@ public class MainApp extends Application {
         get("/callback", (req, res) -> {
             String code = req.queryParams("code"); // Recupero il codice OAuth
             if (code == null) {
-                LOGGER.severe("Errore: Nessun codice ricevuto da Google.");
-                return "Errore nell'autenticazione";
+                LOGGER.severe("Error: No code received from Google.");
+                return "Authentication error.";
             }
 
-            LOGGER.info("Codice ricevuto: " + code);
+            LOGGER.info("Code received: " + code);
 
             // Scambio il codice per un token
             String idToken = GoogleAuthProvider.getIdTokenFromGoogle(code);
             if (idToken == null) {
-                LOGGER.severe("Errore nel recupero dell'ID Token.");
-                return "Errore nell'autenticazione";
+                LOGGER.severe("Error retrieving ID Token.");
+                return "Authentication error.";
             }
 
-            LOGGER.info("ID Token ricevuto!");
+            LOGGER.info("ID Token received!");
             
             // Effettuo il login con Firebase
             boolean loginSuccess = AuthController.loginWithGoogle(idToken);
             if (loginSuccess) {
-                LOGGER.info("Login con Firebase riuscito!");
-                return "Login completato! Puoi chiudere questa finestra.";
+                LOGGER.info("Login with Firebase successful!");
+                return "Login completed! You can close this window.";
             } else {
-                LOGGER.severe("Errore nel login con Firebase.");
-                return "Errore nel login.";
+                LOGGER.severe("Error logging in with Firebase.");
+                return "Login error.";
             }
         });
 
-        LOGGER.info("Server OAuth in ascolto su http://localhost:5000/callback");
+        LOGGER.info("OAuth server listening at http://localhost:5000/callback");
     }
 
     public static void main(String[] args) {

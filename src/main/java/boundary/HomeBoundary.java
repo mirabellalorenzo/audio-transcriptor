@@ -6,6 +6,8 @@ import entity.Note;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import view.components.NotesListComponent;
+
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +41,10 @@ public class HomeBoundary {
         }
     }    
 
-    public void createNewNote() {
-        homeController.createNewNote();
-    }    
+    public Note createNewNote() {
+        Note newNote = homeController.createNewNote(); 
+        return newNote;
+    }     
 
     public void updateNote() {
         if (selectedNote != null) {
