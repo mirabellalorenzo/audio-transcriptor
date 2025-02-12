@@ -39,6 +39,10 @@ public class HomeBoundary {
         }
     }    
 
+    public void createNewNote() {
+        homeController.createNewNote();
+    }    
+
     public void updateNote() {
         if (selectedNote != null) {
             homeController.updateNote(selectedNote);
@@ -47,6 +51,10 @@ public class HomeBoundary {
             logger.warn("No note selected for update.");
         }
     }        
+
+    public void deleteNote(Note note) {
+        homeController.deleteNote(note);
+    }    
 
     public void logout(Stage primaryStage) {
         logger.info("User logged out.");

@@ -1,6 +1,7 @@
 boundary/HomeBoundary.class
 view/LoginView.class
 config/GoogleAuthProvider.class
+view/HomeView$1.class
 config/AppConfig$StorageMode.class
 view/TranscriptionView.class
 boundary/TranscriptionBoundary.class
@@ -11,12 +12,17 @@ persistence/FileSystemNotesDAO.class
 control/HomeController.class
 control/AuthController.class
 entity/Transcription.class
+view/components/SidebarComponent.class
 entity/User.class
+view/components/NotesListComponent$NoteSelectionListener.class
+view/components/NotesListComponent.class
 persistence/NotesDAOFactory.class
 boundary/LoginBoundary.class
 persistence/FirebaseUsersDAO.class
 config/FirebaseConfig.class
+view/components/NoteDetailComponent$NoteChangeListener.class
 config/AppConfig.class
+view/components/NoteDetailComponent.class
 view/HomeView.class
 persistence/NotesDAO.class
 entity/Note.class

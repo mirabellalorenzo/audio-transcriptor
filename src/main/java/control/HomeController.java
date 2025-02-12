@@ -11,6 +11,7 @@ import view.HomeView;
 import view.LoginView;
 import view.TranscriptionView;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,22 @@ public class HomeController {
         }
     }
 
+    public void createNewNote() {
+        try {
+            User currentUser = AuthController.getCurrentUser();
+            if (currentUser == null) {
+                logger.warn("Attempted to create a note but no user is logged in.");
+                return;
+            }
+    
+            Note newNote = new Note(null, currentUser.getId(), "New Note", "");
+            notesDAO.save(newNote);
+            logger.info("New note created: {}", newNote.getTitle());
+        } catch (Exception e) {
+            logger.error("Error creating new note: {}", e.getMessage(), e);
+        }
+    }
+    
     public void updateNote(Note note) {
         try {
             notesDAO.save(note);
@@ -84,6 +101,15 @@ public class HomeController {
             logger.error("Error updating note: {}", e.getMessage(), e);
         }
     }    
+
+    public void deleteNote(Note note) {
+        try {
+            notesDAO.delete(note.getId());
+            logger.info("Nota eliminata con successo: {}", note.getTitle());
+        } catch (IOException e) {
+            logger.error("Errore durante l'eliminazione della nota: {}", e.getMessage(), e);
+        }
+    } 
 
     public void logout(Stage primaryStage) {
         logger.info("User logged out.");
