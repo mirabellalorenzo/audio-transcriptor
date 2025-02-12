@@ -18,14 +18,16 @@ public class FirebaseUsersDAO {
                 try {
                     db.collection("users").document(user.getId()).set(user).get();
                     logger.info("User saved successfully in the 'users' collection.");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+                    throw new IllegalStateException("Thread interrupted while saving user", e);
                 } catch (Exception e) {
-                    logger.error("Error saving user {} in Firestore: {}", user.getId(), e.getMessage(), e);
-                    throw new IllegalStateException("Error saving user in Firestore: " + e.getMessage(), e); // ✅ Eccezione più specifica
+                    throw new IllegalStateException("Error saving user in Firestore: " + e.getMessage(), e); // ✅ Rimosso logger
                 }
             });
         } catch (Exception e) {
             logger.error("Unexpected error while saving user {}: {}", user.getId(), e.getMessage(), e);
-            throw new IllegalStateException("Unexpected error while saving user", e); // ✅ Usa IllegalStateException invece di RuntimeException
-        }
+            throw new IllegalStateException("Unexpected error while saving user", e);
+        }        
     }    
 }
