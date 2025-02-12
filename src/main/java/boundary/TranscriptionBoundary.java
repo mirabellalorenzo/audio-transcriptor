@@ -35,53 +35,35 @@ public class TranscriptionBoundary {
         titleDialog.setTitle("Enter Title");
         titleDialog.setHeaderText("Create a new note");
         titleDialog.setContentText("Title:");
-
+    
         String title = titleDialog.showAndWait().orElse(null);
-        if (title == null || title.isBlank()) {
-            logger.warn("Saving canceled by the user (missing title).");
-            return false;
-        }
-
+        if (title == null || title.isBlank()) return false;
+    
         boolean saved = false;
-        File file = null;
-
+    
         if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
             saved = controller.saveTranscription(title, null);
-            if (saved) {
-                logger.info("Transcription saved to Firebase database with title: {}", title);
-            } else {
-                logger.error("Error saving transcription to Firebase database.");
-            }
+            logger.info("Transcription {} the Firebase database with title: {}", saved ? "saved to" : "failed in", title);
+    
         } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Transcription");
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
             fileChooser.setInitialFileName(title + ".txt");
-
-            // Set default directory to user's home
-            String homePath = System.getProperty("user.home");
-            File homeDir = new File(homePath);
-            if (homeDir.exists() && homeDir.isDirectory()) {
-                fileChooser.setInitialDirectory(homeDir);
-            }
-
-            file = fileChooser.showSaveDialog(primaryStage);
-            if (file != null) {
-                saved = controller.saveTranscription(title, file.getAbsolutePath());
-                if (saved) {
-                    logger.info("Transcription saved at: {}", file.getAbsolutePath());
-                } else {
-                    logger.error("Error saving the transcription.");
-                }
-            } else {
-                logger.warn("Saving canceled by the user.");
-            }
+    
+            File homeDir = new File(System.getProperty("user.home"));
+            if (homeDir.isDirectory()) fileChooser.setInitialDirectory(homeDir);
+    
+            File file = fileChooser.showSaveDialog(primaryStage);
+            saved = (file != null) && controller.saveTranscription(title, file.getAbsolutePath());
+    
+            logger.info("Transcription {} at: {}", saved ? "saved" : "failed", file != null ? file.getAbsolutePath() : "No file selected");
         } else {
             logger.error("Unsupported storage mode.");
         }
-
+    
         return saved;
-    }
+    }    
 
     public void openTranscriptionView(Stage primaryStage) {
         logger.info("Opening Transcription View.");
