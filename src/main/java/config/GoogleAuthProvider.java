@@ -18,6 +18,10 @@ public class GoogleAuthProvider {
     private static final String REDIRECT_URI = "http://localhost:5000/callback";
     private static final Logger logger = LoggerFactory.getLogger(GoogleAuthProvider.class);
 
+    private GoogleAuthProvider() {
+        throw new UnsupportedOperationException("Utility class - instantiation not allowed");
+    }
+
     public static void openGoogleLogin() {
         new Thread(() -> {
             try {

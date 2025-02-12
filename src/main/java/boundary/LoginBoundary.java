@@ -5,8 +5,11 @@ import control.AuthController;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import view.HomeView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoginBoundary {
+    private static final Logger logger = LoggerFactory.getLogger(LoginBoundary.class);
 
     public boolean login(String email, String password, Stage primaryStage) {
         boolean success = AuthController.login(email, password);
@@ -33,10 +36,11 @@ public class LoginBoundary {
                 }
                 Platform.runLater(() -> openHomeView(primaryStage)); // Passa alla home nel thread JavaFX
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                Thread.currentThread().interrupt(); // ✅ Ripristina lo stato di interruzione
+                logger.error("Login thread interrupted: {}", ex.getMessage(), ex);
             }
         }).start();
-    }
+    }    
 
     private void openHomeView(Stage primaryStage) {
         HomeView homeView = new HomeView();

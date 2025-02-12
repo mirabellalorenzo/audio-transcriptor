@@ -27,6 +27,10 @@ public class AuthController {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
 
+    private AuthController() {
+        throw new UnsupportedOperationException("Utility class - instantiation not allowed");
+    }
+
     public static User getCurrentUser() {
         return currentUser;
     }
