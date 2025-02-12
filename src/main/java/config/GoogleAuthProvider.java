@@ -7,12 +7,16 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.json.JSONObject;
 
 public class GoogleAuthProvider {
     private static final Dotenv dotenv = Dotenv.load();
     private static final String CLIENT_ID = dotenv.get("CLIENT_ID");
     private static final String CLIENT_SECRET = dotenv.get("CLIENT_SECRET");
     private static final String REDIRECT_URI = "http://localhost:5000/callback";
+    private static final Logger logger = LoggerFactory.getLogger(GoogleAuthProvider.class);
 
     public static void openGoogleLogin() {
         new Thread(() -> {
@@ -25,17 +29,18 @@ public class GoogleAuthProvider {
                         + "&access_type=offline"
                         + "&prompt=consent";
 
-                System.out.println("Aprendo il browser per l'autenticazione Google: " + authUrl);
+                logger.info("Opening browser for Google authentication: {}", authUrl);
 
-                if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                String osName = System.getProperty("os.name").toLowerCase();
+                if (osName.contains("win")) {
                     Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + authUrl);
-                } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                } else if (osName.contains("mac")) {
                     Runtime.getRuntime().exec("open " + authUrl);
                 } else {
                     Runtime.getRuntime().exec("xdg-open " + authUrl);
                 }
             } catch (IOException e) {
-                System.err.println("Errore nell'aprire il browser: " + e.getMessage());
+                logger.error("Error opening browser for Google authentication: {}", e.getMessage(), e);
             }
         }).start();
     }
@@ -62,10 +67,10 @@ public class GoogleAuthProvider {
             String responseBody = scanner.useDelimiter("\\A").next();
             scanner.close();
 
-            System.out.println("🔹 Risposta Google: " + responseBody);
-            return new org.json.JSONObject(responseBody).optString("id_token", null);
+            logger.info("Google response received: {}", responseBody);
+            return new JSONObject(responseBody).optString("id_token", null);
         } catch (Exception e) {
-            System.err.println("Errore nel recupero del token da Google: " + e.getMessage());
+            logger.error("Error retrieving token from Google: {}", e.getMessage(), e);
             return null;
         }
     }

@@ -7,10 +7,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HomeBoundary {
     private HomeController homeController = new HomeController();
     private Note selectedNote;
+    private static final Logger logger = LoggerFactory.getLogger(HomeBoundary.class);
 
     public String getUserEmail() {
         return homeController.getUserEmail();
@@ -30,29 +33,34 @@ public class HomeBoundary {
             noteTextArea.setText(note.getContent()); 
             noteTextArea.setVisible(true);
             saveNoteButton.setVisible(true); 
+            logger.info("Note loaded: {}", note.getTitle());
+        } else {
+            logger.warn("Attempted to load a null note.");
         }
     }    
 
     public void updateNote() {
         if (selectedNote != null) {
             homeController.updateNote(selectedNote);
-            System.out.println("Nota aggiornata: " + selectedNote.getTitle());
+            logger.info("Note updated: {}", selectedNote.getTitle());
         } else {
-            System.err.println("Nessuna nota selezionata.");
+            logger.warn("No note selected for update.");
         }
     }        
 
     public void logout(Stage primaryStage) {
+        logger.info("User logged out.");
         homeController.logout(primaryStage);
     }
 
     public void openToolView(Stage primaryStage, String toolName) {
-        System.out.println("openToolView chiamato con: " + toolName);
+        logger.info("openToolView called with: {}", toolName);
         if ("Transcribe Audio".equals(toolName)) {
             TranscriptionBoundary transcriptionBoundary = new TranscriptionBoundary(new TranscriptionController());
             transcriptionBoundary.openTranscriptionView(primaryStage);
+            logger.info("Transcription tool opened.");
         } else {
-            System.out.println(toolName + " non gestito.");
+            logger.warn("Unrecognized tool: {}", toolName);
         }
     }
 }

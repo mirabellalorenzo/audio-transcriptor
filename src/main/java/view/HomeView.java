@@ -99,7 +99,7 @@ public class HomeView {
         notesContainer.getChildren().add(notesTitle);
 
         if (savedNotes.isEmpty()) {
-            notesContainer.getChildren().add(new Label("❌ Nessuna nota salvata."));
+            notesContainer.getChildren().add(new Label("You don't have saved notes"));
         } else {
             for (Note note : savedNotes) {
                 VBox noteBox = new VBox(5); // Un contenitore per titolo e anteprima

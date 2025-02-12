@@ -15,7 +15,6 @@ public class FileSystemNotesDAO implements NotesDAO {
     private final File notesDirectory = new File("notes");
 
     public FileSystemNotesDAO() {
-        // Creazione della directory se non esiste
         if (!notesDirectory.exists()) {
             notesDirectory.mkdir();
         }
@@ -33,7 +32,6 @@ public class FileSystemNotesDAO implements NotesDAO {
     public List<Note> getAll() {
         List<Note> notes = new ArrayList<>();
 
-        // Recupera l'utente corrente
         User currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
             System.err.println("Errore: utente non autenticato.");
@@ -60,14 +58,11 @@ public class FileSystemNotesDAO implements NotesDAO {
 
     @Override
     public Note getById(String id) {
-        // Per il file system, non c'è un concetto diretto di "ID",
-        // quindi possiamo restituire null o gestire diversamente (ad esempio, basandoci sul titolo).
         return null;
     }
 
     @Override
     public void delete(String id) throws IOException {
-        // Per il file system, supponiamo che `id` sia il titolo.
         File noteFile = new File(notesDirectory, id + ".txt");
         if (noteFile.exists()) {
             Files.delete(noteFile.toPath());
