@@ -3,6 +3,8 @@ package persistence;
 import entity.Note;
 import entity.User;
 import control.AuthController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,11 +14,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class FileSystemNotesDAO implements NotesDAO {
+    private static final Logger logger = LoggerFactory.getLogger(FileSystemNotesDAO.class);
     private final File notesDirectory = new File("notes");
 
     public FileSystemNotesDAO() {
         if (!notesDirectory.exists()) {
-            notesDirectory.mkdir();
+            if (notesDirectory.mkdir()) {
+                logger.info("Notes directory created successfully.");
+            } else {
+                logger.error("Failed to create notes directory.");
+            }
         }
     }
 
@@ -25,6 +32,10 @@ public class FileSystemNotesDAO implements NotesDAO {
         File noteFile = new File(notesDirectory, note.getUid() + "_" + note.getTitle() + ".txt");
         try (FileWriter writer = new FileWriter(noteFile)) {
             writer.write(note.getContent());
+            logger.info("Note saved successfully: {}", noteFile.getAbsolutePath());
+        } catch (IOException e) {
+            logger.error("Error saving note: {}", note.getTitle(), e);
+            throw e;
         }
     }
 
@@ -34,12 +45,15 @@ public class FileSystemNotesDAO implements NotesDAO {
 
         User currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
-            System.err.println("Errore: utente non autenticato.");
+            logger.warn("Attempted to retrieve notes, but user is not authenticated.");
             return notes;
         }
         String uid = currentUser.getId();
 
-        if (!notesDirectory.exists() || !notesDirectory.isDirectory()) return notes;
+        if (!notesDirectory.exists() || !notesDirectory.isDirectory()) {
+            logger.warn("Notes directory does not exist or is not a directory.");
+            return notes;
+        }
 
         for (File file : notesDirectory.listFiles((dir, name) -> name.endsWith(".txt"))) {
             try {
@@ -49,15 +63,18 @@ public class FileSystemNotesDAO implements NotesDAO {
                 String title = parts[1].replace(".txt", "");
                 String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
                 notes.add(new Note(UUID.randomUUID().toString(), uid, title, content));
+                logger.info("Loaded note: {}", title);
             } catch (IOException e) {
-                System.err.println("Errore durante la lettura della nota: " + e.getMessage());
+                logger.error("Error reading note file: {}", file.getName(), e);
             }
         }
+        logger.info("Loaded {} notes for user: {}", notes.size(), uid);
         return notes;
     }
 
     @Override
     public Note getById(String id) {
+        logger.warn("Method getById is not implemented.");
         return null;
     }
 
@@ -65,7 +82,15 @@ public class FileSystemNotesDAO implements NotesDAO {
     public void delete(String id) throws IOException {
         File noteFile = new File(notesDirectory, id + ".txt");
         if (noteFile.exists()) {
-            Files.delete(noteFile.toPath());
+            try {
+                Files.delete(noteFile.toPath());
+                logger.info("Note deleted successfully: {}", id);
+            } catch (IOException e) {
+                logger.error("Error deleting note: {}", id, e);
+                throw e;
+            }
+        } else {
+            logger.warn("Attempted to delete a note that does not exist: {}", id);
         }
     }
 }
