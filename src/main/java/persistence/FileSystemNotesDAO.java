@@ -34,8 +34,7 @@ public class FileSystemNotesDAO implements NotesDAO {
             writer.write(note.getContent());
             logger.info("Note saved successfully: {}", noteFile.getAbsolutePath());
         } catch (IOException e) {
-            logger.error("Error saving note: {}", note.getTitle(), e);
-            throw e;
+            throw new IOException("Failed to save note: " + note.getTitle(), e); // ✅ No log duplicato
         }
     }
 

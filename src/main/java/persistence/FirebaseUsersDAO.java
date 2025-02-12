@@ -20,12 +20,12 @@ public class FirebaseUsersDAO {
                     logger.info("User saved successfully in the 'users' collection.");
                 } catch (Exception e) {
                     logger.error("Error saving user {} in Firestore: {}", user.getId(), e.getMessage(), e);
-                    throw new RuntimeException("Error saving user: " + e.getMessage(), e);
+                    throw new IllegalStateException("Error saving user in Firestore: " + e.getMessage(), e); // ✅ Eccezione più specifica
                 }
             });
         } catch (Exception e) {
             logger.error("Unexpected error while saving user {}: {}", user.getId(), e.getMessage(), e);
-            throw new RuntimeException("Unexpected error while saving user: " + e.getMessage(), e);
+            throw new IllegalStateException("Unexpected error while saving user", e); // ✅ Usa IllegalStateException invece di RuntimeException
         }
-    }
+    }    
 }
