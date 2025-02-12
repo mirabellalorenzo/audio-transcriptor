@@ -66,7 +66,7 @@ public class AuthController {
                 return login(email, password);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore during registration.");
         }
         return false;
     }    
@@ -91,7 +91,7 @@ public class AuthController {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error during login");
         }
         return false;
     }    
@@ -120,7 +120,7 @@ public class AuthController {
                 return true;
             }
         } catch (Exception e) {
-            System.err.println("Errore nel login con Firebase: " + e.getMessage());
+            System.err.println("Error with Firebase Login");
         }
         return false;
     }    

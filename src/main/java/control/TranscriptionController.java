@@ -108,7 +108,6 @@ public class TranscriptionController {
             return true;
         } catch (Exception e) {
             System.err.println("Errore durante il salvataggio della nota nel database Firebase.");
-            e.printStackTrace();
             return false;
         }
     }    

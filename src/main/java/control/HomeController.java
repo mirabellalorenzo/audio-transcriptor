@@ -76,7 +76,6 @@ public class HomeController {
             System.out.println("✅ Nota aggiornata nel database Firebase!");
         } catch (Exception e) {
             System.err.println("❌ Errore durante l'aggiornamento della nota.");
-            e.printStackTrace();
         }
     }    
 
