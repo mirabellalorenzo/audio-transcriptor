@@ -22,12 +22,11 @@ public class FirebaseUsersDAO {
                     Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
                     throw new IllegalStateException("Thread interrupted while saving user", e);
                 } catch (Exception e) {
-                    throw new IllegalStateException("Error saving user in Firestore: " + e.getMessage(), e); // ✅ Rimosso logger
+                    throw new IllegalStateException("Error saving user in Firestore: " + e.getMessage(), e);
                 }
             });
         } catch (Exception e) {
-            logger.error("Unexpected error while saving user {}: {}", user.getId(), e.getMessage(), e);
-            throw new IllegalStateException("Unexpected error while saving user", e);
-        }        
-    }    
+            throw new IllegalStateException("Unexpected error while saving user", e); // ✅ Rimosso logger ridondante
+        }
+    }
 }
