@@ -39,7 +39,7 @@ public class NotesListComponent extends VBox {
         this.primaryStage = primaryStage;
         this.notes = notes;
         this.listener = listener;
-        this.setStyle("-fx-padding: 20; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
+        this.setStyle("-fx-padding: 35; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
         
         // Header con titolo "Notes" e pulsante "New Note" (a destra)
         Label titleLabel = new Label("Notes");
@@ -247,6 +247,8 @@ public class NotesListComponent extends VBox {
             "-fx-cursor: hand;"
         );
 
+        noteCard.setMinWidth(250);
+        
         Label title = new Label(note.getTitle());
         title.setStyle("-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #333;");
         title.setMaxWidth(Double.MAX_VALUE);

@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class NoteDetailComponent extends VBox {
-    private final TextField titleField; // 🔥 Titolo modificabile
+    private final TextField titleField;
     private final TextArea contentArea;
     private final Button saveButton;
     private final Button deleteButton;
@@ -25,7 +25,7 @@ public class NoteDetailComponent extends VBox {
         this.listener = listener;
         this.currentNote = note;
         this.setStyle(
-            "-fx-padding: 100; " +  
+            "-fx-padding: 85; " +  
             "-fx-background-color: white; " +
             "-fx-spacing: 15; "  
         );

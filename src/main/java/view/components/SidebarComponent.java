@@ -58,7 +58,7 @@ public class SidebarComponent extends VBox {
 
     private HBox createMenuItem(String text, FontAwesomeSolid icon, Runnable action) {
         FontIcon menuIcon = new FontIcon(icon);
-        menuIcon.setIconSize(18);
+        menuIcon.setIconSize(20);
         menuIcon.setStyle("-fx-icon-color: #555;");
         
         Label label = new Label(text);
