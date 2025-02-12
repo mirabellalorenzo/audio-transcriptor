@@ -46,14 +46,15 @@ public class HomeBoundary {
         return newNote;
     }     
 
-    public void updateNote() {
-        if (selectedNote != null) {
-            homeController.updateNote(selectedNote);
-            logger.info("Note updated: {}", selectedNote.getTitle());
+    public void updateNote(Note note) {
+        if (note != null) {
+            homeController.updateNote(note);
+            selectedNote = note;
+            logger.info("Note updated: {}", note.getTitle());
         } else {
-            logger.warn("No note selected for update.");
+            logger.warn("No note provided for update.");
         }
-    }        
+    }          
 
     public void deleteNote(Note note) {
         homeController.deleteNote(note);

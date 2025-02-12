@@ -24,7 +24,6 @@ public class HomeView {
             notes = new ArrayList<>();
         }
     
-        // Istanzia il componente delle note prima della Sidebar
         notesList = new NotesListComponent(notes, this::updateSelectedNote);
     
         SidebarComponent sidebar = new SidebarComponent(
@@ -33,25 +32,26 @@ public class HomeView {
                 boundary.getUserEmail(), 
                 boundary.getUserPhotoUrl(), 
                 notes, 
-                notesList // ora questo riferimento è valido
+                notesList
         );
     
         noteDetail = new NoteDetailComponent(
-                notes.isEmpty() ? new Note(null, null, "No notes", "") : notes.get(0), 
-                new NoteDetailComponent.NoteChangeListener() {
-                    @Override
-                    public void onNoteUpdated(Note note) {
-                        boundary.updateNote();
-                        System.out.println("Nota aggiornata: " + note.getTitle());
-                    }
-    
-                    @Override
-                    public void onNoteDeleted(Note note) {
-                        notes.remove(note);
-                        boundary.deleteNote(note);
-                        refreshNotesList();
-                    }
+            notes.isEmpty() ? new Note(null, null, "No notes", "") : notes.get(0),
+            new NoteDetailComponent.NoteChangeListener() {
+                @Override
+                public void onNoteUpdated(Note note) {
+                    boundary.updateNote(note);  // Passiamo la nota aggiornata
+                    notesList.refreshNotesList();
+                    System.out.println("Nota aggiornata: " + note.getTitle());
                 }
+
+                @Override
+                public void onNoteDeleted(Note note) {
+                    notes.remove(note);
+                    boundary.deleteNote(note);
+                    notesList.refreshNotesList();
+                }
+            }
         );
     
         BorderPane root = new BorderPane();

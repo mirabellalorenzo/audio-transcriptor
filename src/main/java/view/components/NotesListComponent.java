@@ -146,13 +146,50 @@ public class NotesListComponent extends VBox {
         }
     }    
 
+    public void refreshNotesList() {
+        notesContainer.getChildren().clear();
+        loadNotes(notes, listener);
+    }    
+
     public void addNoteAndSelect(Note newNote) {
-        notes.add(newNote);
+        if (!notes.contains(newNote)) {
+            notes.add(0, newNote);
+        }
     
         VBox noteCard = createNoteCard(newNote);
         notesContainer.getChildren().add(0, noteCard);
-        listener.onNoteSelected(newNote);
-    }
+    
+        noteCard.setOnMouseClicked(e -> {
+            if (selectedNoteCard != null) {
+                selectedNoteCard.setStyle(
+                    "-fx-background-color: #fcfbfc; " +
+                    "-fx-padding: 20px; " +
+                    "-fx-border-radius: 20px; " +
+                    "-fx-border-color: #E0E0E0; " +
+                    "-fx-background-insets: 0; " + 
+                    "-fx-background-radius: 20px; " +
+                    "-fx-spacing: 10px; " +
+                    "-fx-cursor: hand;"
+                );
+            }
+        
+            selectedNoteCard = noteCard;
+            selectedNoteCard.setStyle(
+                "-fx-background-color: #edf6ff; " +
+                "-fx-padding: 20px; " +
+                "-fx-border-radius: 20px; " +
+                "-fx-border-color: #99c9ef; " +
+                "-fx-background-insets: 0; " + 
+                "-fx-background-radius: 20px; " +
+                "-fx-spacing: 10px; " +
+                "-fx-cursor: hand;"
+            );
+        
+            listener.onNoteSelected(newNote);
+        });
+    
+        noteCard.getOnMouseClicked().handle(null);
+    }    
     
     private VBox createNoteCard(Note note) {
         VBox noteCard = new VBox();
