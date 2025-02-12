@@ -12,8 +12,12 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import java.util.List;
 
-public class HomeView {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+
+public class HomeView {
+    private static final Logger logger = LoggerFactory.getLogger(HomeView.class);
 
     public void start(Stage primaryStage) {
         HomeBoundary boundary = new HomeBoundary();
@@ -33,7 +37,7 @@ public class HomeView {
         topBar.setStyle("-fx-padding: 10; -fx-background-color: #f8f9fa; -fx-border-width: 0 0 1 0; -fx-border-color: #ddd; -fx-alignment: center;");
 
 
-        // Immagine del profilo 
+        // Immagine profilo 
         ImageView profileImage = new ImageView(new Image(photoUrl));
         profileImage.setFitWidth(50); 
         profileImage.setFitHeight(50); 
@@ -56,13 +60,11 @@ public class HomeView {
         logoutButton.setOnAction(e -> boundary.logout(primaryStage));
         logoutButton.getStyleClass().add("button");
         
-        // Navbar Alignment
         HBox.setHgrow(profileImage, Priority.ALWAYS);
         HBox.setHgrow(logoutButton, Priority.ALWAYS);
         topBar.getChildren().addAll(profileImage, emailLabel, logoutButton);
         root.setTop(topBar);
 
-        // Separator
         Separator separator = new Separator();
         separator.setStyle("-fx-border-color: #000000; -fx-padding: 10;");
         root.setCenter(separator);
@@ -102,13 +104,12 @@ public class HomeView {
             notesContainer.getChildren().add(new Label("You don't have saved notes"));
         } else {
             for (Note note : savedNotes) {
-                VBox noteBox = new VBox(5); // Un contenitore per titolo e anteprima
+                VBox noteBox = new VBox(5); 
                 noteBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px; -fx-padding: 10; -fx-spacing: 5;");
 
                 Label noteTitle = new Label(note.getTitle());
                 noteTitle.setStyle("-fx-font-weight: bold; -fx-text-fill: #333;");
 
-                // Mostra solo le prime 2 righe della nota
                 String previewText = note.getContent().split("\n").length > 2 ? 
                                     note.getContent().split("\n")[0] + "\n" + note.getContent().split("\n")[1] + "..." : 
                                     note.getContent();
@@ -116,7 +117,6 @@ public class HomeView {
                 Label notePreview = new Label(previewText);
                 notePreview.setStyle("-fx-text-fill: #666; -fx-font-size: 12px;");
 
-                // Aggiunge un effetto hover per migliorare la UI
                 noteBox.setOnMouseEntered(e -> noteBox.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #bbb; -fx-border-radius: 5px; -fx-padding: 10; -fx-spacing: 5;"));
                 noteBox.setOnMouseExited(e -> noteBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px; -fx-padding: 10; -fx-spacing: 5;"));
 
@@ -127,24 +127,21 @@ public class HomeView {
                     Stage modalStage = new Stage();
                     modalStage.setTitle("Edit Note");
             
-                    // TextArea per modificare il contenuto della nota
                     TextArea modalTextArea = new TextArea(note.getContent());
                     modalTextArea.setWrapText(true);
-                    modalTextArea.getStyleClass().add("text-area"); // Applica stile CSS
+                    modalTextArea.getStyleClass().add("text-area"); 
             
-                    // Pulsante per chiudere il modal senza salvare
                     Button closeButton = new Button("Close");
-                    closeButton.getStyleClass().add("button-secondary"); // Stile secondario
+                    closeButton.getStyleClass().add("button-secondary");
                     closeButton.setOnAction(ev -> modalStage.close());
 
-                    // Pulsante per salvare le modifiche
                     Button saveButton = new Button("Save");
-                    saveButton.getStyleClass().add("button-primary"); // Stile principale
+                    saveButton.getStyleClass().add("button-primary"); 
                     saveButton.setOnAction(ev -> {
                         note.setContent(modalTextArea.getText());
                         boundary.updateNote();
-                        System.out.println("✅ Nota aggiornata: " + note.getTitle());
-                        modalStage.close(); // Chiude il modal
+                        logger.info("Note updated: {}", note.getTitle());
+                        modalStage.close(); 
                     });
             
                     // Layout dei pulsanti
@@ -166,7 +163,6 @@ public class HomeView {
             }            
         }
 
-        // **Ora aggiungiamo notesContainer dopo che è stato dichiarato**
         centerContent.getChildren().addAll(titleLabel, centerPanel, notesContainer);
 
         root.setCenter(centerContent);

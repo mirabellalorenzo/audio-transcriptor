@@ -10,12 +10,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class LoginView extends Application {
     private Stage primaryStage;
     private Scene loginScene;
     private Scene registerScene;
     private static final String LOGIN_KEY = "Login";
     private static final String REGISTER_KEY = "Register";
+    private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
 
     @Override
     public void start(Stage primaryStage) {
@@ -64,9 +69,10 @@ public class LoginView extends Application {
             }
 
             if (boundary.login(email, password, primaryStage)) {
-                System.out.println("Login successful!");
+                logger.info("User logged in successfully.");
                 errorLabel.setVisible(false);
             } else {
+                logger.warn("Login failed: Incorrect email or password.");
                 errorLabel.setText("Incorrect email or password!");
                 errorLabel.setVisible(true);
             }
@@ -102,7 +108,6 @@ public class LoginView extends Application {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
     
-        // Label per gli errori
         Label errorLabel = new Label();
         errorLabel.getStyleClass().add("error-label");
         errorLabel.setVisible(false);
@@ -120,9 +125,10 @@ public class LoginView extends Application {
             }
     
             if (boundary.register(email, password, primaryStage)) {
-                System.out.println("✅ Registration successful!");
+                logger.info("User registered successfully.");
                 errorLabel.setVisible(false);
             } else {
+                logger.warn("Registration failed: Email already in use.");
                 errorLabel.setText("Registration failed! Email already in use.");
                 errorLabel.setVisible(true);
             }

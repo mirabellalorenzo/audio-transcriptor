@@ -13,15 +13,19 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 public class TranscriptionView extends Application {
     private TranscriptionBoundary boundary;
     private String lastSavedText = "";
     private String originalText = "";
     private static final String BUTTON_KEY = "button";
+    private static final Logger logger = LoggerFactory.getLogger(TranscriptionView.class);
 
     @Override
     public void start(Stage primaryStage) {
-        System.out.println("TranscriptionView avviata.");
+        logger.info("TranscriptionView started.");
         boundary = new TranscriptionBoundary(new TranscriptionController());
 
         Label titleLabel = new Label("Audio Transcriptor");
@@ -103,7 +107,7 @@ public class TranscriptionView extends Application {
             File audioFile = fileChooser.showOpenDialog(primaryStage);
             if (audioFile != null) {
                 String audioFilePath = audioFile.getAbsolutePath();
-                System.out.println("File selezionato: " + audioFilePath);
+                logger.info("Selected file: {}", audioFilePath);
                 editableTextArea.setText("Trascrizione in corso...");
 
                 new Thread(() -> {
@@ -147,7 +151,7 @@ public class TranscriptionView extends Application {
         // Salvare le modifiche
         saveChangesButton.setOnAction(event -> {
             lastSavedText = editableTextArea.getText();
-            System.out.println("✅ Testo modificato salvato.");
+            logger.info("Modified text saved successfully.");
             editableTextArea.setEditable(false);
             editButton.setVisible(true);
             saveAndExitButton.setVisible(true);
@@ -159,7 +163,7 @@ public class TranscriptionView extends Application {
         // Annullare la modifica
         cancelEditButton.setOnAction(event -> {
             editableTextArea.setText(lastSavedText);
-            System.out.println("🔄 Modifica annullata, ripristinato testo salvato.");
+            logger.info("Edit canceled, reverted to last saved text.");
             editableTextArea.setEditable(false);
             editButton.setVisible(true);
             saveAndExitButton.setVisible(true);
@@ -171,7 +175,7 @@ public class TranscriptionView extends Application {
         // Ripristinare il testo originale
         restoreOriginalButton.setOnAction(event -> {
             editableTextArea.setText(originalText);
-            System.out.println("↩️ Ripristinato il testo originale.");
+            logger.info("Original text restored.");
         });
 
         // Salvare e uscire
@@ -181,7 +185,7 @@ public class TranscriptionView extends Application {
             if (saved) {
                 showSummaryDialog(primaryStage, boundary.getTranscription());
             } else {
-                System.err.println("Errore nel salvataggio della trascrizione.");
+                logger.error("Error saving transcription.");
             }
         });
         

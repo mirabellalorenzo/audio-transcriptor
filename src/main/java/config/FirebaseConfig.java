@@ -9,11 +9,14 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class FirebaseConfig {
+public final class FirebaseConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
     private static boolean initialized = false;
+
+    private FirebaseConfig() {
+        throw new UnsupportedOperationException("FirebaseConfig is a utility class and cannot be instantiated.");
+    }
 
     public static void initializeFirebase() {
         if (initialized) return;
@@ -27,10 +30,10 @@ public class FirebaseConfig {
 
             FirebaseApp.initializeApp(options);
             initialized = true;
-            logger.info("Firebase inizializzato con successo!"); // INFO invece di System.out.println
+            logger.info("Firebase initialized successfully!");
 
         } catch (IOException e) {
-            logger.error("Errore durante l'inizializzazione di Firebase", e); // ERROR invece di System.err.println
+            logger.error("Error initializing Firebase", e);
         }
     }
 
