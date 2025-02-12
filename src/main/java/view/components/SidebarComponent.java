@@ -2,78 +2,77 @@ package view.components;
 
 import boundary.HomeBoundary;
 import entity.Note;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.List;
 
 public class SidebarComponent extends VBox {
     private final HomeBoundary boundary;
     private final Stage primaryStage;
-    private static final Logger logger = LoggerFactory.getLogger(SidebarComponent.class);
 
     public SidebarComponent(HomeBoundary boundary, Stage primaryStage, String userEmail, String userPhotoUrl, List<Note> notes, NotesListComponent notesList) {
         this.boundary = boundary;
         this.primaryStage = primaryStage;
 
-        setSpacing(20);
-        setStyle("-fx-padding: 20; -fx-background-color: #f8f9fa; -fx-min-width: 220px;");
+        setSpacing(15);
+        setPadding(new Insets(20));
+        setStyle("-fx-background-color: #f8f9fa; -fx-min-width: 250px;");
 
         // **Immagine Profilo**
         ImageView profileImage = new ImageView(new Image(userPhotoUrl));
-        profileImage.setFitWidth(60);
-        profileImage.setFitHeight(60);
+        profileImage.setFitWidth(50);
+        profileImage.setFitHeight(50);
         profileImage.setPreserveRatio(true);
         profileImage.setStyle("-fx-background-radius: 50%; -fx-border-radius: 50%;");
 
         // **Email Utente**
         Label emailLabel = new Label(userEmail);
-        emailLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+        emailLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333;");
 
-        // **Pulsante "New Note"**
-        Button newNoteButton = new Button("New Note");
-        newNoteButton.setStyle(
-            "-fx-background-color: #0078d7; " +
-            "-fx-text-fill: white; " +
-            "-fx-padding: 12px 20px; " +
-            "-fx-min-width: 180px; " +
-            "-fx-font-size: 14px; " +
-            "-fx-border-radius: 8px; " +
-            "-fx-cursor: hand;"
-        );
+        // **Container Utente**
+        VBox userBox = new VBox(10, profileImage, emailLabel);
+        userBox.setAlignment(Pos.CENTER);
+        
+        // **Sezione Menu**
+        VBox menuBox = new VBox(15);
+        menuBox.setPadding(new Insets(10, 0, 0, 0));
+        
+        // **Item Notes**
+        HBox notesItem = createMenuItem("Notes", FontAwesomeSolid.STICKY_NOTE, () -> boundary.openToolView(primaryStage, "Notes"));
+        
+        // **Item Transcribe Audio**
+        HBox transcribeItem = createMenuItem("Transcribe Audio", FontAwesomeSolid.MICROPHONE, () -> boundary.openToolView(primaryStage, "Transcribe Audio"));
+        
+        menuBox.getChildren().addAll(notesItem, transcribeItem);
+        getChildren().addAll(userBox, menuBox);
+    }
 
-        newNoteButton.setOnAction(e -> {
-            logger.info("New Note button clicked");
-            Note newNote = boundary.createNewNote();
-            
-            if (newNote != null) {
-                notes.add(newNote);
-                notesList.addNoteAndSelect(newNote);
-            }
-        });          
-
-        // **Pulsante "Transcribe Audio"**
-        Button transcribeButton = new Button("Transcribe Audio");
-        transcribeButton.setStyle(
-            "-fx-background-color: #28a745; " +
-            "-fx-text-fill: white; " +
-            "-fx-padding: 12px 20px; " +
-            "-fx-min-width: 180px; " +
-            "-fx-font-size: 14px; " +
-            "-fx-border-radius: 8px; " +
-            "-fx-cursor: hand;"
-        );
-
-        transcribeButton.setOnAction(e -> {
-            logger.info("Transcribe button clicked");
-            boundary.openToolView(primaryStage, "Transcribe Audio");
-        });
-
-        getChildren().addAll(profileImage, emailLabel, newNoteButton, transcribeButton);
+    private HBox createMenuItem(String text, FontAwesomeSolid icon, Runnable action) {
+        FontIcon menuIcon = new FontIcon(icon);
+        menuIcon.setIconSize(18);
+        menuIcon.setStyle("-fx-icon-color: #555;");
+        
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 16px; -fx-text-fill: #222;");
+        
+        HBox item = new HBox(10, menuIcon, label);
+        item.setPadding(new Insets(10, 15, 10, 15));
+        item.setAlignment(Pos.CENTER_LEFT);
+        item.setStyle("-fx-background-radius: 8px; -fx-cursor: hand;");
+        
+        item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #e9ecef; -fx-background-radius: 8px;"));
+        item.setOnMouseExited(e -> item.setStyle("-fx-background-radius: 8px;"));
+        item.setOnMouseClicked(e -> action.run());
+        
+        return item;
     }
 }

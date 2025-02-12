@@ -1,38 +1,78 @@
 package view.components;
 
+import boundary.HomeBoundary;
 import entity.Note;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
+import javafx.stage.Stage;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NotesListComponent extends VBox {
     public interface NoteSelectionListener {
         void onNoteSelected(Note note);
     }
 
+    private HomeBoundary boundary;
+    private Stage primaryStage;
     private final VBox notesContainer;
     private VBox selectedNoteCard = null;
     private final NoteSelectionListener listener;
     private final List<Note> notes;
+    
+    private static final Logger logger = LoggerFactory.getLogger(NotesListComponent.class);
 
-    public NotesListComponent(List<Note> notes, NoteSelectionListener listener) {
+    // Modifica del costruttore: ora richiede anche boundary e primaryStage per poter creare una nuova nota
+    public NotesListComponent(HomeBoundary boundary, Stage primaryStage, List<Note> notes, NoteSelectionListener listener) {
+        this.boundary = boundary;
+        this.primaryStage = primaryStage;
         this.notes = notes;
         this.listener = listener;
         this.setStyle("-fx-padding: 20; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
         
+        // Header con titolo "Notes" e pulsante "New Note" (a destra)
         Label titleLabel = new Label("Notes");
         titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #222;");
-
+        
+        Button newNoteButton = new Button("New Note");
+        newNoteButton.setStyle(
+            "-fx-background-color: white; " +
+            "-fx-border-color: #E0E0E0; " +
+            "-fx-border-width: 1px; " +
+            "-fx-border-radius: 30px; " +
+            "-fx-background-radius: 30px; " +
+            "-fx-padding: 8px 16px; " +
+            "-fx-font-size: 14px; " +
+            "-fx-text-fill: #222; " +
+            "-fx-cursor: hand;"
+        );
+        newNoteButton.setOnAction(e -> {
+            logger.info("New Note button clicked");
+            Note newNote = boundary.createNewNote();
+            if (newNote != null) {
+                notes.add(newNote);
+                addNoteAndSelect(newNote);
+            }
+        });
+        
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        
+        HBox headerBox = new HBox(10, titleLabel, spacer, newNoteButton);
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        
+        // Barra di ricerca
         TextField searchField = new TextField();
         searchField.setPromptText("Search notes...");
         searchField.setMaxWidth(Double.MAX_VALUE);
@@ -62,13 +102,15 @@ public class NotesListComponent extends VBox {
             "-fx-padding: 8px 16px; " +
             "-fx-pref-width: 100%; "
         );
-
+        
         notesContainer = new VBox(10);
         notesContainer.setStyle("-fx-spacing: 10; -fx-padding: 5;");
         loadNotes(notes, listener);
 
-        this.getChildren().addAll(titleLabel, searchBox, notesContainer);
+        // Aggiungo header, barra di ricerca e lista note
+        this.getChildren().addAll(headerBox, searchBox, notesContainer);
 
+        // Filtraggio note in base al testo immesso nella barra di ricerca
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             List<Note> filteredNotes = notes.stream()
                 .filter(note -> note.getTitle().toLowerCase().contains(newText.toLowerCase()))
@@ -188,6 +230,7 @@ public class NotesListComponent extends VBox {
             listener.onNoteSelected(newNote);
         });
     
+        // Seleziono automaticamente la nuova nota
         noteCard.getOnMouseClicked().handle(null);
     }    
     

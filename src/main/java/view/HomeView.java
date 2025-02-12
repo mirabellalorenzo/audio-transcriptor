@@ -17,14 +17,16 @@ public class HomeView {
     private NoteDetailComponent noteDetail;
     private NotesListComponent notesList;
     private List<Note> notes = new ArrayList<>();
+    private Stage primaryStage;
 
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         notes = boundary.getSavedNotes(); 
         if (notes == null) {
             notes = new ArrayList<>();
         }
     
-        notesList = new NotesListComponent(notes, this::updateSelectedNote);
+        notesList = new NotesListComponent(boundary, primaryStage, notes, this::updateSelectedNote);
     
         SidebarComponent sidebar = new SidebarComponent(
                 boundary, 
@@ -72,6 +74,8 @@ public class HomeView {
 
     private void refreshNotesList() {
         notesList.getChildren().clear();
-        notesList.getChildren().addAll(new NotesListComponent(notes, this::updateSelectedNote).getChildren());
-    }
+        notesList.getChildren().addAll(
+            new NotesListComponent(boundary, primaryStage, notes, this::updateSelectedNote).getChildren()
+        );
+    }    
 }
