@@ -1,7 +1,6 @@
 package view;
 
 import boundary.LoginBoundary;
-import config.AppConfig;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -33,70 +32,62 @@ public class LoginView extends Application {
         registerScene.getStylesheets().add(getClass().getResource("/view/styles.css").toExternalForm());
 
         primaryStage.setTitle(LOGIN_KEY);
-        primaryStage.setScene(loginScene); // Imposta direttamente la scena del login
+        primaryStage.setScene(loginScene);
         primaryStage.show();
     }
 
     private VBox createLoginLayout(LoginBoundary boundary) {
         Label title = new Label(LOGIN_KEY);
         title.getStyleClass().add("title");
-    
+
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
-    
+
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-    
+
+        // Label per gli errori
+        Label errorLabel = new Label();
+        errorLabel.getStyleClass().add("error-label");
+        errorLabel.setVisible(false);
+
         Button loginButton = new Button(LOGIN_KEY);
         loginButton.getStyleClass().add("button");
         loginButton.setOnAction(e -> {
             String email = emailField.getText();
             String password = passwordField.getText();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                errorLabel.setText("Email and password are required!");
+                errorLabel.setVisible(true);
+                return;
+            }
+
             if (boundary.login(email, password, primaryStage)) {
-                System.out.println("✅ Login successful!");
+                System.out.println("Login successful!");
+                errorLabel.setVisible(false);
             } else {
-                System.out.println("❌ Error logging in");
+                errorLabel.setText("Incorrect email or password!");
+                errorLabel.setVisible(true);
             }
         });
-    
-        // Pulsante Google
+
         Button googleSignInButton = createGoogleSignInButton(boundary);
-    
-        // Barra con "or"
+
         Label orLabel = new Label("or");
         Separator separatorLeft = new Separator();
         Separator separatorRight = new Separator();
         HBox orBox = new HBox(separatorLeft, orLabel, separatorRight);
         orBox.setAlignment(Pos.CENTER);
         orBox.setSpacing(10);
-    
-        // Link per registrarsi
+
         Label registerLabel = new Label("Don't have an account?");
         Hyperlink registerLink = new Hyperlink(REGISTER_KEY);
         registerLink.setOnAction(e -> switchToRegisterPage());
         HBox registerBox = new HBox(registerLabel, registerLink);
         registerBox.setAlignment(Pos.CENTER);
-    
-        // Selettore della modalità
-        ChoiceBox<String> modeSelector = new ChoiceBox<>();
-        modeSelector.getItems().addAll("File System", "Database");
-        modeSelector.setValue("Database"); // Imposta il valore predefinito
-        modeSelector.setOnAction(e -> {
-            String selectedMode = modeSelector.getValue();
-            if ("File System".equals(selectedMode)) {
-                AppConfig.setStorageMode(AppConfig.StorageMode.FILE_SYSTEM);
-            } else {
-                AppConfig.setStorageMode(AppConfig.StorageMode.DATABASE);
-            }
-            System.out.println("Modalità selezionata: " + AppConfig.getStorageMode());
-        });
-    
-        Label modeLabel = new Label("Select Storage Mode:");
-        VBox modeBox = new VBox(5, modeLabel, modeSelector);
-        modeBox.setAlignment(Pos.CENTER);
-    
-        // Composizione del layout
-        VBox layout = new VBox(15, title, emailField, passwordField, loginButton, orBox, googleSignInButton, registerBox, modeBox);
+
+        VBox layout = new VBox(15, title, emailField, passwordField, errorLabel, loginButton, orBox, googleSignInButton, registerBox);
         layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
         return layout;
     }
@@ -104,47 +95,58 @@ public class LoginView extends Application {
     private VBox createRegisterLayout(LoginBoundary boundary) {
         Label title = new Label(REGISTER_KEY);
         title.getStyleClass().add("title");
-
+    
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
-
+    
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-
+    
+        // Label per gli errori
+        Label errorLabel = new Label();
+        errorLabel.getStyleClass().add("error-label");
+        errorLabel.setVisible(false);
+    
         Button registerButton = new Button(REGISTER_KEY);
         registerButton.getStyleClass().add("button");
         registerButton.setOnAction(e -> {
             String email = emailField.getText();
             String password = passwordField.getText();
+    
+            if (email.isEmpty() || password.isEmpty()) {
+                errorLabel.setText("Email and password are required!");
+                errorLabel.setVisible(true);
+                return;
+            }
+    
             if (boundary.register(email, password, primaryStage)) {
                 System.out.println("✅ Registration successful!");
+                errorLabel.setVisible(false);
             } else {
-                System.out.println("❌ Error in registration");
+                errorLabel.setText("Registration failed! Email already in use.");
+                errorLabel.setVisible(true);
             }
         });
-
-        // Pulsante Google
+    
         Button googleSignInButton = createGoogleSignInButton(boundary);
-
-        // Barra con "or"
+    
         Label orLabel = new Label("or");
         Separator separatorLeft = new Separator();
         Separator separatorRight = new Separator();
         HBox orBox = new HBox(separatorLeft, orLabel, separatorRight);
         orBox.setAlignment(Pos.CENTER);
         orBox.setSpacing(10);
-
-        // Link per tornare al login
+    
         Label loginLabel = new Label("Already have an account?");
         Hyperlink loginLink = new Hyperlink(LOGIN_KEY);
         loginLink.setOnAction(e -> switchToLoginPage());
         HBox loginBox = new HBox(loginLabel, loginLink);
         loginBox.setAlignment(Pos.CENTER);
-
-        VBox layout = new VBox(15, title, emailField, passwordField, registerButton, orBox, googleSignInButton, loginBox);
+    
+        VBox layout = new VBox(15, title, emailField, passwordField, errorLabel, registerButton, orBox, googleSignInButton, loginBox);
         layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
         return layout;
-    }
+    }    
 
     private Button createGoogleSignInButton(LoginBoundary boundary) {
         ImageView googleIcon = new ImageView(new Image(getClass().getResource("/images/google.png").toExternalForm()));

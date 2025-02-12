@@ -200,7 +200,6 @@ a:hover {
     -fx-padding: 10;
 }
 
-/* Stile per i pulsanti delle note */
 .note-button {
     background-color: white;
     border-color: #ddd;
@@ -224,7 +223,6 @@ a:hover {
     -fx-background-color: #f0f0f0;
 }
 
-/* Stile per i pulsanti principali (Save) */
 .button-primary {
     background-color: #0BB61F;
     font-weight: bold;
@@ -242,7 +240,6 @@ a:hover {
     -fx-background-color: #0BB61F;
 }
 
-/* Stile per i pulsanti secondari (Close) */
 .button-secondary {
     background-color: #f44336;
     font-weight: bold;
@@ -260,7 +257,6 @@ a:hover {
     -fx-background-color: #d32f2f;
 }
 
-/* Stile per la TextArea nel modal */
 .text-area {
     font-size: 14px;
     border-color: #cccccc;

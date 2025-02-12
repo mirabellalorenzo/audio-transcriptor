@@ -13,9 +13,6 @@ import javafx.geometry.Pos;
 import java.util.List;
 
 public class HomeView {
-    private TextArea noteTextArea;
-    private Button saveNoteButton;
-    private Note selectedNote;
 
 
     public void start(Stage primaryStage) {
@@ -91,35 +88,10 @@ public class HomeView {
         centerPanel.add(transcribeButton, 0, 0);
 
 
-        // **Sezione per mostrare le note**
+        // Sezione note
         VBox notesContainer = new VBox(10);
         notesContainer.setAlignment(Pos.TOP_CENTER);
         notesContainer.setStyle("-fx-padding: 20; -fx-max-width: 400px;");
-
-
-        // Pulsante per salvare le modifiche alla nota
-        saveNoteButton = new Button("Save Note");
-        saveNoteButton.setVisible(false);
-        saveNoteButton.setOnAction(e -> {
-            if (selectedNote != null) {
-                selectedNote.setContent(noteTextArea.getText());
-                boundary.updateNote();
-                System.out.println("✅ Nota aggiornata: " + selectedNote.getTitle());
-            }
-        });               
-
-        // Pulsante per deselezionare la nota e chiudere la textarea
-        Button deselectNoteButton = new Button("Deselect");
-        deselectNoteButton.setVisible(false);
-        deselectNoteButton.setOnAction(e -> {
-            selectedNote = null;
-            noteTextArea.clear();
-            noteTextArea.setVisible(false);
-            saveNoteButton.setVisible(false);
-            deselectNoteButton.setVisible(false);
-        });
-
-
 
         Label notesTitle = new Label("Your saved notes:");
         notesTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 15 0 5 0;");

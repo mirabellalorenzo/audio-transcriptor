@@ -35,10 +35,10 @@ public class HomeBoundary {
 
     public void updateNote() {
         if (selectedNote != null) {
-            homeController.updateNote(selectedNote); // Ora usa selectedNote salvato
-            System.out.println("✅ Nota aggiornata: " + selectedNote.getTitle());
+            homeController.updateNote(selectedNote);
+            System.out.println("Nota aggiornata: " + selectedNote.getTitle());
         } else {
-            System.err.println("❌ Nessuna nota selezionata.");
+            System.err.println("Nessuna nota selezionata.");
         }
     }        
 

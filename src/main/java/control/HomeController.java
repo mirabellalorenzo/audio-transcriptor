@@ -59,10 +59,9 @@ public class HomeController {
             String currentUserId = currentUser.getId();
             List<Note> allNotes = notesDAO.getAll();
             
-            // Filtra solo le note dell'utente attuale (compatibile con Java 11 e precedenti)
             List<Note> userNotes = allNotes.stream()
                     .filter(note -> note.getUid().equals(currentUserId))
-                    .collect(Collectors.toList());  // ✅ Use Collectors.toList()
+                    .collect(Collectors.toList());
 
             return userNotes;
         } catch (Exception e) {

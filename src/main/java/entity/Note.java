@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Note {
     private String id;
-    private String uid; // Identificativo dell'utente
+    private String uid;
     private String title;
     private String content;
 
