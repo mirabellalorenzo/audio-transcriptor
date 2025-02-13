@@ -148,6 +148,21 @@
             <version>12.3.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>20</version> <!-- Sostituisci con la tua versione di JavaFX -->
+        </dependency>
+
+
+
+
 
 
     </dependencies>

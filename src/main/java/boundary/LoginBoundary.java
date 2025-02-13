@@ -1,9 +1,9 @@
 package boundary;
 
-import config.GoogleAuthProvider;
 import control.AuthController;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import util.GoogleAuthProvider;
 import view.HomeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
