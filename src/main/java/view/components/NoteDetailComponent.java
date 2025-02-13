@@ -8,7 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -44,12 +46,32 @@ public class NoteDetailComponent extends VBox {
         profileImage.setFitWidth(40);
         profileImage.setFitHeight(40);
         profileImage.setPreserveRatio(true);
-        profileImage.setStyle("-fx-background-radius: 50%; -fx-border-radius: 50%;");
+
+        // Creazione di un cerchio per il clip
+        Circle clip = new Circle(20, 20, 20); // Centra e crea il cerchio
+        profileImage.setClip(clip);
+
+        profileImage.setStyle(
+            "-fx-background-radius: 50%; " +
+            "-fx-border-radius: 50%; " +
+            "-fx-border-color: #CCCCCC; " +
+            "-fx-border-width: 1px; " +
+            "-fx-border-style: solid; " +
+            "-fx-clip-path: circle(50% at 50% 50%);" 
+        );
+
+        StackPane profileContainer = new StackPane();
+        profileContainer.setStyle("-fx-background-color: #CCCCCC; -fx-background-radius: 50%;");
+        profileContainer.setPrefSize(42, 42); // Leggermente più grande per il bordo
+        profileContainer.getChildren().add(profileImage);
+
+
 
         Label emailLabel = new Label(boundary.getUserEmail());
         emailLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333;");
 
-        topRightContainer.getChildren().addAll(emailLabel, profileImage);
+        topRightContainer.getChildren().addAll(emailLabel, profileContainer);
+        topRightContainer.setAlignment(Pos.CENTER_RIGHT);
         this.getChildren().add(0, topRightContainer); // Aggiunge in alto
 
 
