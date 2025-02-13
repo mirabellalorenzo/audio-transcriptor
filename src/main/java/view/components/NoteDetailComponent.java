@@ -1,12 +1,16 @@
 package view.components;
 
+import boundary.HomeBoundary;
 import entity.Note;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class NoteDetailComponent extends VBox {
     private final TextField titleField;
@@ -15,6 +19,7 @@ public class NoteDetailComponent extends VBox {
     private final Button deleteButton;
     private Note currentNote;
     private final NoteChangeListener listener;
+    private final HomeBoundary boundary = new HomeBoundary();
 
     public interface NoteChangeListener {
         void onNoteUpdated(Note note);
@@ -25,10 +30,28 @@ public class NoteDetailComponent extends VBox {
         this.listener = listener;
         this.currentNote = note;
         this.setStyle(
-            "-fx-padding: 85; " +  
+            "-fx-padding: 40 85; " +  
             "-fx-background-color: white; " +
             "-fx-spacing: 15; "  
         );
+
+        // **Immagine Profilo e Email in Alto a Destra**
+        HBox topRightContainer = new HBox(10);
+        topRightContainer.setAlignment(Pos.TOP_RIGHT);
+        topRightContainer.setStyle("-fx-padding: 15px; -fx-spacing: 10px;");        
+
+        ImageView profileImage = new ImageView(new Image(boundary.getUserPhotoUrl()));
+        profileImage.setFitWidth(40);
+        profileImage.setFitHeight(40);
+        profileImage.setPreserveRatio(true);
+        profileImage.setStyle("-fx-background-radius: 50%; -fx-border-radius: 50%;");
+
+        Label emailLabel = new Label(boundary.getUserEmail());
+        emailLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333;");
+
+        topRightContainer.getChildren().addAll(emailLabel, profileImage);
+        this.getChildren().add(0, topRightContainer); // Aggiunge in alto
+
 
         titleField = new TextField(note.getTitle() == null || note.getTitle().isBlank() ? "New Note" : note.getTitle());
         titleField.setStyle(

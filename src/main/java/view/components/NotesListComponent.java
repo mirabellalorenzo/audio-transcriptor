@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,13 +86,13 @@ public class NotesListComponent extends VBox {
             "-fx-prompt-text-fill: #999;"
         );
 
-        FontIcon searchIcon = new FontIcon(FontAwesomeSolid.SEARCH);
-        searchIcon.setIconSize(16);
-        searchIcon.setIconColor(Color.web("#888"));
+        //FontIcon searchIcon = new FontIcon(FontAwesomeSolid.SEARCH);
+        //searchIcon.setIconSize(16);
+        //searchIcon.setIconColor(Color.web("#888"));
 
         HBox.setHgrow(searchField, Priority.ALWAYS);  
 
-        HBox searchBox = new HBox(10, searchIcon, searchField);
+        HBox searchBox = new HBox(10, searchField);
         searchBox.setAlignment(Pos.CENTER_LEFT);
         searchBox.setStyle(
             "-fx-background-color: #FFFFFF; " +

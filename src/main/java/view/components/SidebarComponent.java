@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.List;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
 
 public class SidebarComponent extends VBox {
     private final HomeBoundary boundary;
@@ -27,20 +29,20 @@ public class SidebarComponent extends VBox {
         setPadding(new Insets(20));
         setStyle("-fx-background-color: #f8f9fa; -fx-min-width: 250px;");
 
-        // **Immagine Profilo**
-        ImageView profileImage = new ImageView(new Image(userPhotoUrl));
-        profileImage.setFitWidth(50);
-        profileImage.setFitHeight(50);
-        profileImage.setPreserveRatio(true);
-        profileImage.setStyle("-fx-background-radius: 50%; -fx-border-radius: 50%;");
+        // **Logo dell'App e Nome in HBox**
+        HBox logoContainer = new HBox(10);
+        logoContainer.setAlignment(Pos.CENTER_LEFT);
+        logoContainer.setPadding(new Insets(10, 15, 10, 15));
 
-        // **Email Utente**
-        Label emailLabel = new Label(userEmail);
-        emailLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333;");
+        ImageView appLogo = new ImageView(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
+        appLogo.setFitWidth(40);
+        appLogo.setFitHeight(40);
+        appLogo.setPreserveRatio(true);
 
-        // **Container Utente**
-        VBox userBox = new VBox(10, profileImage, emailLabel);
-        userBox.setAlignment(Pos.CENTER);
+        Label appNameLabel = new Label("AudioTranscriptor");
+        appNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #222;");
+
+        logoContainer.getChildren().addAll(appLogo, appNameLabel);
         
         // **Sezione Menu**
         VBox menuBox = new VBox(15);
@@ -53,12 +55,25 @@ public class SidebarComponent extends VBox {
         HBox transcribeItem = createMenuItem("Transcribe Audio", FontAwesomeSolid.MICROPHONE, () -> boundary.openToolView(primaryStage, "Transcribe Audio"));
         
         menuBox.getChildren().addAll(notesItem, transcribeItem);
-        getChildren().addAll(userBox, menuBox);
+
+        // **Pulsante di Logout con lo stesso stile del menu**
+        
+        HBox logoutItem = createMenuItem("Logout", FontAwesomeSolid.SIGN_OUT_ALT, () -> boundary.logout(primaryStage));
+        VBox.setMargin(logoutItem, new Insets(0, 0, 20, 0)); // Aggiunge margine in basso
+
+
+        // Posizionare il logout in fondo alla sidebar
+        VBox spacer = new VBox();
+        spacer.setMinHeight(Region.USE_COMPUTED_SIZE);
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+
+        getChildren().addAll(logoContainer, menuBox, spacer, logoutItem);
     }
 
     private HBox createMenuItem(String text, FontAwesomeSolid icon, Runnable action) {
         FontIcon menuIcon = new FontIcon(icon);
-        menuIcon.setIconSize(20);
+        menuIcon.setIconSize(22);
         menuIcon.setStyle("-fx-icon-color: #555;");
         
         Label label = new Label(text);

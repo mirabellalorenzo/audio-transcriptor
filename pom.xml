@@ -130,9 +130,25 @@
         <!-- Material Icons (Se preferisci Material Design) -->
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-materialdesign2-pack</artifactId>
+            <artifactId>ikonli-materialdesign-pack</artifactId>
             <version>12.3.1</version>
         </dependency>
+
+        <!-- Ionicons -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-ionicons-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+        <!-- Ionicons 4 -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-ionicons4-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
+
 
     </dependencies>
 
