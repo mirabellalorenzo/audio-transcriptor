@@ -77,6 +77,10 @@ public class TranscriptionController {
         }
     }    
 
+    public void setTranscription(Transcription transcription) {
+        this.transcription = transcription;
+    }    
+
     private boolean saveTranscriptionToFile(String filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(transcription.getText());

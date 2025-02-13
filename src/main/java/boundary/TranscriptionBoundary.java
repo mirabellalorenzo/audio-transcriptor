@@ -65,6 +65,10 @@ public class TranscriptionBoundary {
         return saved;
     }    
 
+    public void updateTranscription(Transcription transcription) {
+        this.controller.setTranscription(transcription);
+    }    
+
     public void openTranscriptionView(Stage primaryStage) {
         logger.info("Opening Transcription View.");
         TranscriptionView transcriptionView = new TranscriptionView();

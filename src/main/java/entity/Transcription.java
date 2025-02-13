@@ -23,6 +23,10 @@ public class Transcription {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }    
+
     public int getDuration() {
         return duration;
     }
