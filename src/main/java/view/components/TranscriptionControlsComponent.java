@@ -5,81 +5,116 @@ import entity.Transcription;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import java.io.File;
-
 import java.util.function.Consumer;
 
 public class TranscriptionControlsComponent extends VBox {
-    private CustomButtonComponent uploadButton, editButton, saveButton, cancelButton, restoreButton;
+    private CustomButtonComponent uploadButton, editButton, saveButton, saveAndExitButton, cancelButton, restoreButton;
     private TranscriptionBoundary boundary;
     private TranscriptionEditorComponent editorComponent;
     private Consumer<Transcription> showSummaryPage;
+    private Stage primaryStage;
+    
+    private HBox uploadStateButtons, initialStateButtons, editingStateButtons;
 
-    public TranscriptionControlsComponent(TranscriptionBoundary boundary, TranscriptionEditorComponent editorComponent, Consumer<Transcription> showSummaryPage) {
+    public TranscriptionControlsComponent(TranscriptionBoundary boundary, 
+                                          TranscriptionEditorComponent editorComponent, 
+                                          Consumer<Transcription> showSummaryPage,
+                                          Stage primaryStage) {
         this.boundary = boundary;
         this.editorComponent = editorComponent;
         this.showSummaryPage = showSummaryPage;
+        this.primaryStage = primaryStage;
         
-
+        // Dichiarazione dei pulsanti
         uploadButton = new CustomButtonComponent("Carica Audio", null, CustomButtonComponent.ButtonType.PRIMARY);
         editButton = new CustomButtonComponent("Modifica", null, CustomButtonComponent.ButtonType.SECONDARY);
         saveButton = new CustomButtonComponent("Salva", null, CustomButtonComponent.ButtonType.PRIMARY);
+        saveAndExitButton = new CustomButtonComponent("Salva ed Esci", null, CustomButtonComponent.ButtonType.PRIMARY);
         cancelButton = new CustomButtonComponent("Annulla", null, CustomButtonComponent.ButtonType.OUTLINE);
         restoreButton = new CustomButtonComponent("Ripristina", null, CustomButtonComponent.ButtonType.SECONDARY);
 
-        editButton.setVisible(false);
-        saveButton.setVisible(false);
-        cancelButton.setVisible(false);
-        restoreButton.setVisible(false);
-
+        // Eventi dei pulsanti
         uploadButton.setOnAction(event -> handleUpload());
         editButton.setOnAction(event -> enableEditingMode());
         saveButton.setOnAction(event -> saveChanges());
+        saveAndExitButton.setOnAction(event -> handleSaveAndExit());
         cancelButton.setOnAction(event -> cancelEdit());
         restoreButton.setOnAction(event -> restoreOriginal());
 
-        HBox buttonContainer = new HBox(10, uploadButton, editButton, saveButton, cancelButton, restoreButton);
-        buttonContainer.setStyle("-fx-alignment: center;");
+        // Stato 0: Solo "Carica Audio"
+        uploadStateButtons = new HBox(10, uploadButton);
+        uploadStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        uploadStateButtons.setManaged(true);
+        uploadStateButtons.setVisible(true);
+
+        // Stato 1: "Modifica" + "Salva ed Esci"
+        initialStateButtons = new HBox(10, editButton, saveAndExitButton);
+        initialStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        initialStateButtons.setManaged(false);
+        initialStateButtons.setVisible(false);
+
+        // Stato 2: "Salva", "Annulla" e "Ripristina"
+        editingStateButtons = new HBox(10, saveButton, cancelButton, restoreButton);
+        editingStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        editingStateButtons.setManaged(false);
+        editingStateButtons.setVisible(false);
 
         setSpacing(15);
-        setStyle("-fx-alignment: center;");
+        setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
 
-        getChildren().add(buttonContainer);
+        getChildren().addAll(uploadStateButtons, initialStateButtons, editingStateButtons);
     }
 
     private void handleUpload() {
-        // Crea un FileChooser per selezionare file audio
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleziona un file audio");
         fileChooser.getExtensionFilters().add(
             new FileChooser.ExtensionFilter("Audio Files", "*.mp3", "*.wav", "*.ogg")
         );
-        
-        // Usa getScene().getWindow() per ottenere la finestra attiva
+
         File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
-        
-        // Se l'utente ha selezionato un file, prosegui
+
         if (selectedFile != null) {
             boolean success = boundary.uploadAudio(selectedFile.getAbsolutePath());
             if (success) {
                 Transcription transcription = boundary.getTranscription();
                 editorComponent.loadTranscription(transcription);
-                editButton.setVisible(true);
+
+                // Cambia dallo Stato 0 (upload) allo Stato 1 (modifica e salva ed esci)
+                uploadStateButtons.setManaged(false);
+                uploadStateButtons.setVisible(false);
+
+                initialStateButtons.setManaged(true);
+                initialStateButtons.setVisible(true);
             }
         }
     }
 
     private void enableEditingMode() {
         editorComponent.enableEditing();
-        saveButton.setVisible(true);
-        cancelButton.setVisible(true);
-        restoreButton.setVisible(true);
-        editButton.setVisible(false);
+
+        // Cambia dallo Stato 1 (modifica e salva ed esci) allo Stato 2 (salva, annulla, ripristina)
+        initialStateButtons.setManaged(false);
+        initialStateButtons.setVisible(false);
+
+        editingStateButtons.setManaged(true);
+        editingStateButtons.setVisible(true);
     }
 
     private void saveChanges() {
         editorComponent.saveChanges();
-        showSummaryPage.accept(boundary.getTranscription());
+        exitEditingMode();
+    }
+
+    private void handleSaveAndExit() {
+        editorComponent.saveChanges();
+        boolean saved = boundary.saveTranscription(primaryStage);
+        if (saved) {
+            exitEditingMode();
+            showSummaryPage.accept(boundary.getTranscription());
+        }
     }
 
     private void cancelEdit() {
@@ -93,9 +128,12 @@ public class TranscriptionControlsComponent extends VBox {
 
     private void exitEditingMode() {
         editorComponent.disableEditing();
-        saveButton.setVisible(false);
-        cancelButton.setVisible(false);
-        restoreButton.setVisible(false);
-        editButton.setVisible(true);
+
+        // Torna allo Stato 1 (Modifica e Salva ed Esci)
+        editingStateButtons.setManaged(false);
+        editingStateButtons.setVisible(false);
+
+        initialStateButtons.setManaged(true);
+        initialStateButtons.setVisible(true);
     }
 }

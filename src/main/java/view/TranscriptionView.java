@@ -37,7 +37,7 @@ public class TranscriptionView {
         sidebar = new SidebarComponent(homeBoundary, primaryStage, homeBoundary.getUserEmail(), homeBoundary.getUserPhotoUrl(), new ArrayList<>(), notesList);
         
         editorComponent = new TranscriptionEditorComponent(boundary);
-        controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showSummaryPage);
+        controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showSummaryPage, primaryStage);
         summaryComponent = new TranscriptionSummaryComponent();
 
         // Spaziatori per centrare verticalmente

@@ -80,10 +80,11 @@ public class CustomButtonComponent extends Button {
             case SECONDARY:
                 return "-fx-background-color: #D6D6D6; " +
                         "-fx-text-fill: black; " +
-                        "-fx-border-color: #C4C4C4;";
+                        "-fx-border-color: #D6D6D6;";
             case OUTLINE:
-                return "-fx-background-color: black; " +
-                        "-fx-text-fill: white;";
+                return "-fx-background-color: D6D6D6; " +
+                        "-fx-text-fill: white;" +
+                        "-fx-border-color: black;";
             default:
                 return "";
         }

@@ -1,5 +1,8 @@
 package view.components;
 
+import java.util.ArrayList;
+
+import boundary.HomeBoundary;
 import entity.Transcription;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,11 +29,16 @@ public class TranscriptionSummaryComponent {
         HBox words = createSummaryItem("document-text-outline", "Parole: " + transcription.getWordCount());
         HBox characters = createSummaryItem("text-outline", "Caratteri: " + transcription.getCharacterCount());
 
-        Button backButton = new Button("← Torna alla trascrizione");
-        backButton.setStyle("-fx-background-color: #007BFF; -fx-text-fill: white; -fx-border-radius: 5px; -fx-padding: 8px 15px; -fx-font-size: 14px;");
-        backButton.setOnAction(e -> root.setCenter(new VBox(10, new TranscriptionEditorComponent(null), new TranscriptionControlsComponent(null, null, t -> {}))));
+        Button backToNotesButton = new Button("Back to Notes");
+        backToNotesButton.setStyle("-fx-background-color: #007BFF; -fx-text-fill: white; -fx-border-radius: 5px; -fx-padding: 8px 15px; -fx-font-size: 14px;");
+        backToNotesButton.setOnAction(e -> {
+            HomeBoundary homeBoundary = new HomeBoundary();
+            NotesListComponent notesList = new NotesListComponent(homeBoundary, primaryStage, new ArrayList<>(), note -> {});
+            root.setCenter(notesList);
+        });
 
-        summaryBox.getChildren().addAll(title, duration, time, words, characters, backButton);
+
+        summaryBox.getChildren().addAll(title, duration, time, words, characters, backToNotesButton);
         root.setCenter(summaryBox);
     }
 
