@@ -54,14 +54,14 @@ public class NoteDetailComponent extends VBox {
         profileImage.setStyle(
             "-fx-background-radius: 50%; " +
             "-fx-border-radius: 50%; " +
-            "-fx-border-color: #CCCCCC; " +
+            "-fx-border-color: #E0E0E0; " +
             "-fx-border-width: 1px; " +
             "-fx-border-style: solid; " +
             "-fx-clip-path: circle(50% at 50% 50%);" 
         );
 
         StackPane profileContainer = new StackPane();
-        profileContainer.setStyle("-fx-background-color: #CCCCCC; -fx-background-radius: 50%;");
+        profileContainer.setStyle("-fx-background-color: #E0E0E0; -fx-background-radius: 50%;");
         profileContainer.setPrefSize(42, 42); // Leggermente più grande per il bordo
         profileContainer.getChildren().add(profileImage);
 
