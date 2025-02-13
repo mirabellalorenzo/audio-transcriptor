@@ -1,0 +1,49 @@
+/* Nasconde la scrollbar di default e la mostra solo quando necessario */
+.scroll-pane {
+    background-color: transparent;
+    border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:vertical {
+    background-color: transparent;
+    padding: 0;
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* Stile della thumb (la parte mobile della scrollbar) */
+.scroll-bar:vertical .thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-color: rgba(0, 0, 0, 0.2); /* Colore semi-trasparente */
+    -fx-background-radius: 10px;
+}
+
+/* Quando passi il mouse sopra la scrollbar */
+.scroll-bar:vertical .thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Effetto quando clicchi sulla scrollbar */
+.scroll-bar:vertical .thumb:pressed {
+    background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Nasconde le frecce della scrollbar */
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    opacity: 0;
+    padding: 0;
+    -fx-opacity: 0;
+    -fx-padding: 0;
+}
+
+/* Stile del track (sfondo della scrollbar) */
+.scroll-bar:vertical .track {
+    background-color: rgba(0, 0, 0, 0.05);
+    -fx-background-color: rgba(0, 0, 0, 0.05);
+    -fx-background-radius: 10px;
+}

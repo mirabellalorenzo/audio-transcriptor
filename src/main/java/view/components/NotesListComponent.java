@@ -5,16 +5,15 @@ import entity.Note;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,7 @@ public class NotesListComponent extends VBox {
         this.primaryStage = primaryStage;
         this.notes = notes;
         this.listener = listener;
-        this.setStyle("-fx-padding: 35; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
+        this.setStyle("-fx-padding: 35px 0px 0px 35px; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
         
         // Header con titolo "Notes" e pulsante "New Note" (a destra)
         Label titleLabel = new Label("Notes");
@@ -106,8 +105,21 @@ public class NotesListComponent extends VBox {
         notesContainer.setStyle("-fx-spacing: 10; -fx-padding: 5;");
         loadNotes(notes, listener);
 
-        // Aggiungo header, barra di ricerca e lista note
-        this.getChildren().addAll(headerBox, searchBox, notesContainer);
+        ScrollPane scrollPane = new ScrollPane(notesContainer);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle(
+            "-fx-background: white; " +
+            "-fx-border-color: transparent; " +
+            "-fx-background-insets: 0; " +
+            "-fx-padding: 0;"
+        );
+
+        scrollPane.getStylesheets().add(getClass().getResource("/view/scrollbar.css").toExternalForm());
+
+        this.getChildren().addAll(headerBox, searchBox, scrollPane);
+
 
         // Filtraggio note in base al testo immesso nella barra di ricerca
         searchField.textProperty().addListener((obs, oldText, newText) -> {

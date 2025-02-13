@@ -1,226 +1,68 @@
 package view;
 
 import boundary.TranscriptionBoundary;
-import control.HomeController;
+import boundary.HomeBoundary;
 import control.TranscriptionController;
 import entity.Transcription;
-import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import java.io.File;
+import view.components.SidebarComponent;
+import view.components.TranscriptionEditorComponent;
+import view.components.TranscriptionControlsComponent;
+import view.components.TranscriptionSummaryComponent;
+import view.components.NotesListComponent;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+import java.util.ArrayList;
 
-public class TranscriptionView extends Application {
+public class TranscriptionView {
     private TranscriptionBoundary boundary;
-    private String lastSavedText = "";
-    private String originalText = "";
-    private static final String BUTTON_KEY = "button";
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptionView.class);
+    private TranscriptionEditorComponent editorComponent;
+    private TranscriptionControlsComponent controlsComponent;
+    private TranscriptionSummaryComponent summaryComponent;
+    private SidebarComponent sidebar;
+    private BorderPane root;
+    private Stage primaryStage;
 
-    @Override
     public void start(Stage primaryStage) {
-        logger.info("TranscriptionView started.");
+        this.primaryStage = primaryStage;
         boundary = new TranscriptionBoundary(new TranscriptionController());
 
-        Label titleLabel = new Label("Audio Transcriptor");
-        titleLabel.getStyleClass().add("title");
-
-        TextArea editableTextArea = new TextArea();
-        editableTextArea.setWrapText(true);
-        editableTextArea.setEditable(false);
-        editableTextArea.setPromptText("Il testo trascritto apparirà qui...");
-        editableTextArea.getStyleClass().add("text-area");
-        editableTextArea.setPrefHeight(250); // Altezza preferita
-        editableTextArea.setMaxHeight(Double.MAX_VALUE); // Permette il ridimensionamento
-        editableTextArea.setMinHeight(150); // Altezza minima
-
-        Button uploadButton = new Button("Carica File Audio");
-        Button editButton = new Button("Modifica");
-        Button saveAndExitButton = new Button("Salva e Esci");
-        Button saveChangesButton = new Button("Salva Modifiche");
-        Button cancelEditButton = new Button("Annulla");
-        Button restoreOriginalButton = new Button("Ripristina Originale");
-
-        // Stili per i pulsanti
-        uploadButton.getStyleClass().add(BUTTON_KEY);
-        editButton.getStyleClass().add(BUTTON_KEY);
-        saveAndExitButton.getStyleClass().add(BUTTON_KEY);
-        saveChangesButton.getStyleClass().add(BUTTON_KEY);
-        cancelEditButton.getStyleClass().add(BUTTON_KEY);
-        restoreOriginalButton.getStyleClass().add(BUTTON_KEY);
-
-        // Inizialmente i pulsanti di modifica sono nascosti
-        editButton.setVisible(false);
-        saveAndExitButton.setVisible(false);
-        saveChangesButton.setVisible(false);
-        cancelEditButton.setVisible(false);
-        restoreOriginalButton.setVisible(false);
-
-        // Etichette per il resoconto
-        Label summaryLabel = new Label("📊 Resoconto della Trascrizione:");
-        Label durationLabel = new Label();
-        Label timeLabel = new Label();
-        Label wordsLabel = new Label();
-        Label charsLabel = new Label();
-
-        // Layout per il resoconto
-        VBox summaryBox = new VBox(10, summaryLabel, durationLabel, timeLabel, wordsLabel, charsLabel);
-        summaryBox.getStyleClass().add("summary-box");
-        summaryBox.setVisible(false); // Inizialmente nascosto
-
-        // Layout pulsanti
-        HBox buttonBar = new HBox(20);
-        buttonBar.getStyleClass().add("hbox");
-        buttonBar.getChildren().addAll(editButton, saveAndExitButton);
-
-        HBox editButtonsBar = new HBox(20);
-        editButtonsBar.getStyleClass().add("hbox");
-        editButtonsBar.getChildren().addAll(saveChangesButton, cancelEditButton, restoreOriginalButton);
-
-        // Pulsante per tornare alla Home
-        Button backButton = new Button("← Back to Home");
-        backButton.getStyleClass().add(BUTTON_KEY);
-        HomeController homeController = new HomeController();
-        backButton.setOnAction(event -> homeController.openHome(primaryStage));
-
-        HBox backButtonBar = new HBox(backButton);
-        backButtonBar.getStyleClass().add("back-button-bar");
-
-        VBox root = new VBox(20, backButtonBar, titleLabel, uploadButton, editableTextArea, buttonBar, editButtonsBar, summaryBox);
-        root.getStyleClass().add("vbox");
-
-        Scene scene = new Scene(root, 700, 500);
-        scene.getStylesheets().add(getClass().getResource("/view/styles.css").toExternalForm());
-
-        // Caricare un file audio
-        uploadButton.setOnAction(event -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Seleziona un file audio");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("File Audio", "*.wav", "*.mp3"));
-
-            File audioFile = fileChooser.showOpenDialog(primaryStage);
-            if (audioFile != null) {
-                String audioFilePath = audioFile.getAbsolutePath();
-                logger.info("Selected file: {}", audioFilePath);
-                editableTextArea.setText("Trascrizione in corso...");
-
-                new Thread(() -> {
-                    boolean success = boundary.uploadAudio(audioFilePath);
-                    javafx.application.Platform.runLater(() -> {
-                        if (success) {
-                            originalText = boundary.getTranscription().getText();
-                            lastSavedText = originalText;
-                            editableTextArea.setText(originalText);
-                            editableTextArea.setEditable(false);
-                            editButton.setVisible(true);
-                            saveAndExitButton.setVisible(true);
-
-                            // Recupera i dati della trascrizione
-                            Transcription t = boundary.getTranscription();
-                            durationLabel.setText("🎵 Durata Audio: " + t.getDuration() + " sec");
-                            timeLabel.setText("⏳ Tempo di Trascrizione: " + (t.getProcessingTime() / 1000.0) + " sec");
-                            wordsLabel.setText("📝 Parole: " + t.getWordCount());
-                            charsLabel.setText("🔡 Caratteri: " + t.getCharacterCount());
-
-                        } else {
-                            editableTextArea.setText("Errore durante la trascrizione.");
-                        }
-                    });
-                }).start();
-            } else {
-                editableTextArea.setText("Nessun file selezionato.");
-            }
-        });
-
-        // Attivare la modalità di modifica
-        editButton.setOnAction(event -> {
-            editableTextArea.setEditable(true);
-            saveChangesButton.setVisible(true);
-            cancelEditButton.setVisible(true);
-            restoreOriginalButton.setVisible(true);
-            editButton.setVisible(false);
-            saveAndExitButton.setVisible(false);
-        });
-
-        // Salvare le modifiche
-        saveChangesButton.setOnAction(event -> {
-            lastSavedText = editableTextArea.getText();
-            logger.info("Modified text saved successfully.");
-            editableTextArea.setEditable(false);
-            editButton.setVisible(true);
-            saveAndExitButton.setVisible(true);
-            saveChangesButton.setVisible(false);
-            cancelEditButton.setVisible(false);
-            restoreOriginalButton.setVisible(false);
-        });
-
-        // Annullare la modifica
-        cancelEditButton.setOnAction(event -> {
-            editableTextArea.setText(lastSavedText);
-            logger.info("Edit canceled, reverted to last saved text.");
-            editableTextArea.setEditable(false);
-            editButton.setVisible(true);
-            saveAndExitButton.setVisible(true);
-            saveChangesButton.setVisible(false);
-            cancelEditButton.setVisible(false);
-            restoreOriginalButton.setVisible(false);
-        });
-
-        // Ripristinare il testo originale
-        restoreOriginalButton.setOnAction(event -> {
-            editableTextArea.setText(originalText);
-            logger.info("Original text restored.");
-        });
-
-        // Salvare e uscire
-        saveAndExitButton.setOnAction(event -> {
-            boolean saved = boundary.saveTranscription(primaryStage);
-            
-            if (saved) {
-                showSummaryDialog(primaryStage, boundary.getTranscription());
-            } else {
-                logger.error("Error saving transcription.");
-            }
-        });
+        HomeBoundary homeBoundary = new HomeBoundary();
+        NotesListComponent notesList = new NotesListComponent(homeBoundary, primaryStage, new ArrayList<>(), note -> {});
+        sidebar = new SidebarComponent(homeBoundary, primaryStage, homeBoundary.getUserEmail(), homeBoundary.getUserPhotoUrl(), new ArrayList<>(), notesList);
         
+        editorComponent = new TranscriptionEditorComponent(boundary);
+        controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showSummaryPage);
+        summaryComponent = new TranscriptionSummaryComponent();
+
+        // Spaziatori per centrare verticalmente
+        Region topSpacer = new Region();
+        Region bottomSpacer = new Region();
+        VBox.setVgrow(topSpacer, Priority.ALWAYS);
+        VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
+
+        // VBox per centrare gli elementi
+        VBox centerBox = new VBox(10, topSpacer, editorComponent, controlsComponent, bottomSpacer);
+        centerBox.setAlignment(Pos.CENTER);
+
+        root = new BorderPane();
+        root.setLeft(sidebar);
+        root.setCenter(centerBox);
+        root.setStyle("-fx-background-color: #ffffff;");
+
+        Scene scene = new Scene(root, 1000, 700);
         primaryStage.setTitle("Audio Transcriptor");
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
-    private void showSummaryDialog(Stage primaryStage, Transcription transcription) {
-        Alert summaryDialog = new Alert(Alert.AlertType.INFORMATION);
-        summaryDialog.setTitle("Resoconto della Trascrizione");
-        summaryDialog.setHeaderText("Trascrizione completata con successo!");
-        
-        // Testo del resoconto
-        String summaryText = String.format(
-            "🎵 Durata Audio: %d sec\n" +
-            "⏳ Tempo di Trascrizione: %.2f sec\n" +
-            "📝 Parole: %d\n" +
-            "🔡 Caratteri: %d",
-            transcription.getDuration(),
-            transcription.getProcessingTime() / 1000.0,
-            transcription.getWordCount(),
-            transcription.getCharacterCount()
-        );
-        
-        summaryDialog.setContentText(summaryText);
-    
-        // Pulsante "Torna alla Home"
-        ButtonType backToHomeButton = new ButtonType("Torna alla Home");
-        summaryDialog.getButtonTypes().setAll(backToHomeButton);
-    
-        summaryDialog.showAndWait(); // Mostra la finestra di dialogo
-        
-        // Dopo che l'utente chiude il resoconto, torna alla home
-        HomeController homeController = new HomeController();
-        homeController.openHome(primaryStage);
-    }    
+    private void showSummaryPage(Transcription transcription) {
+        summaryComponent.displaySummary(transcription, primaryStage, root);
+    }
 }
