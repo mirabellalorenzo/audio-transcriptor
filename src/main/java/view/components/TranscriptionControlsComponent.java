@@ -117,12 +117,17 @@ public class TranscriptionControlsComponent extends VBox {
     private void handleSaveAndExit() {
         saveChanges();
     
-        boolean saved = boundary.saveTranscription(primaryStage);
+        String title = editorComponent.getCurrentText().trim();
+        if (title.isEmpty()) {
+            title = "New Note";
+        }
+    
+        boolean saved = boundary.saveTranscription(primaryStage, title);
         if (saved) {
             exitEditingMode();
             showSummaryPage.accept(boundary.getTranscription());
         }
-    }    
+    }     
 
     private void cancelEdit() {
         editorComponent.cancelEdit();

@@ -1,6 +1,7 @@
 package view.components;
 
 import boundary.TranscriptionBoundary;
+import entity.Transcription;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -48,7 +49,12 @@ public class TranscriptionTitleComponent {
         continueButton.setOnAction(e -> {
             String title = titleField.getText().trim();
             if (!title.isEmpty()) {
-                boundary.saveTranscription(primaryStage); // Salva la trascrizione
+                boolean saved = boundary.saveTranscription(primaryStage, title);
+                if (saved) {
+                    Transcription transcription = boundary.getTranscription();
+                    TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent();
+                    summaryComponent.displaySummary(transcription, primaryStage, root); // Passa alla pagina successiva
+                }
             }
         });
 

@@ -12,6 +12,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import util.SvgToPngConverter;
+import javafx.scene.image.ImageView;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -85,13 +88,13 @@ public class NotesListComponent extends VBox {
             "-fx-prompt-text-fill: #999;"
         );
 
-        //FontIcon searchIcon = new FontIcon(FontAwesomeSolid.SEARCH);
-        //searchIcon.setIconSize(16);
-        //searchIcon.setIconColor(Color.web("#888"));
+        ImageView searchIcon = SvgToPngConverter.loadSvgAsImage("search-outline", 20); 
+        searchIcon.setFitHeight(20);
+        searchIcon.setFitWidth(20);
 
         HBox.setHgrow(searchField, Priority.ALWAYS);  
 
-        HBox searchBox = new HBox(10, searchField);
+        HBox searchBox = new HBox(10, searchIcon, searchField);
         searchBox.setAlignment(Pos.CENTER_LEFT);
         searchBox.setStyle(
             "-fx-background-color: #FFFFFF; " +

@@ -1,29 +1,31 @@
 package view;
 
-import boundary.TranscriptionBoundary;
+import java.util.ArrayList;
+
 import boundary.HomeBoundary;
+import boundary.TranscriptionBoundary;
 import control.TranscriptionController;
 import entity.Transcription;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import view.components.SidebarComponent;
-import view.components.TranscriptionEditorComponent;
-import view.components.TranscriptionControlsComponent;
-import view.components.TranscriptionSummaryComponent;
-import view.components.NotesListComponent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-
-import java.util.ArrayList;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import view.components.NotesListComponent;
+import view.components.SidebarComponent;
+import view.components.TranscriptionControlsComponent;
+import view.components.TranscriptionEditorComponent;
+import view.components.TranscriptionSummaryComponent;
+import view.components.TranscriptionTitleComponent;
 
 public class TranscriptionView {
     private TranscriptionBoundary boundary;
     private TranscriptionEditorComponent editorComponent;
     private TranscriptionControlsComponent controlsComponent;
     private TranscriptionSummaryComponent summaryComponent;
+    private TranscriptionTitleComponent titleComponent;
     private SidebarComponent sidebar;
     private BorderPane root;
     private Stage primaryStage;
@@ -37,8 +39,9 @@ public class TranscriptionView {
         sidebar = new SidebarComponent(homeBoundary, primaryStage, homeBoundary.getUserEmail(), homeBoundary.getUserPhotoUrl(), new ArrayList<>(), notesList);
         
         editorComponent = new TranscriptionEditorComponent(boundary);
-        controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showSummaryPage, primaryStage);
+        controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showTitlePage, primaryStage);
         summaryComponent = new TranscriptionSummaryComponent();
+        titleComponent = new TranscriptionTitleComponent(boundary);
 
         // Spaziatori per centrare verticalmente
         Region topSpacer = new Region();
@@ -62,7 +65,7 @@ public class TranscriptionView {
         primaryStage.show();
     }
 
-    private void showSummaryPage(Transcription transcription) {
-        summaryComponent.displaySummary(transcription, primaryStage, root);
-    }
+    private void showTitlePage(Transcription transcription) {
+        titleComponent.displayTitleInput(primaryStage, root);
+    }    
 }

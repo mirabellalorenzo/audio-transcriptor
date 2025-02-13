@@ -30,13 +30,7 @@ public class TranscriptionBoundary {
         return success;
     }
 
-    public boolean saveTranscription(Stage primaryStage) {
-        TextInputDialog titleDialog = new TextInputDialog("New Note");
-        titleDialog.setTitle("Enter Title");
-        titleDialog.setHeaderText("Create a new note");
-        titleDialog.setContentText("Title:");
-    
-        String title = titleDialog.showAndWait().orElse(null);
+    public boolean saveTranscription(Stage primaryStage, String title) {
         if (title == null || title.isBlank()) return false;
     
         boolean saved = false;
@@ -44,7 +38,6 @@ public class TranscriptionBoundary {
         if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
             saved = controller.saveTranscription(title, null);
             logger.info("Transcription {} the Firebase database with title: {}", saved ? "saved to" : "failed in", title);
-    
         } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Transcription");

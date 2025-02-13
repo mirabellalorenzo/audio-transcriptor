@@ -9,6 +9,7 @@ persistence/NotesDAOFactory.class
 view/components/TranscriptionSummaryComponent.class
 control/HomeController.class
 entity/Note.class
+view/components/TranscriptionTitleComponent.class
 view/components/NotesListComponent$NoteSelectionListener.class
 view/LoginView.class
 config/AppConfig$StorageMode.class
