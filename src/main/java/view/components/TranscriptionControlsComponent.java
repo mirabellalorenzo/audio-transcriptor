@@ -28,12 +28,12 @@ public class TranscriptionControlsComponent extends VBox {
         this.primaryStage = primaryStage;
         
         // Dichiarazione dei pulsanti
-        uploadButton = new CustomButtonComponent("Carica Audio", null, CustomButtonComponent.ButtonType.PRIMARY);
-        editButton = new CustomButtonComponent("Modifica", null, CustomButtonComponent.ButtonType.SECONDARY);
-        saveButton = new CustomButtonComponent("Salva", null, CustomButtonComponent.ButtonType.PRIMARY);
-        saveAndExitButton = new CustomButtonComponent("Salva ed Esci", null, CustomButtonComponent.ButtonType.PRIMARY);
-        cancelButton = new CustomButtonComponent("Annulla", null, CustomButtonComponent.ButtonType.OUTLINE);
-        restoreButton = new CustomButtonComponent("Ripristina", null, CustomButtonComponent.ButtonType.SECONDARY);
+        uploadButton = new CustomButtonComponent("Upload Audio", null, CustomButtonComponent.ButtonType.PRIMARY);
+        editButton = new CustomButtonComponent("Edit", null, CustomButtonComponent.ButtonType.SECONDARY);
+        saveButton = new CustomButtonComponent("Save", null, CustomButtonComponent.ButtonType.PRIMARY);
+        saveAndExitButton = new CustomButtonComponent("Save & Exit", null, CustomButtonComponent.ButtonType.PRIMARY);
+        cancelButton = new CustomButtonComponent("Cancel", null, CustomButtonComponent.ButtonType.OUTLINE);
+        restoreButton = new CustomButtonComponent("Reset", null, CustomButtonComponent.ButtonType.SECONDARY);
 
         // Eventi dei pulsanti
         uploadButton.setOnAction(event -> handleUpload());

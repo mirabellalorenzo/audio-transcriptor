@@ -100,24 +100,11 @@ public class NoteDetailComponent extends VBox {
             "-fx-control-inner-background: white;"
         );        
 
-        saveButton = new Button("Save Changes");
+        saveButton = new CustomButtonComponent("Save Changes", CustomButtonComponent.ButtonType.PRIMARY);
         saveButton.setDisable(true);
-        saveButton.setStyle(
-            "-fx-background-color: #0078d7; " +
-            "-fx-text-fill: white; " +
-            "-fx-padding: 10; " +
-            "-fx-border-radius: 12px; " +
-            "-fx-cursor: hand;"
-        );
-
-        deleteButton = new Button("Delete");
-        deleteButton.setStyle(
-            "-fx-background-color: #d9534f; " +
-            "-fx-text-fill: white; " +
-            "-fx-padding: 10; " +
-            "-fx-border-radius: 12px; " +
-            "-fx-cursor: hand;"
-        );
+        
+        deleteButton = new CustomButtonComponent("Delete", CustomButtonComponent.ButtonType.OUTLINE);
+        
 
         titleField.textProperty().addListener((obs, oldText, newText) -> {
             saveButton.setDisable(newText.equals(currentNote.getTitle()) && contentArea.getText().equals(currentNote.getContent()));
