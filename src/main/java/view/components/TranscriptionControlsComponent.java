@@ -9,7 +9,11 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TranscriptionControlsComponent extends VBox {
+    private static final Logger logger = LoggerFactory.getLogger(TranscriptionBoundary.class);
     private CustomButtonComponent uploadButton, editButton, saveButton, saveAndExitButton, cancelButton, restoreButton;
     private TranscriptionBoundary boundary;
     private TranscriptionEditorComponent editorComponent;
@@ -116,18 +120,17 @@ public class TranscriptionControlsComponent extends VBox {
 
     private void handleSaveAndExit() {
         saveChanges();
+        
+        Transcription transcription = boundary.getTranscription();
     
-        String title = editorComponent.getCurrentText().trim();
-        if (title.isEmpty()) {
-            title = "New Note";
+        if (transcription == null || transcription.getText().trim().isEmpty()) {
+            logger.warn("No transcription available to save.");
+            return;
         }
     
-        boolean saved = boundary.saveTranscription(primaryStage, title);
-        if (saved) {
-            exitEditingMode();
-            showSummaryPage.accept(boundary.getTranscription());
-        }
-    }     
+        // Mostriamo la schermata per inserire il titolo
+        showSummaryPage.accept(transcription);
+    }       
 
     private void cancelEdit() {
         editorComponent.cancelEdit();

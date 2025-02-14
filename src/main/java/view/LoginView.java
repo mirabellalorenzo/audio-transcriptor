@@ -269,7 +269,13 @@ public class LoginView extends Application {
 
         Button googleSignInButton = new Button();
         googleSignInButton.setGraphic(googleContent);
-        googleSignInButton.setStyle("-fx-background-color: white; -fx-border-color: #ccc; -fx-padding: 10; -fx-border-radius: 10px; -fx-cursor-pointer: hand;");
+        googleSignInButton.setStyle(
+            "-fx-background-color: #F5F5F5;" +
+            "-fx-border-color: #ccc;" +
+            "-fx-padding: 10;" + 
+            "-fx-border-radius: 10px;" +
+            "-fx-cursor-pointer: hand;"
+        );
         googleSignInButton.setCursor(Cursor.HAND);
         googleSignInButton.setOnAction(e -> boundary.loginWithGoogle(primaryStage));
         return googleSignInButton;

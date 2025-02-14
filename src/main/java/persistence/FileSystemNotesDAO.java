@@ -29,47 +29,85 @@ public class FileSystemNotesDAO implements NotesDAO {
 
     @Override
     public void save(Note note) throws IOException {
-        File noteFile = new File(notesDirectory, note.getUid() + "_" + note.getTitle() + ".txt");
-        try (FileWriter writer = new FileWriter(noteFile)) {
+        // Se non c'è un ID, lo generiamo (solo per nuove note)
+        if (note.getId() == null || note.getId().isBlank()) {
+            note.setId(UUID.randomUUID().toString());
+        }
+
+        // Sanifichiamo il titolo per evitare caratteri non validi nel nome del file
+        String safeTitle = note.getTitle().replaceAll("[^a-zA-Z0-9]", "_");
+
+        // Percorso del nuovo file
+        File newNoteFile = new File(notesDirectory, note.getId() + "_" + note.getUid() + "_" + safeTitle + ".txt");
+
+        // Controlliamo se esiste già una nota con questo ID ma con un titolo diverso
+        File[] existingFiles = notesDirectory.listFiles((dir, name) -> name.startsWith(note.getId() + "_") && name.endsWith(".txt"));
+        
+        if (existingFiles != null) {
+            for (File existingFile : existingFiles) {
+                if (!existingFile.getName().equals(newNoteFile.getName())) {
+                    // Se il file con lo stesso ID ha un nome diverso, lo eliminiamo
+                    if (existingFile.delete()) {
+                        logger.info("Eliminato vecchio file della nota: {}", existingFile.getName());
+                    } else {
+                        logger.warn("Impossibile eliminare il vecchio file della nota: {}", existingFile.getName());
+                    }
+                }
+            }
+        }
+
+        // Scriviamo la nuova versione della nota
+        try (FileWriter writer = new FileWriter(newNoteFile)) {
             writer.write(note.getContent());
-            logger.info("Note saved successfully: {}", noteFile.getAbsolutePath());
+            logger.info("Nota salvata correttamente: {}", newNoteFile.getAbsolutePath());
         } catch (IOException e) {
-            throw new IOException("Failed to save note: " + note.getTitle(), e); // ✅ No log duplicato
+            throw new IOException("Impossibile salvare la nota: " + note.getTitle(), e);
         }
     }
 
     @Override
     public List<Note> getAll() {
         List<Note> notes = new ArrayList<>();
-
+    
         User currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
-            logger.warn("Attempted to retrieve notes, but user is not authenticated.");
+            logger.warn("Recupero note non effettuato: utente non autenticato.");
             return notes;
         }
-        String uid = currentUser.getId();
-
+        String currentUid = currentUser.getId();
+    
         if (!notesDirectory.exists() || !notesDirectory.isDirectory()) {
-            logger.warn("Notes directory does not exist or is not a directory.");
+            logger.warn("La directory delle note non esiste o non è una directory.");
             return notes;
         }
-
+    
         for (File file : notesDirectory.listFiles((dir, name) -> name.endsWith(".txt"))) {
             try {
-                String[] parts = file.getName().split("_", 2);
-                if (parts.length < 2 || !parts[0].equals(uid)) continue; // Filtra per UID
-
-                String title = parts[1].replace(".txt", "");
-                String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
-                notes.add(new Note(UUID.randomUUID().toString(), uid, title, content));
-                logger.info("Loaded note: {}", title);
+                // Formato atteso: id_uid_titolo.txt
+                String[] parts = file.getName().split("_", 3);
+                if (parts.length < 3) continue;
+    
+                String noteId = parts[0];
+                String noteUid = parts[1];
+                String titleWithExtension = parts[2];
+                if (!noteUid.equals(currentUid)) continue; // Filtra solo le note dell'utente corrente
+    
+                // Rimuove l'estensione .txt dal titolo
+                String rawTitle = titleWithExtension.replaceAll("\\.txt$", "");
+    
+                // Se siamo in modalità file system, sostituiamo "_" con spazio
+                String formattedTitle = rawTitle.replace("_", " ");
+    
+                String content = new String(Files.readAllBytes(file.toPath()));
+                notes.add(new Note(noteId, noteUid, formattedTitle, content));
+                logger.info("Nota caricata: {}", formattedTitle);
             } catch (IOException e) {
-                logger.error("Error reading note file: {}", file.getName(), e);
+                logger.error("Errore durante la lettura del file: {}", file.getName(), e);
             }
         }
-        logger.info("Loaded {} notes for user: {}", notes.size(), uid);
+        logger.info("Caricate {} note per l'utente: {}", notes.size(), currentUid);
         return notes;
-    }
+    }    
 
     @Override
     public Note getById(String id) {
@@ -79,16 +117,19 @@ public class FileSystemNotesDAO implements NotesDAO {
 
     @Override
     public void delete(String id) throws IOException {
-        File noteFile = new File(notesDirectory, id + ".txt");
-        if (noteFile.exists()) {
-            try {
-                Files.delete(noteFile.toPath());
-                logger.info("Note deleted successfully: {}", id);
-            } catch (IOException e) {
-                throw new IOException("Error deleting note: " + id, e); // ✅ Nessun doppio log
+        // Cerca il file che inizia con id + "_"
+        File[] matchingFiles = notesDirectory.listFiles((dir, name) -> name.startsWith(id + "_") && name.endsWith(".txt"));
+        if (matchingFiles != null && matchingFiles.length > 0) {
+            for (File file : matchingFiles) {
+                try {
+                    Files.delete(file.toPath());
+                    logger.info("Nota eliminata correttamente: {}", file.getName());
+                } catch (IOException e) {
+                    throw new IOException("Errore durante l'eliminazione della nota: " + id, e);
+                }
             }
         } else {
-            logger.warn("Attempted to delete a note that does not exist: {}", id);
+            logger.warn("Tentativo di eliminare una nota inesistente: {}", id);
         }
-    }
+    }    
 }

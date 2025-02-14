@@ -48,15 +48,17 @@ public class TranscriptionTitleComponent {
         CustomButtonComponent continueButton = new CustomButtonComponent("Continue", CustomButtonComponent.ButtonType.PRIMARY);
         continueButton.setOnAction(e -> {
             String title = titleField.getText().trim();
+            
             if (!title.isEmpty()) {
+                // Ora possiamo chiamare direttamente saveTranscription con il titolo scelto
                 boolean saved = boundary.saveTranscription(primaryStage, title);
                 if (saved) {
                     Transcription transcription = boundary.getTranscription();
                     TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent();
-                    summaryComponent.displaySummary(transcription, primaryStage, root); // Passa alla pagina successiva
+                    summaryComponent.displaySummary(transcription, primaryStage, root);
                 }
             }
-        });
+        });              
 
         // **Aggiunta degli elementi nel box**
         inputBox.getChildren().addAll(titleLabel, titleField, continueButton);

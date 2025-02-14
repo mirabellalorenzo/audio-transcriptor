@@ -33,30 +33,11 @@ public class TranscriptionBoundary {
     public boolean saveTranscription(Stage primaryStage, String title) {
         if (title == null || title.isBlank()) return false;
     
-        boolean saved = false;
-    
-        if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
-            saved = controller.saveTranscription(title, null);
-            logger.info("Transcription {} the Firebase database with title: {}", saved ? "saved to" : "failed in", title);
-        } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Transcription");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-            fileChooser.setInitialFileName(title + ".txt");
-    
-            File homeDir = new File(System.getProperty("user.home"));
-            if (homeDir.isDirectory()) fileChooser.setInitialDirectory(homeDir);
-    
-            File file = fileChooser.showSaveDialog(primaryStage);
-            saved = (file != null) && controller.saveTranscription(title, file.getAbsolutePath());
-    
-            logger.info("Transcription {} at: {}", saved ? "saved" : "failed", file != null ? file.getAbsolutePath() : "No file selected");
-        } else {
-            logger.error("Unsupported storage mode.");
-        }
+        boolean saved = controller.saveTranscription(title);
+        logger.info("Transcription {} successfully", saved ? "saved" : "failed");
     
         return saved;
-    }    
+    }     
 
     public void updateTranscription(Transcription transcription) {
         this.controller.setTranscription(transcription);

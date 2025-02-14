@@ -62,33 +62,48 @@ public class TranscriptionController {
         }
     }    
 
-    public boolean saveTranscription(String title, String filePath) {
-        if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
-            if (filePath == null) {
-                logger.error("Error: Missing file path for File System storage.");
-                return false;
-            }
-            return saveTranscriptionToFile(filePath);
-        } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
-            return saveTranscriptionToFirebase(title);
-        } else {
-            logger.error("Error: Unsupported storage mode.");
+    public boolean saveTranscription(String title) {
+        if (title == null || title.isBlank() || transcription == null) {
+            logger.error("Invalid transcription or title.");
             return false;
         }
-    }    
+    
+        boolean saved = false;
+    
+        if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
+            saved = saveTranscriptionToFirebase(title);
+        } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
+            saved = saveTranscriptionToFile(title, transcription.getId());
+        } else {
+            logger.error("Unsupported storage mode.");
+        }
+    
+        return saved;
+    }           
 
     public void setTranscription(Transcription transcription) {
         this.transcription = transcription;
     }    
 
-    private boolean saveTranscriptionToFile(String filePath) {
-        try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write(transcription.getText());
-            writer.flush();
-            logger.info("Transcription saved in File System at: {}", filePath);
+    private boolean saveTranscriptionToFile(String title, String id) {
+        User user = AuthController.getCurrentUser();
+        if (user == null) {
+            logger.error("Error: No authenticated user.");
+            return false;
+        }
+    
+        String safeTitle = title.replaceAll("[^a-zA-Z0-9]", "_");
+    
+        // Creiamo una nuova nota con ID, utente, titolo e testo della trascrizione
+        Note note = new Note(id, user.getId(), safeTitle, transcription.getText());
+    
+        try {
+            // Salviamo la nota usando il DAO, che gestirà tutto correttamente
+            notesDAO.save(note);
+            logger.info("Transcription saved as a note: {}", note.getTitle());
             return true;
         } catch (IOException e) {
-            logger.error("Error saving transcription to File System: {}", e.getMessage(), e);
+            logger.error("Error saving transcription to file: {}", e.getMessage(), e);
             return false;
         }
     }
