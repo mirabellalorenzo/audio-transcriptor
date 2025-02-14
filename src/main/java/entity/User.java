@@ -8,7 +8,6 @@ public class User {
     // Costruttore vuoto richiesto da Firebase
     public User() {}
 
-    // Costruttore con parametri
     public User(String id, String email, String photoUrl) {
         this.id = id;
         this.email = email;

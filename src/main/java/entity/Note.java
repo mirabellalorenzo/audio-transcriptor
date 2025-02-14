@@ -34,25 +34,15 @@ public class Note {
         return title;
     }
 
-    public String getContent() {
-        return content;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }    
 
+    public String getContent() {
+        return content;
+    }
+
     public void setContent(String content) {
         this.content = content;
     }    
-
-    @Override
-    public String toString() {
-        return "Note{" +
-               "id='" + id + '\'' +
-               ", uid='" + uid + '\'' +
-               ", title='" + title + '\'' +
-               ", content='" + content + '\'' +
-               '}';
-    }
 }

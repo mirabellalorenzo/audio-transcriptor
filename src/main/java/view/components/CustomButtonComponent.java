@@ -45,11 +45,11 @@ public class CustomButtonComponent extends Button {
     private String getCommonStyle() {
         return "-fx-font-size: 14px; " +
                "-fx-font-weight: bold; " +
-               "-fx-border-radius: 25px; " +  // Forma a pillola
-               "-fx-background-radius: 25px; " +  // Assicura bordi arrotondati
+               "-fx-border-radius: 25px; " +
+               "-fx-background-radius: 25px; " +
                "-fx-padding: 8px 16px; " +
                "-fx-cursor: hand; " +
-               "-fx-border-width: 1px; ";  // Migliore visibilità
+               "-fx-border-width: 1px; ";
     }
 
     private String getSpecificStyle(ButtonType type) {

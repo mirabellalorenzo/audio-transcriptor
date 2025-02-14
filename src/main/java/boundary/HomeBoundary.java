@@ -7,8 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import view.HomeView;
-import view.components.NotesListComponent;
-
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +71,7 @@ public class HomeBoundary {
             TranscriptionBoundary transcriptionBoundary = new TranscriptionBoundary(new TranscriptionController());
             transcriptionBoundary.openTranscriptionView(primaryStage);
             logger.info("Transcription tool opened.");
-        } else if ("Notes".equals(toolName)) { // Gestione del tool Notes
+        } else if ("Notes".equals(toolName)) {
             HomeView homeView = new HomeView();
             homeView.start(primaryStage);
             logger.info("HomeView (Notes) opened.");

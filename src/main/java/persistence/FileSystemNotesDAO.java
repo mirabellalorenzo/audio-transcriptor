@@ -5,10 +5,8 @@ import entity.User;
 import control.AuthController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,24 +27,19 @@ public class FileSystemNotesDAO implements NotesDAO {
 
     @Override
     public void save(Note note) throws IOException {
-        // Se non c'è un ID, lo generiamo (solo per nuove note)
         if (note.getId() == null || note.getId().isBlank()) {
             note.setId(UUID.randomUUID().toString());
         }
 
-        // Sanifichiamo il titolo per evitare caratteri non validi nel nome del file
         String safeTitle = note.getTitle().replaceAll("[^a-zA-Z0-9]", "_");
 
-        // Percorso del nuovo file
         File newNoteFile = new File(notesDirectory, note.getId() + "_" + note.getUid() + "_" + safeTitle + ".txt");
 
-        // Controlliamo se esiste già una nota con questo ID ma con un titolo diverso
         File[] existingFiles = notesDirectory.listFiles((dir, name) -> name.startsWith(note.getId() + "_") && name.endsWith(".txt"));
         
         if (existingFiles != null) {
             for (File existingFile : existingFiles) {
                 if (!existingFile.getName().equals(newNoteFile.getName())) {
-                    // Se il file con lo stesso ID ha un nome diverso, lo eliminiamo
                     if (existingFile.delete()) {
                         logger.info("Eliminato vecchio file della nota: {}", existingFile.getName());
                     } else {
@@ -56,7 +49,6 @@ public class FileSystemNotesDAO implements NotesDAO {
             }
         }
 
-        // Scriviamo la nuova versione della nota
         try (FileWriter writer = new FileWriter(newNoteFile)) {
             writer.write(note.getContent());
             logger.info("Nota salvata correttamente: {}", newNoteFile.getAbsolutePath());
@@ -83,19 +75,15 @@ public class FileSystemNotesDAO implements NotesDAO {
     
         for (File file : notesDirectory.listFiles((dir, name) -> name.endsWith(".txt"))) {
             try {
-                // Formato atteso: id_uid_titolo.txt
                 String[] parts = file.getName().split("_", 3);
                 if (parts.length < 3) continue;
     
                 String noteId = parts[0];
                 String noteUid = parts[1];
                 String titleWithExtension = parts[2];
-                if (!noteUid.equals(currentUid)) continue; // Filtra solo le note dell'utente corrente
+                if (!noteUid.equals(currentUid)) continue;
     
-                // Rimuove l'estensione .txt dal titolo
                 String rawTitle = titleWithExtension.replaceAll("\\.txt$", "");
-    
-                // Se siamo in modalità file system, sostituiamo "_" con spazio
                 String formattedTitle = rawTitle.replace("_", " ");
     
                 String content = new String(Files.readAllBytes(file.toPath()));
@@ -117,7 +105,6 @@ public class FileSystemNotesDAO implements NotesDAO {
 
     @Override
     public void delete(String id) throws IOException {
-        // Cerca il file che inizia con id + "_"
         File[] matchingFiles = notesDirectory.listFiles((dir, name) -> name.startsWith(id + "_") && name.endsWith(".txt"));
         if (matchingFiles != null && matchingFiles.length > 0) {
             for (File file : matchingFiles) {

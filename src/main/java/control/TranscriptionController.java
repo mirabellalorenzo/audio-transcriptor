@@ -9,7 +9,6 @@ import org.vosk.Model;
 import org.vosk.Recognizer;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -94,11 +93,9 @@ public class TranscriptionController {
     
         String safeTitle = title.replaceAll("[^a-zA-Z0-9]", "_");
     
-        // Creiamo una nuova nota con ID, utente, titolo e testo della trascrizione
         Note note = new Note(id, user.getId(), safeTitle, transcription.getText());
     
         try {
-            // Salviamo la nota usando il DAO, che gestirà tutto correttamente
             notesDAO.save(note);
             logger.info("Transcription saved as a note: {}", note.getTitle());
             return true;
