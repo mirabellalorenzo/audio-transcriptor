@@ -1,7 +1,5 @@
 package view.components;
 
-import java.util.ArrayList;
-
 import boundary.HomeBoundary;
 import entity.Transcription;
 import javafx.geometry.Pos;
@@ -43,7 +41,7 @@ public class TranscriptionSummaryComponent {
 
         // **Pulsante personalizzato**
         CustomButtonComponent backToNotesButton = new CustomButtonComponent("Back to Notes", CustomButtonComponent.ButtonType.PRIMARY);
-        backToNotesButton.setOnAction(e -> boundary.openToolView(primaryStage, "Notes"));
+        backToNotesButton.setOnAction(e -> boundary.openPageView(primaryStage, "Notes"));
 
         // **Aggiunta degli elementi nel box**
         infoBox.getChildren().addAll(duration, time, words, characters);

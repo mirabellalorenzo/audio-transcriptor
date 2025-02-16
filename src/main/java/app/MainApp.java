@@ -5,7 +5,8 @@ import control.AuthController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import util.GoogleAuthProvider;
-import view.LoginView;
+import view.gui1.LoginView;
+
 import java.util.logging.Logger;
 
 import config.FirebaseConfig;

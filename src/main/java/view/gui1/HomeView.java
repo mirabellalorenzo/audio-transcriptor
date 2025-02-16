@@ -1,4 +1,4 @@
-package view;
+package view.gui1;
 
 import boundary.HomeBoundary;
 import entity.Note;

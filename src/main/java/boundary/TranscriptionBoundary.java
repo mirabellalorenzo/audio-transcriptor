@@ -3,7 +3,8 @@ package boundary;
 import control.TranscriptionController;
 import entity.Transcription;
 import javafx.stage.Stage;
-import view.TranscriptionView;
+import view.gui1.TranscriptionView;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

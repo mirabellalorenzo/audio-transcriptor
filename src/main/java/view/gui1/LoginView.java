@@ -1,4 +1,4 @@
-package view;
+package view.gui1;
 
 import boundary.LoginBoundary;
 import config.AppConfig;
@@ -33,7 +33,8 @@ public class LoginView extends Application {
 
         // Layout per Login e Register
         VBox loginLayout = createLoginLayout(boundary);
-        loginScene = new Scene(loginLayout, 400, 500);
+        StackPane root = new StackPane(loginLayout); // StackPane permette di sovrapporre elementi
+        loginScene = new Scene(root, 400, 500);
 
         VBox registerLayout = createRegisterLayout(boundary);
         registerScene = new Scene(registerLayout, 400, 500);
@@ -136,8 +137,11 @@ public class LoginView extends Application {
             "-fx-border-radius: 5px; " +
             "-fx-padding: 3px;"
         );
+
+        CustomButtonComponent settingsButton = new CustomButtonComponent("Impostazioni", "settings-outline", CustomButtonComponent.ButtonType.SECONDARY);
+        settingsButton.setOnAction(e -> showSettingsModal());
     
-        HBox modeBox = new HBox(10, modeLabel, modeSelector);
+        HBox modeBox = new HBox(10, settingsButton);
         modeBox.setAlignment(Pos.CENTER);
         modeBox.setStyle("-fx-padding: 20px 0px 0px 0px;");
     
@@ -288,6 +292,96 @@ public class LoginView extends Application {
     private void switchToLoginPage() {
         primaryStage.setScene(loginScene);
     }
+
+    private void showSettingsModal() {
+        VBox modalBox = new VBox(25);
+        modalBox.setStyle(
+            "-fx-background-color: white; " +
+            "-fx-padding: 30px; " +
+            "-fx-border-radius: 20px; " +  // ✅ Aggiunto border-radius
+            "-fx-background-radius: 20px; " + // ✅ Per JavaFX, serve anche questa proprietà
+            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 5);"
+        );
+        modalBox.setAlignment(Pos.CENTER);
+        modalBox.setMaxWidth(380); // Maggiore larghezza
+    
+        Label title = new Label("Impostazioni");
+        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        
+        // **GridPane per migliorare allineamento**
+        GridPane settingsGrid = new GridPane();
+        settingsGrid.setHgap(10);
+        settingsGrid.setVgap(15);
+        
+        // **Selettore Storage Mode**
+        Label storageModeLabel = new Label("Storage Mode:");
+        storageModeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333;");
+        GridPane.setConstraints(storageModeLabel, 0, 0);
+    
+        ComboBox<AppConfig.StorageMode> storageSelector = new ComboBox<>();
+        storageSelector.getItems().addAll(AppConfig.StorageMode.values());
+        storageSelector.setValue(AppConfig.getStorageMode());
+        storageSelector.setStyle(
+            "-fx-font-size: 14px; " +
+            "-fx-background-color: #f8f9fa; " +
+            "-fx-border-color: #ccc; " +
+            "-fx-border-radius: 8px; " +
+            "-fx-background-radius: 8px; " +  // ✅ Anche qui per sicurezza
+            "-fx-padding: 5px;"
+        );
+        storageSelector.setCursor(Cursor.HAND);
+        GridPane.setConstraints(storageSelector, 1, 0);
+    
+        // **Selettore GUI Mode**
+        Label guiModeLabel = new Label("GUI Mode:");
+        guiModeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333;");
+        GridPane.setConstraints(guiModeLabel, 0, 1);
+    
+        ComboBox<AppConfig.GuiMode> guiSelector = new ComboBox<>();
+        guiSelector.getItems().addAll(AppConfig.GuiMode.values());
+        guiSelector.setValue(AppConfig.getGuiMode());
+        guiSelector.setStyle(
+            "-fx-font-size: 14px; " +
+            "-fx-background-color: #f8f9fa; " +
+            "-fx-border-color: #ccc; " +
+            "-fx-border-radius: 8px; " +
+            "-fx-background-radius: 8px; " +  // ✅ Per sicurezza
+            "-fx-padding: 5px;"
+        );
+        guiSelector.setCursor(Cursor.HAND);
+        GridPane.setConstraints(guiSelector, 1, 1);
+    
+        settingsGrid.getChildren().addAll(storageModeLabel, storageSelector, guiModeLabel, guiSelector);
+    
+        // **Pulsante Salva**
+        CustomButtonComponent saveButton = new CustomButtonComponent("Salva", CustomButtonComponent.ButtonType.PRIMARY);
+        saveButton.setOnAction(e -> {
+            AppConfig.setStorageMode(storageSelector.getValue());
+            AppConfig.setGuiMode(guiSelector.getValue());
+            hideSettingsModal();
+        });
+    
+        modalBox.getChildren().addAll(title, settingsGrid, saveButton);
+    
+        // **Overlay sfocato con migliorato border-radius**
+        VBox overlay = new VBox();
+        overlay.setStyle(
+            "-fx-background-color: rgba(0, 0, 0, 0.5); "
+        );
+        overlay.setAlignment(Pos.CENTER);
+        overlay.getChildren().add(modalBox);
+    
+        // **Aggiunge il modal al root dello StackPane**
+        ((StackPane) loginScene.getRoot()).getChildren().add(overlay);
+    
+        // **Chiude il modal cliccando fuori**
+        overlay.setOnMouseClicked(e -> hideSettingsModal());
+    }    
+    
+    private void hideSettingsModal() {
+        StackPane root = (StackPane) loginScene.getRoot();
+        root.getChildren().remove(root.getChildren().size() - 1); // Rimuove il modal
+    }    
 
     public static void main(String[] args) {
         launch(args);

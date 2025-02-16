@@ -50,10 +50,10 @@ public class SidebarComponent extends VBox {
         menuBox.setPadding(new Insets(10, 0, 0, 0));
 
         // **Item Notes**
-        HBox notesItem = createMenuItem("Notes", "document-text-outline", () -> boundary.openToolView(primaryStage, "Notes"));
+        HBox notesItem = createMenuItem("Notes", "document-text-outline", () -> boundary.openPageView(primaryStage, "Notes"));
 
         // **Item Transcribe Audio**
-        HBox transcribeItem = createMenuItem("Transcribe Audio", "mic-outline", () -> boundary.openToolView(primaryStage, "Transcribe Audio"));
+        HBox transcribeItem = createMenuItem("Transcribe Audio", "mic-outline", () -> boundary.openPageView(primaryStage, "Transcribe Audio"));
 
         menuBox.getChildren().addAll(notesItem, transcribeItem);
 

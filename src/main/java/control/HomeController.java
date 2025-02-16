@@ -5,11 +5,13 @@ import entity.User;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import config.AppConfig;
 import persistence.NotesDAO;
 import persistence.NotesDAOFactory;
-import view.HomeView;
-import view.LoginView;
-import view.TranscriptionView;
+import view.gui1.HomeView;
+import view.gui1.LoginView;
+import view.gui1.TranscriptionView;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,24 +31,33 @@ public class HomeController {
         return currentUser != null ? currentUser.getPhotoUrl() : "/images/avatar.png";
     }
 
-    public void openToolView(Stage primaryStage, String toolName) {
-        logger.info("Tool selected: {}", toolName);
-        if ("Transcribe Audio".equals(toolName)) {
-            openTranscriptionView(primaryStage);
+    public void openPageView(Stage primaryStage, String pageName) {
+        logger.info("Page selected: {}", pageName);
+    
+        if ("Transcribe Audio".equals(pageName)) {
+            if (AppConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
+                view.gui1.TranscriptionView transcriptionView = new view.gui1.TranscriptionView();
+                transcriptionView.start(primaryStage);
+                logger.info("Opened TranscriptionView (GUI 1).");
+            } else {
+                view.gui2.TranscriptionView2 transcriptionView2 = new view.gui2.TranscriptionView2();
+                transcriptionView2.start(primaryStage);
+                logger.info("Opened TranscriptionView2 (GUI 2).");
+            }
+        } else if ("Notes".equals(pageName)) {
+            if (AppConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
+                view.gui1.HomeView homeView = new view.gui1.HomeView();
+                homeView.start(primaryStage);
+                logger.info("Opened HomeView (GUI 1).");
+            } else {
+                view.gui2.HomeView2 homeView2 = new view.gui2.HomeView2();
+                homeView2.start(primaryStage);
+                logger.info("Opened HomeView2 (GUI 2).");
+            }
+        } else {
+            logger.warn("Unrecognized page: {}", pageName);
         }
-    }
-
-    private void openTranscriptionView(Stage primaryStage) {
-        logger.info("Opening Transcription View.");
-        TranscriptionView transcriptionView = new TranscriptionView();
-        transcriptionView.start(primaryStage);
-    }
-
-    public void openHome(Stage primaryStage) {
-        logger.info("Opening Home View.");
-        HomeView homeView = new HomeView();
-        homeView.start(primaryStage);
-    }
+    }      
     
     private void openLoginView(Stage primaryStage) {
         logger.info("Opening Login View.");

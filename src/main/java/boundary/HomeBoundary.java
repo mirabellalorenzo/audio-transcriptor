@@ -6,7 +6,8 @@ import entity.Note;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import view.HomeView;
+import view.gui1.HomeView;
+
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,19 +65,7 @@ public class HomeBoundary {
         homeController.logout(primaryStage);
     }
 
-    public void openToolView(Stage primaryStage, String toolName) {
-        logger.info("openToolView called with: {}", toolName);
-        
-        if ("Transcribe Audio".equals(toolName)) {
-            TranscriptionBoundary transcriptionBoundary = new TranscriptionBoundary(new TranscriptionController());
-            transcriptionBoundary.openTranscriptionView(primaryStage);
-            logger.info("Transcription tool opened.");
-        } else if ("Notes".equals(toolName)) {
-            HomeView homeView = new HomeView();
-            homeView.start(primaryStage);
-            logger.info("HomeView (Notes) opened.");
-        } else {
-            logger.warn("Unrecognized tool: {}", toolName);
-        }
-    }
+    public void openPageView(Stage primaryStage, String pageName) {
+        homeController.openPageView(primaryStage, pageName);
+    }     
 }

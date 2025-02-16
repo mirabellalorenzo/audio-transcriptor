@@ -43,8 +43,8 @@ public class NoteDetailComponent extends VBox {
         topRightContainer.setStyle("-fx-padding: 15px; -fx-spacing: 10px;");        
 
         ImageView profileImage = new ImageView(new Image(boundary.getUserPhotoUrl()));
-        profileImage.setFitWidth(40);
-        profileImage.setFitHeight(40);
+        profileImage.setFitWidth(38);
+        profileImage.setFitHeight(38);
         profileImage.setPreserveRatio(true);
 
         // Creazione di un cerchio per il clip
@@ -62,7 +62,7 @@ public class NoteDetailComponent extends VBox {
 
         StackPane profileContainer = new StackPane();
         profileContainer.setStyle("-fx-background-color: #E0E0E0; -fx-background-radius: 50%;");
-        profileContainer.setPrefSize(42, 42); // Leggermente più grande per il bordo
+        profileContainer.setPrefSize(40, 40); // Leggermente più grande per il bordo
         profileContainer.getChildren().add(profileImage);
 
 

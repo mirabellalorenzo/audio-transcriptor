@@ -10,16 +10,13 @@ public class CustomButtonComponent extends Button {
         PRIMARY, SECONDARY, OUTLINE
     }
 
-    // Costruttore SENZA icona
     public CustomButtonComponent(String text, ButtonType type) {
         this(text, null, type); // Chiama il costruttore con icona passando `null`
     }
 
-    // Costruttore CON icona opzionale
     public CustomButtonComponent(String text, String iconName, ButtonType type) {
         super(text);
 
-        // Aggiunta dell'icona solo se fornita
         if (iconName != null && !iconName.isEmpty()) {
             ImageView icon = SvgToPngConverter.loadSvgAsImage(iconName, 18);
             setGraphic(icon);
@@ -59,9 +56,9 @@ public class CustomButtonComponent extends Button {
                        "-fx-text-fill: white; " +
                        "-fx-border-color: black;";
             case SECONDARY:
-                return "-fx-background-color: #E0E0E0; " +
+                return "-fx-background-color: #ededed; " +
                        "-fx-text-fill: black; " +
-                       "-fx-border-color: #E0E0E0;";
+                       "-fx-border-color: #ededed;";
             case OUTLINE:
                 return "-fx-background-color: transparent; " +
                        "-fx-border-color: black; " +
