@@ -6,33 +6,35 @@
     -fx-border-color: transparent;
 }
 
-.scroll-bar:vertical {
+/* Stile della scrollbar verticale */
+.scroll-bar {
     background-color: transparent;
     padding: 0;
+    -fx-orientation: vertical;
     -fx-background-color: transparent;
     -fx-padding: 0;
 }
 
-/* Stile della thumb (la parte mobile della scrollbar) */
-.scroll-bar:vertical .thumb {
+/* Stile della thumb (parte mobile) */
+.scroll-bar .thumb {
     background-color: rgba(0, 0, 0, 0.2);
-    -fx-background-color: rgba(0, 0, 0, 0.2); /* Colore semi-trasparente */
+    -fx-background-color: rgba(0, 0, 0, 0.2);
     -fx-background-radius: 10px;
 }
 
-/* Quando passi il mouse sopra la scrollbar */
-.scroll-bar:vertical .thumb:hover {
+/* Hover sulla thumb */
+.scroll-bar .thumb:hover {
     background-color: rgba(0, 0, 0, 0.3);
     -fx-background-color: rgba(0, 0, 0, 0.3);
 }
 
-/* Effetto quando clicchi sulla scrollbar */
-.scroll-bar:vertical .thumb:pressed {
+/* Quando si clicca sulla thumb */
+.scroll-bar .thumb:armed {
     background-color: rgba(0, 0, 0, 0.5);
     -fx-background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Nasconde le frecce della scrollbar */
+/* Nasconde le frecce */
 .scroll-bar .increment-button,
 .scroll-bar .decrement-button {
     opacity: 0;
@@ -41,8 +43,8 @@
     -fx-padding: 0;
 }
 
-/* Stile del track (sfondo della scrollbar) */
-.scroll-bar:vertical .track {
+/* Stile del track */
+.scroll-bar .track {
     background-color: rgba(0, 0, 0, 0.05);
     -fx-background-color: rgba(0, 0, 0, 0.05);
     -fx-background-radius: 10px;
