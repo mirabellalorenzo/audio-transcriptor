@@ -2,6 +2,7 @@ package view.components;
 
 import boundary.TranscriptionBoundary;
 import entity.Transcription;
+import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -49,19 +50,19 @@ public class TranscriptionControlsComponent extends VBox {
 
         // Stato 0: Solo "Carica Audio"
         uploadStateButtons = new HBox(10, uploadButton);
-        uploadStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        uploadStateButtons.setAlignment(Pos.CENTER);
         uploadStateButtons.setManaged(true);
         uploadStateButtons.setVisible(true);
 
         // Stato 1: "Modifica" + "Salva ed Esci"
         initialStateButtons = new HBox(10, editButton, saveAndExitButton);
-        initialStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        initialStateButtons.setAlignment(Pos.CENTER);
         initialStateButtons.setManaged(false);
         initialStateButtons.setVisible(false);
 
         // Stato 2: "Salva", "Annulla" e "Ripristina"
         editingStateButtons = new HBox(10, saveButton, cancelButton, restoreButton);
-        editingStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        editingStateButtons.setAlignment(Pos.CENTER);
         editingStateButtons.setManaged(false);
         editingStateButtons.setVisible(false);
 
