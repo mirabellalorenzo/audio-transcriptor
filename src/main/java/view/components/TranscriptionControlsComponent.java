@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TranscriptionControlsComponent extends VBox {
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptionBoundary.class);
+    private static final Logger logger = LoggerFactory.getLogger(TranscriptionControlsComponent.class);
     private CustomButtonComponent uploadButton, editButton, saveButton, saveAndExitButton, cancelButton, restoreButton;
     private TranscriptionBoundary boundary;
     private TranscriptionEditorComponent editorComponent;

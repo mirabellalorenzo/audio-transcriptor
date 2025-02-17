@@ -125,25 +125,28 @@ public class FileSystemNotesDAO implements NotesDAO {
         for (File file : notesDirectory.listFiles((dir, name) -> name.endsWith(".txt"))) {
             try {
                 String[] parts = file.getName().split("_", 3);
-                if (parts.length < 3) continue;
-
+        
+                if (parts.length < 3 || !parts[1].equals(currentUid)) {
+                    logger.warn("File ignorato: {}", file.getName());
+                    continue;
+                }
+        
                 String noteId = parts[0];
                 String noteUid = parts[1];
                 String titleWithExtension = parts[2];
-                if (!noteUid.equals(currentUid)) continue;
-
+        
                 String rawTitle = titleWithExtension.replaceAll("\\.txt$", "");
                 String formattedTitle = rawTitle.replace("_", " ");
-
+        
                 String encryptedContent = new String(Files.readAllBytes(file.toPath()));
                 String decryptedContent = decryptAES(encryptedContent, AES_KEY);
-
+        
                 notes.add(new Note(noteId, noteUid, formattedTitle, decryptedContent));
                 logger.info("Nota caricata: {}", formattedTitle);
             } catch (Exception e) {
                 logger.error("Errore durante la lettura e la decrittografia del file: {}", file.getName(), e);
             }
-        }
+        }        
 
         logger.info("Caricate {} note per l'utente: {}", notes.size(), currentUid);
         return notes;
