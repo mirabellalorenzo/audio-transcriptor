@@ -66,7 +66,9 @@ public class FileSystemNotesDAO implements NotesDAO {
             Path filePath = newNoteFile.toPath();
 
             // Scrivi il file crittografato
-            Files.write(filePath, encryptedContent.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            try (OutputStream outputStream = Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+                outputStream.write(encryptedContent.getBytes());
+            }            
 
             // Controlla il sistema operativo e imposta i permessi adeguati
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
