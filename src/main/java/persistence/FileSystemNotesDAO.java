@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
+import java.security.GeneralSecurityException;
 
 
 public class FileSystemNotesDAO implements NotesDAO {
@@ -49,9 +50,11 @@ public class FileSystemNotesDAO implements NotesDAO {
             writeEncryptedFile(newNoteFile, encryptedContent);
             setFilePermissions(newNoteFile);
             logger.info("Nota salvata in formato crittografato: {}", newNoteFile.getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException("Errore durante la crittografia e il salvataggio della nota: " + note.getTitle(), e);
-        }
+        } catch (GeneralSecurityException e) {
+            throw new IOException("Errore nella crittografia della nota: " + note.getTitle(), e);
+        } catch (IOException e) {
+            throw new IOException("Errore di I/O durante il salvataggio della nota: " + note.getTitle(), e);
+        }        
     }
 
     private void ensureNoteHasId(Note note) {
@@ -170,35 +173,47 @@ public class FileSystemNotesDAO implements NotesDAO {
     }  
     
     // Metodo per crittografare il testo con AES-256 CBC
-    private static String encryptAES(String data, String key) throws Exception {
-        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-
-        byte[] iv = new byte[12]; // IV di 12 byte per GCM
-        new SecureRandom().nextBytes(iv);
-        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
-
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
-        byte[] encrypted = cipher.doFinal(data.getBytes());
-
-        // Concatena IV e dati cifrati in Base64
-        return Base64.getEncoder().encodeToString(iv) + ":" + Base64.getEncoder().encodeToString(encrypted);
-    }
-
-    // Metodo per decrittografare il testo con AES-256 CBC
-    private static String decryptAES(String encryptedData, String key) throws Exception {
-        String[] parts = encryptedData.split(":");
-        if (parts.length != 2) throw new IllegalArgumentException("Formato dati non valido");
+    private static String encryptAES(String data, String key) throws GeneralSecurityException {
+        try {
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
     
-        byte[] iv = Base64.getDecoder().decode(parts[0]);
-        byte[] encrypted = Base64.getDecoder().decode(parts[1]);
+            byte[] iv = new byte[12]; // IV di 12 byte per GCM
+            new SecureRandom().nextBytes(iv);
+            GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
     
-        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
+            byte[] encrypted = cipher.doFinal(data.getBytes());
     
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
-        byte[] decrypted = cipher.doFinal(encrypted);
-        return new String(decrypted);
+            return Base64.getEncoder().encodeToString(iv) + ":" + Base64.getEncoder().encodeToString(encrypted);
+        } catch (GeneralSecurityException e) {
+            throw e;  // Ora SonarQube non si lamenterà più
+        }
     }    
+
+    // Metodo per decrittografare il testo con AES-256 GCM
+    private static String decryptAES(String encryptedData, String key) throws GeneralSecurityException {
+        try {
+            String[] parts = encryptedData.split(":");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Formato dati non valido");
+            }
+
+            byte[] iv = Base64.getDecoder().decode(parts[0]);
+            byte[] encrypted = Base64.getDecoder().decode(parts[1]);
+
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
+            byte[] decrypted = cipher.doFinal(encrypted);
+            return new String(decrypted);
+
+        } catch (GeneralSecurityException e) {
+            throw e;  // Mantiene l'eccezione specifica
+        } catch (IllegalArgumentException e) {
+            throw new GeneralSecurityException("Errore nel formato dei dati crittografati", e);
+        }
+    }
 }
