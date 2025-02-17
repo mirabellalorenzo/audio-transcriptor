@@ -17,6 +17,10 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.security.SecureRandom;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.Path;
+import java.util.Set;
 
 
 public class FileSystemNotesDAO implements NotesDAO {
@@ -59,7 +63,23 @@ public class FileSystemNotesDAO implements NotesDAO {
 
         try {
             String encryptedContent = encryptAES(note.getContent(), AES_KEY);
-            Files.write(newNoteFile.toPath(), encryptedContent.getBytes(), StandardOpenOption.CREATE);
+            Path filePath = newNoteFile.toPath();
+
+            // Scrivi il file crittografato
+            Files.write(filePath, encryptedContent.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+
+            // Controlla il sistema operativo e imposta i permessi adeguati
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                // Windows: Disabilita lettura per tutti tranne il proprietario
+                newNoteFile.setReadable(false, false);
+                newNoteFile.setWritable(true, true);
+                newNoteFile.setExecutable(false, false);
+            } else {
+                // Linux/macOS: Usa POSIX per restringere i permessi
+                Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rw-------"); // Solo il proprietario può leggere/scrivere
+                Files.setPosixFilePermissions(filePath, perms);
+            }
+
             logger.info("Nota salvata in formato crittografato: {}", newNoteFile.getAbsolutePath());
         } catch (Exception e) {
             throw new IOException("Errore durante la crittografia e il salvataggio della nota: " + note.getTitle(), e);
