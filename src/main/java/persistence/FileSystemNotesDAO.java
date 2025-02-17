@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import io.github.cdimascio.dotenv.Dotenv;
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
@@ -166,15 +167,16 @@ public class FileSystemNotesDAO implements NotesDAO {
     // Metodo per crittografare il testo con AES-256 CBC
     private static String encryptAES(String data, String key) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
 
-        byte[] iv = new byte[16];
+        byte[] iv = new byte[12]; // IV di 12 byte per GCM
         new SecureRandom().nextBytes(iv);
-        IvParameterSpec ivParams = new IvParameterSpec(iv);
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
 
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParams);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
         byte[] encrypted = cipher.doFinal(data.getBytes());
 
+        // Concatena IV e dati cifrati in Base64
         return Base64.getEncoder().encodeToString(iv) + ":" + Base64.getEncoder().encodeToString(encrypted);
     }
 
@@ -182,16 +184,16 @@ public class FileSystemNotesDAO implements NotesDAO {
     private static String decryptAES(String encryptedData, String key) throws Exception {
         String[] parts = encryptedData.split(":");
         if (parts.length != 2) throw new IllegalArgumentException("Formato dati non valido");
-
+    
         byte[] iv = Base64.getDecoder().decode(parts[0]);
         byte[] encrypted = Base64.getDecoder().decode(parts[1]);
-
+    
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        IvParameterSpec ivParams = new IvParameterSpec(iv);
-
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParams);
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+    
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
         byte[] decrypted = cipher.doFinal(encrypted);
         return new String(decrypted);
-    }
+    }    
 }
