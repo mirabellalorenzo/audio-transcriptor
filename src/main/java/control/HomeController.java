@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import config.AppConfig;
 import persistence.NotesDAO;
 import persistence.NotesDAOFactory;
-import view.gui1.HomeView;
 import view.gui1.LoginView;
-import view.gui1.TranscriptionView;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;

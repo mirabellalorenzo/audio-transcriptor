@@ -4,8 +4,6 @@ import control.AuthController;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import util.GoogleAuthProvider;
-import view.gui1.HomeView;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,15 +27,15 @@ public class LoginBoundary {
     }
 
     public void loginWithGoogle(Stage primaryStage) {
-        GoogleAuthProvider.openGoogleLogin(); // Avvia il processo di login
+        GoogleAuthProvider.openGoogleLogin();
         new Thread(() -> {
             try {
                 while (!AuthController.isLoggedIn()) {
-                    Thread.sleep(2000); // Attendi che l'utente completi il login
+                    Thread.sleep(2000);
                 }
-                Platform.runLater(() -> openPageView(primaryStage)); // Passa alla home nel thread JavaFX
+                Platform.runLater(() -> openPageView(primaryStage));
             } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt(); // ✅ Ripristina lo stato di interruzione
+                Thread.currentThread().interrupt();
                 logger.error("Login thread interrupted: {}", ex.getMessage(), ex);
             }
         }).start();
@@ -45,6 +43,6 @@ public class LoginBoundary {
 
     public void openPageView(Stage primaryStage) {
         HomeBoundary homeBoundary = new HomeBoundary();
-        homeBoundary.openPageView(primaryStage, "Notes"); // Ora chiama il boundary
+        homeBoundary.openPageView(primaryStage, "Notes");
     }    
 }

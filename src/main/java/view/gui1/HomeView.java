@@ -74,11 +74,4 @@ public class HomeView {
     private void updateSelectedNote(Note note) {
         noteDetail.updateNote(note);
     }
-
-    private void refreshNotesList() {
-        notesList.getChildren().clear();
-        notesList.getChildren().addAll(
-            new NotesListComponent(boundary, primaryStage, notes, this::updateSelectedNote).getChildren()
-        );
-    }    
 }

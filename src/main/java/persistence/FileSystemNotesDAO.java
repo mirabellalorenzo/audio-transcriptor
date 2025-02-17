@@ -14,7 +14,6 @@ import java.util.UUID;
 import io.github.cdimascio.dotenv.Dotenv;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.security.SecureRandom;

@@ -1,13 +1,10 @@
 package boundary;
 
 import control.HomeController;
-import control.TranscriptionController;
 import entity.Note;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import view.gui1.HomeView;
-
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
