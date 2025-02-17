@@ -28,12 +28,10 @@ public class SidebarComponent extends VBox {
         setPadding(new Insets(20));
         setStyle("-fx-background-color: #f8f9fa; -fx-min-width: 250px;");
 
-        // **Logo dell'App e Nome in HBox**
         HBox logoContainer = new HBox(10);
         logoContainer.setAlignment(Pos.CENTER_LEFT);
         logoContainer.setPadding(new Insets(10, 15, 10, 15));
 
-        // Carica il logo PNG
         ImageView appLogo = new ImageView(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
         appLogo.setFitWidth(40);
         appLogo.setFitHeight(40);
@@ -45,23 +43,18 @@ public class SidebarComponent extends VBox {
         logoContainer.getChildren().addAll(appLogo, appNameLabel);
 
 
-        // **Sezione Menu**
         VBox menuBox = new VBox(15);
         menuBox.setPadding(new Insets(10, 0, 0, 0));
 
-        // **Item Notes**
         HBox notesItem = createMenuItem("Notes", "document-text-outline", () -> boundary.openPageView(primaryStage, "Notes"));
 
-        // **Item Transcribe Audio**
         HBox transcribeItem = createMenuItem("Transcribe Audio", "mic-outline", () -> boundary.openPageView(primaryStage, "Transcribe Audio"));
 
         menuBox.getChildren().addAll(notesItem, transcribeItem);
 
-        // **Pulsante di Logout con lo stesso stile del menu**
         HBox logoutItem = createMenuItem("Logout", "log-out-outline", () -> boundary.logout(primaryStage));
-        VBox.setMargin(logoutItem, new Insets(0, 0, 20, 0)); // Aggiunge margine in basso
+        VBox.setMargin(logoutItem, new Insets(0, 0, 20, 0));
 
-        // Posizionare il logout in fondo alla sidebar
         VBox spacer = new VBox();
         spacer.setMinHeight(Region.USE_COMPUTED_SIZE);
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -70,7 +63,7 @@ public class SidebarComponent extends VBox {
     }
 
     private HBox createMenuItem(String text, String iconName, Runnable action) {
-        ImageView icon = SvgToPngConverter.loadSvgAsImage(iconName, 24); // Carica l'icona SVG dinamicamente
+        ImageView icon = SvgToPngConverter.loadSvgAsImage(iconName, 24);
 
         Label label = new Label(text);
         label.setStyle("-fx-font-size: 16px; -fx-text-fill: #222; -fx-cursor: hand;");

@@ -21,7 +21,6 @@ public class HomeView2 {
         this.primaryStage = primaryStage;
         List<Note> notes = boundary.getSavedNotes();
 
-        // Recupera i dati dell'utente
         String userEmail = boundary.getUserEmail();
         String userPhotoUrl = boundary.getUserPhotoUrl();
 

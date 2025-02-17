@@ -11,7 +11,7 @@ public class CustomButtonComponent extends Button {
     }
 
     public CustomButtonComponent(String text, ButtonType type) {
-        this(text, null, type); // Chiama il costruttore con icona passando `null`
+        this(text, null, type);
     }
 
     public CustomButtonComponent(String text, String iconName, ButtonType type) {

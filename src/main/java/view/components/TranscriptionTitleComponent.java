@@ -17,21 +17,19 @@ public class TranscriptionTitleComponent {
     }
 
     public void displayTitleInput(Stage primaryStage, BorderPane root) {
-        // **Box principale che contiene il titolo e il campo input**
         VBox inputBox = new VBox(15);
         inputBox.setStyle(
-            "-fx-background-color: #F5F5F5; " + // Sfondo grigio chiaro
+            "-fx-background-color: #F5F5F5; " +
             "-fx-padding: 25px; " +
-            "-fx-background-radius: 30px; " +  // Arrotonda lo sfondo
-            "-fx-background-insets: 0;"  // Impedisce che lo sfondo esca dai bordi
+            "-fx-background-radius: 30px; " +
+            "-fx-background-insets: 0;"
         );
-        inputBox.setMaxWidth(400); // Limita la larghezza per estetica
+        inputBox.setMaxWidth(400);
         inputBox.setAlignment(Pos.CENTER);
 
         Label titleLabel = new Label("Enter a title");
         titleLabel.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #222;");
 
-        // **Input field per il titolo**
         TextField titleField = new TextField();
         titleField.setPromptText("New Note");
         titleField.setStyle(
@@ -44,13 +42,11 @@ public class TranscriptionTitleComponent {
         );
         titleField.setMaxWidth(300);
 
-        // **Pulsante per salvare il titolo e procedere**
         CustomButtonComponent continueButton = new CustomButtonComponent("Continue", CustomButtonComponent.ButtonType.PRIMARY);
         continueButton.setOnAction(e -> {
             String title = titleField.getText().trim();
             
             if (!title.isEmpty()) {
-                // Ora possiamo chiamare direttamente saveTranscription con il titolo scelto
                 boolean saved = boundary.saveTranscription(title);
                 if (saved) {
                     Transcription transcription = boundary.getTranscription();
@@ -60,10 +56,8 @@ public class TranscriptionTitleComponent {
             }
         });              
 
-        // **Aggiunta degli elementi nel box**
         inputBox.getChildren().addAll(titleLabel, titleField, continueButton);
 
-        // **Box per centrare tutto**
         VBox centeredBox = new VBox(20, inputBox);
         centeredBox.setStyle("-fx-background-color: white; -fx-padding: 20px;");
         centeredBox.setAlignment(Pos.CENTER);

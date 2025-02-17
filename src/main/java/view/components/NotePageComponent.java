@@ -46,13 +46,11 @@ public class NotePageComponent {
         overlay.setAlignment(Pos.CENTER);
         overlay.getChildren().add(modalBox);
 
-        // **Controlla se il root è StackPane**
         if (parentStage.getScene().getRoot() instanceof StackPane) {
             StackPane root = (StackPane) parentStage.getScene().getRoot();
             root.getChildren().add(overlay);
         }
         
-        // **Chiudi il modal cliccando fuori**
         overlay.setOnMouseClicked(e -> hideModal(parentStage));
     }
     

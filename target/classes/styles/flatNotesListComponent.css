@@ -6,7 +6,6 @@
     -fx-background-color: white;
 }
 
-/* Stile titolo */
 .label-title {
     font-size: 28px;
     font-weight: bold;
@@ -15,7 +14,6 @@
     -fx-text-fill: #222;
 }
 
-/* Stile bottone "New Note" */
 .button-new-note {
     background-color: white;
     border-color: #E0E0E0;
@@ -35,7 +33,6 @@
     -fx-cursor: hand;
 }
 
-/* Barra di ricerca */
 .search-box {
     background-color: white;
     border-color: transparent;
@@ -64,7 +61,6 @@
     -fx-pref-width: 100%;
 }
 
-/* Contenitore note */
 .notes-container {
     background-color: white;
     border-radius: 12px;
@@ -78,7 +74,6 @@
     -fx-padding: 10px;
 }
 
-/* ScrollPane */
 .scroll-pane {
     background: white;
     border-color: transparent;
@@ -89,7 +84,6 @@
     -fx-padding: 0;
 }
 
-/* Stile per ogni nota */
 .note-item {
     border-radius: 8px;
     padding: 12px;
@@ -109,7 +103,6 @@
     -fx-background-color: #F0F0F0;
 }
 
-/* Titolo nota */
 .note-title {
     font-weight: bold;
     font-size: 14px;
@@ -118,7 +111,6 @@
     -fx-text-fill: #333;
 }
 
-/* Preview nota */
 .note-preview {
     font-size: 12px;
     -fx-font-size: 12px;

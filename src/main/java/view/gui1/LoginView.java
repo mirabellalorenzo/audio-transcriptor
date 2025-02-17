@@ -254,12 +254,10 @@ public class LoginView extends Application {
         Label title = new Label("Impostazioni");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
         
-        // **GridPane per migliorare allineamento**
         GridPane settingsGrid = new GridPane();
         settingsGrid.setHgap(10);
         settingsGrid.setVgap(15);
         
-        // **Selettore Storage Mode**
         Label storageModeLabel = new Label("Storage Mode:");
         storageModeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333;");
         GridPane.setConstraints(storageModeLabel, 0, 0);
@@ -271,7 +269,6 @@ public class LoginView extends Application {
         storageSelector.setCursor(Cursor.HAND);
         GridPane.setConstraints(storageSelector, 1, 0);
     
-        // **Selettore GUI Mode**
         Label guiModeLabel = new Label("GUI Mode:");
         guiModeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333;");
         GridPane.setConstraints(guiModeLabel, 0, 1);
@@ -285,7 +282,6 @@ public class LoginView extends Application {
     
         settingsGrid.getChildren().addAll(storageModeLabel, storageSelector, guiModeLabel, guiSelector);
     
-        // **Pulsante Salva**
         CustomButtonComponent saveButton = new CustomButtonComponent("Salva", CustomButtonComponent.ButtonType.PRIMARY);
         saveButton.setOnAction(e -> {
             AppConfig.setStorageMode(storageSelector.getValue());
@@ -295,16 +291,13 @@ public class LoginView extends Application {
     
         modalBox.getChildren().addAll(title, settingsGrid, saveButton);
     
-        // **Overlay sfocato con migliorato border-radius**
         VBox overlay = new VBox();
         overlay.getStyleClass().add("overlay");
         overlay.setAlignment(Pos.CENTER);
         overlay.getChildren().add(modalBox);
     
-        // **Aggiunge il modal al root dello StackPane**
         ((StackPane) loginScene.getRoot()).getChildren().add(overlay);
     
-        // **Chiude il modal cliccando fuori**
         overlay.setOnMouseClicked(e -> hideSettingsModal());
     }    
     

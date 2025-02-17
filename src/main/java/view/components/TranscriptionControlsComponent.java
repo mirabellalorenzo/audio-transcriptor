@@ -34,7 +34,7 @@ public class TranscriptionControlsComponent extends VBox {
         this.showSummaryPage = showSummaryPage;
         this.primaryStage = primaryStage;
         
-        // Dichiarazione dei pulsanti
+        // Buttons
         uploadButton = new CustomButtonComponent("Upload Audio", null, CustomButtonComponent.ButtonType.PRIMARY);
         editButton = new CustomButtonComponent("Edit", null, CustomButtonComponent.ButtonType.SECONDARY);
         saveButton = new CustomButtonComponent("Save", null, CustomButtonComponent.ButtonType.PRIMARY);
@@ -42,7 +42,7 @@ public class TranscriptionControlsComponent extends VBox {
         cancelButton = new CustomButtonComponent("Cancel", null, CustomButtonComponent.ButtonType.OUTLINE);
         restoreButton = new CustomButtonComponent("Reset", null, CustomButtonComponent.ButtonType.SECONDARY);
 
-        // Eventi dei pulsanti
+        // Events
         uploadButton.setOnAction(event -> handleUpload());
         editButton.setOnAction(event -> enableEditingMode());
         saveButton.setOnAction(event -> saveChanges());
@@ -50,19 +50,19 @@ public class TranscriptionControlsComponent extends VBox {
         cancelButton.setOnAction(event -> cancelEdit());
         restoreButton.setOnAction(event -> restoreOriginal());
 
-        // Stato 0: Solo "Carica Audio"
+        // State 0: "Upload Audio"
         uploadStateButtons = new HBox(10, uploadButton);
         uploadStateButtons.setAlignment(Pos.CENTER);
         uploadStateButtons.setManaged(true);
         uploadStateButtons.setVisible(true);
 
-        // Stato 1: "Modifica" + "Salva ed Esci"
+        // State 1: "Edit" + "Save & Exit"
         initialStateButtons = new HBox(10, editButton, saveAndExitButton);
         initialStateButtons.setAlignment(Pos.CENTER);
         initialStateButtons.setManaged(false);
         initialStateButtons.setVisible(false);
 
-        // Stato 2: "Salva", "Annulla" e "Ripristina"
+        // State 2: "Salva", "Cancel" e "Reset"
         editingStateButtons = new HBox(10, saveButton, cancelButton, restoreButton);
         editingStateButtons.setAlignment(Pos.CENTER);
         editingStateButtons.setManaged(false);
@@ -102,7 +102,6 @@ public class TranscriptionControlsComponent extends VBox {
     private void enableEditingMode() {
         editorComponent.enableEditing();
 
-        // Cambia dallo Stato 1 (modifica e salva ed esci) allo Stato 2 (salva, annulla, ripristina)
         initialStateButtons.setManaged(false);
         initialStateButtons.setVisible(false);
 
@@ -131,7 +130,6 @@ public class TranscriptionControlsComponent extends VBox {
             return;
         }
     
-        // Mostriamo la schermata per inserire il titolo
         showSummaryPage.accept(transcription);
     }       
 
@@ -147,7 +145,6 @@ public class TranscriptionControlsComponent extends VBox {
     private void exitEditingMode() {
         editorComponent.disableEditing();
 
-        // Torna allo Stato 1 (Modifica e Salva ed Esci)
         editingStateButtons.setManaged(false);
         editingStateButtons.setVisible(false);
 

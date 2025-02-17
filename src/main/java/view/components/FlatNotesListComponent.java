@@ -27,11 +27,9 @@ public class FlatNotesListComponent extends VBox {
         this.notes = notes;
         this.listener = note -> openNoteDetailModal(note, primaryStage);
         
-        // Carichiamo il file CSS
         this.getStylesheets().add(getClass().getResource("/styles/flatNotesListComponent.css").toExternalForm());
         this.getStyleClass().add("root");
 
-        // **Titolo e pulsante per creare una nuova nota**
         Label titleLabel = new Label("Notes");
         titleLabel.getStyleClass().add("label-title");
 
@@ -50,7 +48,6 @@ public class FlatNotesListComponent extends VBox {
         HBox headerBox = new HBox(10, titleLabel, spacer, newNoteButton);
         headerBox.setAlignment(Pos.CENTER_LEFT);
 
-        // **Barra di ricerca**
         TextField searchField = new TextField();
         searchField.setPromptText("Search notes...");
         searchField.getStyleClass().add("search-box");
@@ -64,7 +61,6 @@ public class FlatNotesListComponent extends VBox {
         searchBox.setAlignment(Pos.CENTER_LEFT);
         searchBox.getStyleClass().add("search-container");
 
-        // **Contenitore note**
         notesContainer = new VBox(5);
         notesContainer.getStyleClass().add("notes-container");
 
@@ -133,7 +129,6 @@ public class FlatNotesListComponent extends VBox {
         NoteDetailComponent noteDetail = new NoteDetailComponent(note, new NoteDetailComponent.NoteChangeListener() {
             @Override
             public void onNoteUpdated(Note updatedNote) {
-                // Aggiorna la lista delle note con le modifiche
                 notes.set(notes.indexOf(note), updatedNote);
                 refreshNotesList();
                 modalStage.close();
@@ -141,7 +136,6 @@ public class FlatNotesListComponent extends VBox {
 
             @Override
             public void onNoteDeleted(Note deletedNote) {
-                // Rimuove la nota dalla lista
                 notes.remove(deletedNote);
                 refreshNotesList();
                 modalStage.close();

@@ -43,13 +43,11 @@ public class TranscriptionView {
         summaryComponent = new TranscriptionSummaryComponent();
         titleComponent = new TranscriptionTitleComponent(boundary);
 
-        // Spaziatori per centrare verticalmente
         Region topSpacer = new Region();
         Region bottomSpacer = new Region();
         VBox.setVgrow(topSpacer, Priority.ALWAYS);
         VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
 
-        // VBox per centrare gli elementi
         VBox centerBox = new VBox(10, topSpacer, editorComponent, controlsComponent, bottomSpacer);
         centerBox.setAlignment(Pos.CENTER);
 

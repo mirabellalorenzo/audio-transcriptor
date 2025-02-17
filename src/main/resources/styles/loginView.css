@@ -3,14 +3,12 @@
     -fx-background-color: white;
 }
 
-/* Logo App */
 .logo-container {
     padding: 10px 15px 20px 15px;
     -fx-alignment: center;
     -fx-padding: 10px 15px 20px 15px;
 }
 
-/* Titolo */
 .label-title {
     font-size: 30px;
     font-weight: bold;
@@ -19,7 +17,6 @@
     -fx-text-fill: #222;
 }
 
-/* Nome dell'App */
 .app-name-label {
     font-size: 16px;
     font-weight: bold;
@@ -28,7 +25,6 @@
     -fx-text-fill: #222;
 }
 
-/* Campi di input */
 .text-field, .password-field {
     background-color: white;
     font-size: 14px;
@@ -45,7 +41,6 @@
     -fx-min-width: 200px;
 }
 
-/* Form */
 .form-box {
     background-color: #F5F5F5;
     padding: 25px;
@@ -57,7 +52,6 @@
     -fx-spacing: 15px;
 }
 
-/* Pulsante Google */
 .button-google {
     background-color: #F5F5F5;
     border-color: #ccc;
@@ -71,19 +65,16 @@
     -fx-cursor: hand;
 }
 
-/* Pulsante Impostazioni */
 .button-settings {
     padding: 20px 0px 0px 0px;
     -fx-padding: 20px 0px 0px 0px;
 }
 
-/* Separatore "or" */
 .or-box {
     -fx-alignment: center;
     -fx-spacing: 10px;
 }
 
-/* Modal Impostazioni */
 .modal-box {
     background-color: white;
     padding: 30px;
@@ -97,13 +88,11 @@
     -fx-spacing: 25px;
 }
 
-/* Overlay sfocato */
 .overlay {
     background-color: rgba(0, 0, 0, 0.5);
     -fx-background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Label delle impostazioni */
 .label-settings {
     font-size: 14px;
     font-weight: bold;
@@ -112,7 +101,6 @@
     -fx-font-weight: bold;
 }
 
-/* Selettori (ComboBox) */
 .selector-box {
     font-size: 14px;
     background-color: #f8f9fa;
@@ -129,7 +117,6 @@
     -fx-cursor: hand;
 }
 
-/* GridPane delle impostazioni */
 .settings-grid {
     -fx-hgap: 10px;
     -fx-vgap: 15px;

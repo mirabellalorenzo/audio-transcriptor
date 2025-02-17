@@ -24,7 +24,6 @@ public class NavbarComponent extends HBox {
         setAlignment(Pos.CENTER);
         setStyle("-fx-background-color: #f8f9fa; -fx-min-height: 60px;");
 
-        // **Logo dell'App e Nome**
         ImageView appLogo = new ImageView(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
         appLogo.setFitWidth(40);
         appLogo.setFitHeight(40);
@@ -36,38 +35,33 @@ public class NavbarComponent extends HBox {
         HBox logoContainer = new HBox(10, appLogo, appNameLabel);
         logoContainer.setAlignment(Pos.CENTER_LEFT);
 
-        // **Strumenti al centro**
         HBox notesItem = createNavItem("Notes", "document-text-outline", () -> boundary.openPageView(primaryStage, "Notes"));
         HBox transcribeItem = createNavItem("Transcribe Audio", "mic-outline", () -> boundary.openPageView(primaryStage, "Transcribe Audio"));
 
         HBox toolsContainer = new HBox(30, notesItem, transcribeItem);
         toolsContainer.setAlignment(Pos.CENTER);
 
-        // **Logout, Email e Immagine Profilo a Destra**
         HBox logoutItem = createNavItem("Logout", "log-out-outline", () -> boundary.logout(primaryStage));
 
         Label emailLabel = new Label(userEmail);
         emailLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #444;");
 
-        // **Immagine del profilo con ritaglio circolare**
         ImageView profileImage = new ImageView(new Image(userPhotoUrl, 40, 40, true, true));
         profileImage.setFitWidth(40);
         profileImage.setFitHeight(40);
         profileImage.setPreserveRatio(true);
 
-        // **Applica un ritaglio circolare per garantire la forma corretta**
-        Circle clip = new Circle(20, 20, 20); // X, Y, Raggio (stesso raggio della metà dell'immagine)
+        Circle clip = new Circle(20, 20, 20);
         profileImage.setClip(clip);
 
-        // **Bordo intorno all'immagine (simula effetto cerchio)**
         StackPane profileImageContainer = new StackPane();
         profileImageContainer.setStyle(
-            "-fx-background-color: white; " +  // Sfondo bianco per il bordo
-            "-fx-border-color: #ccc; " + // Bordo grigio chiaro
+            "-fx-background-color: white; " +
+            "-fx-border-color: #ccc; " +
             "-fx-border-width: 1px; " + 
             "-fx-border-radius: 50%; " +
-            "-fx-background-radius: 50%; " + // Assicura il bordo circolare
-            "-fx-padding: 3px;" // Padding per distanziare immagine dal bordo
+            "-fx-background-radius: 50%; " +
+            "-fx-padding: 3px;"
         );
         profileImageContainer.getChildren().add(profileImage);
 
@@ -78,7 +72,6 @@ public class NavbarComponent extends HBox {
         HBox rightContainer = new HBox(20, logoutItem, profileContainer);
         rightContainer.setAlignment(Pos.CENTER_RIGHT);
 
-        // **Riempitivo centrale per centrare i tool**
         Region spacerLeft = new Region();
         Region spacerRight = new Region();
         HBox.setHgrow(spacerLeft, Priority.ALWAYS);

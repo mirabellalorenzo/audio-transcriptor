@@ -172,13 +172,13 @@ public class FileSystemNotesDAO implements NotesDAO {
         }
     }  
     
-    // Metodo per crittografare il testo con AES-256 CBC
+    // Method for encrypting text with AES-256 CBC
     private static String encryptAES(String data, String key) throws GeneralSecurityException {
         try {
             SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
     
-            byte[] iv = new byte[12]; // IV di 12 byte per GCM
+            byte[] iv = new byte[12];
             new SecureRandom().nextBytes(iv);
             GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
     
@@ -187,11 +187,11 @@ public class FileSystemNotesDAO implements NotesDAO {
     
             return Base64.getEncoder().encodeToString(iv) + ":" + Base64.getEncoder().encodeToString(encrypted);
         } catch (GeneralSecurityException e) {
-            throw e;  // Ora SonarQube non si lamenterà più
+            throw e;
         }
     }    
 
-    // Metodo per decrittografare il testo con AES-256 GCM
+    // Method for decrypting text with AES-256 GCM
     private static String decryptAES(String encryptedData, String key) throws GeneralSecurityException {
         try {
             String[] parts = encryptedData.split(":");
@@ -211,7 +211,7 @@ public class FileSystemNotesDAO implements NotesDAO {
             return new String(decrypted);
 
         } catch (GeneralSecurityException e) {
-            throw e;  // Mantiene l'eccezione specifica
+            throw e;
         } catch (IllegalArgumentException e) {
             throw new GeneralSecurityException("Errore nel formato dei dati crittografati", e);
         }

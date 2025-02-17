@@ -18,35 +18,30 @@ public class TranscriptionSummaryComponent {
 
     
     public void displaySummary(Transcription transcription, Stage primaryStage, BorderPane root) {
-        // **Box principale che racchiude le informazioni**
         VBox infoBox = new VBox(15);
         infoBox.setStyle(
-            "-fx-background-color: #F5F5F5; " + // Sfondo grigio chiaro
+            "-fx-background-color: #F5F5F5; " +
             "-fx-padding: 25px; " +
-            "-fx-background-radius: 30px; " +  // Arrotonda lo sfondo
-            "-fx-background-insets: 0;"  // Impedisce che lo sfondo esca dai bordi
+            "-fx-background-radius: 30px; " +
+            "-fx-background-insets: 0;"
         );        
         
-        infoBox.setMaxWidth(400); // Limita la larghezza per estetica
-        infoBox.setAlignment(Pos.CENTER_LEFT); // Contenuto allineato a sinistra
+        infoBox.setMaxWidth(400);
+        infoBox.setAlignment(Pos.CENTER_LEFT);
 
         Label titleLabel = new Label("Transcription Summary");
         titleLabel.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #222;");
 
-        // **Creazione degli elementi del riepilogo**
         HBox duration = createSummaryItem("time-outline", "Audio Duration: " + transcription.getDuration() + " sec");
         HBox time = createSummaryItem("hourglass-outline", "Processing Time: " + (transcription.getProcessingTime() / 1000.0) + " sec");
         HBox words = createSummaryItem("document-text-outline", "Number of Words: " + transcription.getWordCount());
         HBox characters = createSummaryItem("text-outline", "Number of Characters: " + transcription.getCharacterCount());
 
-        // **Pulsante personalizzato**
         CustomButtonComponent backToNotesButton = new CustomButtonComponent("Back to Notes", CustomButtonComponent.ButtonType.PRIMARY);
         backToNotesButton.setOnAction(e -> boundary.openPageView(primaryStage, "Notes"));
 
-        // **Aggiunta degli elementi nel box**
         infoBox.getChildren().addAll(duration, time, words, characters);
 
-        // **Box per centrare tutto**
         VBox centeredBox = new VBox(20, titleLabel, infoBox, backToNotesButton);
         centeredBox.setStyle("-fx-background-color: white; -fx-padding: 20px;");
         centeredBox.setAlignment(Pos.CENTER);

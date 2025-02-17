@@ -34,7 +34,6 @@ public class NotesListComponent extends VBox {
     
     private static final Logger logger = LoggerFactory.getLogger(NotesListComponent.class);
 
-    // Modifica del costruttore: ora richiede anche boundary e primaryStage per poter creare una nuova nota
     public NotesListComponent(HomeBoundary boundary, Stage primaryStage, List<Note> notes, NoteSelectionListener listener) {
         this.boundary = boundary;
         this.primaryStage = primaryStage;
@@ -42,7 +41,6 @@ public class NotesListComponent extends VBox {
         this.listener = listener;
         this.setStyle("-fx-padding: 35px 0px 0px 35px; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
         
-        // Header con titolo "Notes" e pulsante "New Note" (a destra)
         Label titleLabel = new Label("Notes");
         titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #222;");
         
@@ -73,7 +71,6 @@ public class NotesListComponent extends VBox {
         HBox headerBox = new HBox(10, titleLabel, spacer, newNoteButton);
         headerBox.setAlignment(Pos.CENTER_LEFT);
         
-        // Barra di ricerca
         TextField searchField = new TextField();
         searchField.setPromptText("Search notes...");
         searchField.setMaxWidth(Double.MAX_VALUE);
@@ -124,7 +121,6 @@ public class NotesListComponent extends VBox {
         this.getChildren().addAll(headerBox, searchBox, scrollPane);
 
 
-        // Filtraggio note in base al testo immesso nella barra di ricerca
         searchField.textProperty().addListener((obs, oldText, newText) -> {
             List<Note> filteredNotes = notes.stream()
                 .filter(note -> note.getTitle().toLowerCase().contains(newText.toLowerCase()))
@@ -244,7 +240,6 @@ public class NotesListComponent extends VBox {
             listener.onNoteSelected(newNote);
         });
     
-        // Seleziono automaticamente la nuova nota
         noteCard.getOnMouseClicked().handle(null);
     }    
     

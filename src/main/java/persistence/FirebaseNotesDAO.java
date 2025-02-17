@@ -17,7 +17,7 @@ public class FirebaseNotesDAO implements NotesDAO {
         try {
             db.collection(NOTES_KEY).document(note.getId()).set(note).get();
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            Thread.currentThread().interrupt();
             throw new IllegalStateException("Thread interrupted while saving note", e);
         } catch (ExecutionException e) {
             throw new IllegalStateException("Error saving note", e);
@@ -32,7 +32,7 @@ public class FirebaseNotesDAO implements NotesDAO {
                 notes.add(doc.toObject(Note.class));
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            Thread.currentThread().interrupt();
             throw new IllegalStateException("Thread interrupted while fetching notes", e);
         } catch (ExecutionException e) {
             throw new IllegalStateException("Error fetching notes", e);
@@ -46,7 +46,7 @@ public class FirebaseNotesDAO implements NotesDAO {
             DocumentSnapshot doc = db.collection(NOTES_KEY).document(id).get().get();
             return doc.toObject(Note.class);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            Thread.currentThread().interrupt();
             throw new IllegalStateException("Thread interrupted while fetching note by ID", e);
         } catch (ExecutionException e) {
             throw new IllegalStateException("Error fetching note by ID", e);
@@ -58,7 +58,7 @@ public class FirebaseNotesDAO implements NotesDAO {
         try {
             db.collection(NOTES_KEY).document(id).delete().get();
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // ✅ Ripristina il flag di interruzione
+            Thread.currentThread().interrupt();
             throw new IllegalStateException("Thread interrupted while deleting note", e);
         } catch (ExecutionException e) {
             throw new IllegalStateException("Error deleting note", e);
