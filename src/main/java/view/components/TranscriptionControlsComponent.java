@@ -19,6 +19,7 @@ public class TranscriptionControlsComponent extends VBox {
     private TranscriptionEditorComponent editorComponent;
     private Consumer<Transcription> showSummaryPage;
     private Stage primaryStage;
+    private static final String BUTTONS_STYLE = "-fx-alignment: center; -fx-pref-width: 100%;";
     
     private HBox uploadStateButtons, initialStateButtons, editingStateButtons;
 
@@ -49,24 +50,24 @@ public class TranscriptionControlsComponent extends VBox {
 
         // Stato 0: Solo "Carica Audio"
         uploadStateButtons = new HBox(10, uploadButton);
-        uploadStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        uploadStateButtons.setStyle(BUTTONS_STYLE);
         uploadStateButtons.setManaged(true);
         uploadStateButtons.setVisible(true);
 
         // Stato 1: "Modifica" + "Salva ed Esci"
         initialStateButtons = new HBox(10, editButton, saveAndExitButton);
-        initialStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        uploadStateButtons.setStyle(BUTTONS_STYLE);
         initialStateButtons.setManaged(false);
         initialStateButtons.setVisible(false);
 
         // Stato 2: "Salva", "Annulla" e "Ripristina"
         editingStateButtons = new HBox(10, saveButton, cancelButton, restoreButton);
-        editingStateButtons.setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        uploadStateButtons.setStyle(BUTTONS_STYLE);
         editingStateButtons.setManaged(false);
         editingStateButtons.setVisible(false);
 
         setSpacing(15);
-        setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
+        uploadStateButtons.setStyle(BUTTONS_STYLE);
 
         getChildren().addAll(uploadStateButtons, initialStateButtons, editingStateButtons);
     }
