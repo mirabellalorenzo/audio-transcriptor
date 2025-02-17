@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import view.components.SidebarComponent;
-import view.gui2.HomeView2;
 import view.components.NotesListComponent;
 import view.components.NoteDetailComponent;
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeView {
-    private static final Logger logger = LoggerFactory.getLogger(HomeView2.class);
+    private static final Logger logger = LoggerFactory.getLogger(HomeView.class);
     private final HomeBoundary boundary = new HomeBoundary();
     private NoteDetailComponent noteDetail;
     private NotesListComponent notesList;
