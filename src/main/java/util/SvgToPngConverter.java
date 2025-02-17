@@ -18,6 +18,10 @@ import org.apache.batik.transcoder.SVGAbstractTranscoder;
 public class SvgToPngConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgToPngConverter.class);
 
+    private SvgToPngConverter() {
+        throw new UnsupportedOperationException("Utility class - instantiation not allowed.");
+    }    
+
     public static ImageView loadSvgAsImage(String iconName, double size) {
         try {
             String path = "/icons/ionicons/" + iconName + ".svg";
