@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import javax.imageio.ImageIO;
+import org.apache.batik.transcoder.SVGAbstractTranscoder;
 
 public class SvgToPngConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SvgToPngConverter.class);
@@ -34,8 +35,8 @@ public class SvgToPngConverter {
             }
 
             PNGTranscoder transcoder = new PNGTranscoder();
-            transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, (float) size);
-            transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, (float) size);
+            transcoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, (float) size);
+            transcoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, (float) size);
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             TranscoderInput transcoderInput = new TranscoderInput(svgInput);
