@@ -51,7 +51,7 @@ public class TranscriptionTitleComponent {
             
             if (!title.isEmpty()) {
                 // Ora possiamo chiamare direttamente saveTranscription con il titolo scelto
-                boolean saved = boundary.saveTranscription(primaryStage, title);
+                boolean saved = boundary.saveTranscription(title);
                 if (saved) {
                     Transcription transcription = boundary.getTranscription();
                     TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent();

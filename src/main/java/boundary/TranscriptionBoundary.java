@@ -27,7 +27,7 @@ public class TranscriptionBoundary {
         return success;
     }
 
-    public boolean saveTranscription(Stage primaryStage, String title) {
+    public boolean saveTranscription(String title) {
         if (title == null || title.isBlank()) return false;
     
         boolean saved = controller.saveTranscription(title);
