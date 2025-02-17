@@ -88,9 +88,15 @@ public class FileSystemNotesDAO implements NotesDAO {
 
     private void setFilePermissions(File file) throws IOException {
         if (System.getProperty("os.name").toLowerCase().contains("win")) {
-            file.setReadable(false, false);
-            file.setWritable(true, true);
-            file.setExecutable(false, false);
+            if (!file.setReadable(false, false)) {
+                logger.warn("Impossibile disabilitare la lettura del file: {}", file.getAbsolutePath());
+            }
+            if (!file.setWritable(true, true)) {
+                logger.warn("Impossibile rendere scrivibile il file: {}", file.getAbsolutePath());
+            }
+            if (!file.setExecutable(false, false)) {
+                logger.warn("Impossibile disabilitare l'esecuzione del file: {}", file.getAbsolutePath());
+            }
         } else {
             Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rw-------");
             Files.setPosixFilePermissions(file.toPath(), perms);
