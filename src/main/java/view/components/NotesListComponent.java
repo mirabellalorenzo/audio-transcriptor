@@ -119,7 +119,7 @@ public class NotesListComponent extends VBox {
             "-fx-padding: 0;"
         );
 
-        scrollPane.getStylesheets().add(getClass().getResource("/view/scrollbar.css").toExternalForm());
+        scrollPane.getStylesheets().add(getClass().getResource("/styles/scrollbar.css").toExternalForm());
 
         this.getChildren().addAll(headerBox, searchBox, scrollPane);
 

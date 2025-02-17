@@ -95,7 +95,7 @@ public class NoteDetailComponent extends VBox {
         titleField.setPrefWidth(400); 
 
         contentArea = new TextArea(note.getContent());
-        contentArea.getStylesheets().add(getClass().getResource("/view/scrollbar.css").toExternalForm());
+        contentArea.getStylesheets().add(getClass().getResource("/styles/scrollbar.css").toExternalForm());
         contentArea.setWrapText(true);
         contentArea.setMaxWidth(700);
         contentArea.setMinWidth(400);

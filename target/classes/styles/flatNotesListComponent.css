@@ -1,0 +1,126 @@
+.root {
+    padding: 30px 200px;
+    background-color: white;
+    -fx-padding: 30px 200px;
+    -fx-spacing: 20;
+    -fx-background-color: white;
+}
+
+/* Stile titolo */
+.label-title {
+    font-size: 28px;
+    font-weight: bold;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222;
+}
+
+/* Stile bottone "New Note" */
+.button-new-note {
+    background-color: white;
+    border-color: #E0E0E0;
+    border-width: 1px;
+    border-radius: 30px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: hand;
+    -fx-background-color: white;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 30px;
+    -fx-background-radius: 30px;
+    -fx-padding: 8px 16px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #222;
+    -fx-cursor: hand;
+}
+
+/* Barra di ricerca */
+.search-box {
+    background-color: white;
+    border-color: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 30px;
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 12px;
+    -fx-border-radius: 30px;
+    -fx-pref-width: 100%;
+    -fx-text-fill: black;
+    -fx-prompt-text-fill: #999;
+}
+
+.search-container {
+    background-color: #FFFFFF;
+    border-radius: 30px;
+    border-color: #E0E0E0;
+    padding: 8px 16px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 30px;
+    -fx-border-color: #E0E0E0;
+    -fx-padding: 8px 16px;
+    -fx-pref-width: 100%;
+}
+
+/* Contenitore note */
+.notes-container {
+    background-color: white;
+    border-radius: 12px;
+    border-color: #ddd;
+    border-width: 1px;
+    padding: 10px;
+    -fx-background-color: white;
+    -fx-border-radius: 12px;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1px;
+    -fx-padding: 10px;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    background: white;
+    border-color: transparent;
+    padding: 0;
+    -fx-background: white;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/* Stile per ogni nota */
+.note-item {
+    border-radius: 8px;
+    padding: 12px;
+    cursor: hand;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px;
+    -fx-cursor: hand;
+}
+
+.note-item-even {
+    background-color: #FAFAFA;
+    -fx-background-color: #FAFAFA;
+}
+
+.note-item-odd {
+    background-color: #F0F0F0;
+    -fx-background-color: #F0F0F0;
+}
+
+/* Titolo nota */
+.note-title {
+    font-weight: bold;
+    font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+/* Preview nota */
+.note-preview {
+    font-size: 12px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #666;
+}

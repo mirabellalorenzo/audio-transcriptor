@@ -25,29 +25,17 @@ public class FlatNotesListComponent extends VBox {
     public FlatNotesListComponent(HomeBoundary boundary, Stage primaryStage, List<Note> notes, NoteSelectionListener listener) {
         this.notes = notes;
         this.listener = listener;
-
-        this.setStyle(
-            "-fx-padding: 30px 200px; " + // Maggiore padding laterale per adattarsi allo schermo
-            "-fx-spacing: 20; " +
-            "-fx-background-color: white;"
-        );
+        
+        // Carichiamo il file CSS
+        this.getStylesheets().add(getClass().getResource("/styles/flatNotesListComponent.css").toExternalForm());
+        this.getStyleClass().add("root");
 
         // **Titolo e pulsante per creare una nuova nota**
         Label titleLabel = new Label("Notes");
-        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #222;");
+        titleLabel.getStyleClass().add("label-title");
 
         Button newNoteButton = new Button("New Note");
-        newNoteButton.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-border-color: #E0E0E0; " +
-            "-fx-border-width: 1px; " +
-            "-fx-border-radius: 30px; " +
-            "-fx-background-radius: 30px; " +
-            "-fx-padding: 8px 16px; " +
-            "-fx-font-size: 14px; " +
-            "-fx-text-fill: #222; " +
-            "-fx-cursor: hand;"
-        );
+        newNoteButton.getStyleClass().add("button-new-note");
         newNoteButton.setOnAction(e -> {
             Note newNote = boundary.createNewNote();
             if (newNote != null) {
@@ -64,17 +52,8 @@ public class FlatNotesListComponent extends VBox {
         // **Barra di ricerca**
         TextField searchField = new TextField();
         searchField.setPromptText("Search notes...");
+        searchField.getStyleClass().add("search-box");
         searchField.setMaxWidth(Double.MAX_VALUE);
-        searchField.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-border-color: transparent; " +
-            "-fx-font-size: 14px; " +
-            "-fx-padding: 8px 12px; " +
-            "-fx-border-radius: 30px; " +
-            "-fx-pref-width: 100%; " +
-            "-fx-text-fill: black;" +
-            "-fx-prompt-text-fill: #999;"
-        );
 
         ImageView searchIcon = SvgToPngConverter.loadSvgAsImage("search-outline", 20);
         searchIcon.setFitHeight(20);
@@ -82,23 +61,11 @@ public class FlatNotesListComponent extends VBox {
         HBox.setHgrow(searchField, Priority.ALWAYS);
         HBox searchBox = new HBox(10, searchIcon, searchField);
         searchBox.setAlignment(Pos.CENTER_LEFT);
-        searchBox.setStyle(
-            "-fx-background-color: #FFFFFF; " +
-            "-fx-border-radius: 30px; " +
-            "-fx-border-color: #E0E0E0; " +
-            "-fx-padding: 8px 16px; " +
-            "-fx-pref-width: 100%; "
-        );
+        searchBox.getStyleClass().add("search-container");
 
-        // **Contenitore note con bordo più chiaro**
+        // **Contenitore note**
         notesContainer = new VBox(5);
-        notesContainer.setPadding(new Insets(10));
-        notesContainer.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-border-radius: 12px; " +
-            "-fx-border-color: #ddd; " + // Bordo più chiaro per il contenitore
-            "-fx-border-width: 1px;"
-        );
+        notesContainer.getStyleClass().add("notes-container");
 
         refreshNotesList();
 
@@ -106,12 +73,7 @@ public class FlatNotesListComponent extends VBox {
         scrollPane.setFitToWidth(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle(
-            "-fx-background: white; " +
-            "-fx-border-color: transparent; " +
-            "-fx-background-insets: 0; " +
-            "-fx-padding: 0;"
-        );
+        scrollPane.getStyleClass().add("scroll-pane");
 
         this.getChildren().addAll(headerBox, searchBox, scrollPane);
 
@@ -141,20 +103,19 @@ public class FlatNotesListComponent extends VBox {
         HBox noteItem = new HBox();
         noteItem.setSpacing(10);
         noteItem.setPadding(new Insets(12, 15, 12, 15));
-        noteItem.setStyle(
-            "-fx-background-color: " + (isEven ? "#FAFAFA;" : "#F0F0F0;") +
-            "-fx-border-radius: 8px; " +
-            "-fx-padding: 12px; " +
-            "-fx-cursor: hand;"
-        );
+        
+        // Applica la classe CSS appropriata
+        noteItem.getStyleClass().add("note-item");
+        noteItem.getStyleClass().add(isEven ? "note-item-even" : "note-item-odd");
+
         noteItem.setOnMouseClicked(e -> listener.onNoteSelected(note));
 
         VBox textContainer = new VBox(5);
         Label title = new Label(note.getTitle());
-        title.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #333;");
+        title.getStyleClass().add("note-title");
         
         Label preview = new Label(trimContent(note.getContent(), 80));
-        preview.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
+        preview.getStyleClass().add("note-preview");
         preview.setWrapText(true);
         
         textContainer.getChildren().addAll(title, preview);
