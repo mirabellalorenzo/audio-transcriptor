@@ -39,9 +39,8 @@ public class HomeBoundary {
     }    
 
     public Note createNewNote() {
-        Note newNote = homeController.createNewNote(); 
-        return newNote;
-    }     
+        return homeController.createNewNote();
+    }      
 
     public void updateNote(Note note) {
         if (note != null) {

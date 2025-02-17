@@ -4,6 +4,7 @@ import boundary.HomeBoundary;
 import entity.Note;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -24,7 +25,7 @@ public class FlatNotesListComponent extends VBox {
 
     public FlatNotesListComponent(HomeBoundary boundary, Stage primaryStage, List<Note> notes, NoteSelectionListener listener) {
         this.notes = notes;
-        this.listener = listener;
+        this.listener = note -> openNoteDetailModal(note, primaryStage);
         
         // Carichiamo il file CSS
         this.getStylesheets().add(getClass().getResource("/styles/flatNotesListComponent.css").toExternalForm());
@@ -108,7 +109,7 @@ public class FlatNotesListComponent extends VBox {
         noteItem.getStyleClass().add("note-item");
         noteItem.getStyleClass().add(isEven ? "note-item-even" : "note-item-odd");
 
-        noteItem.setOnMouseClicked(e -> listener.onNoteSelected(note));
+        noteItem.setOnMouseClicked(e -> openNoteDetailModal(note, (Stage) getScene().getWindow()));
 
         VBox textContainer = new VBox(5);
         Label title = new Label(note.getTitle());
@@ -122,6 +123,34 @@ public class FlatNotesListComponent extends VBox {
         noteItem.getChildren().add(textContainer);
 
         return noteItem;
+    }
+
+    private void openNoteDetailModal(Note note, Stage primaryStage) {
+        Stage modalStage = new Stage();
+        modalStage.initOwner(primaryStage);
+        modalStage.setTitle("Edit Note");
+
+        NoteDetailComponent noteDetail = new NoteDetailComponent(note, new NoteDetailComponent.NoteChangeListener() {
+            @Override
+            public void onNoteUpdated(Note updatedNote) {
+                // Aggiorna la lista delle note con le modifiche
+                notes.set(notes.indexOf(note), updatedNote);
+                refreshNotesList();
+                modalStage.close();
+            }
+
+            @Override
+            public void onNoteDeleted(Note deletedNote) {
+                // Rimuove la nota dalla lista
+                notes.remove(deletedNote);
+                refreshNotesList();
+                modalStage.close();
+            }
+        });
+
+        Scene scene = new Scene(noteDetail, 700, 550);
+        modalStage.setScene(scene);
+        modalStage.show();
     }
 
     private String trimContent(String content, int maxLength) {

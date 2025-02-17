@@ -21,7 +21,9 @@ public class TranscriptionControlsComponent extends VBox {
     private Consumer<Transcription> showSummaryPage;
     private Stage primaryStage;
     
-    private HBox uploadStateButtons, initialStateButtons, editingStateButtons;
+    private HBox uploadStateButtons;
+    private HBox initialStateButtons;
+    private HBox editingStateButtons;
 
     public TranscriptionControlsComponent(TranscriptionBoundary boundary, 
                                           TranscriptionEditorComponent editorComponent, 

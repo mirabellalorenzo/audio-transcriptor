@@ -35,7 +35,6 @@ public class TranscriptionView2 {
         String userPhotoUrl = homeBoundary.getUserPhotoUrl();
 
         NavbarComponent navbar = new NavbarComponent(homeBoundary, primaryStage, userEmail, userPhotoUrl);
-        FlatNotesListComponent notesListComponent = new FlatNotesListComponent(homeBoundary, primaryStage, new ArrayList<>(), note -> {});
 
         editorComponent = new TranscriptionEditorComponent(boundary);
         controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showTitlePage, primaryStage);

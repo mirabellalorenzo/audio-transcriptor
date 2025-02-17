@@ -32,6 +32,7 @@ view/components/CustomButtonComponent.class
 persistence/FileSystemNotesDAO.class
 entity/User.class
 persistence/FirebaseUsersDAO.class
+view/components/FlatNotesListComponent$1.class
 view/components/CustomButtonComponent$ButtonType.class
 control/TranscriptionController.class
 entity/Transcription.class
