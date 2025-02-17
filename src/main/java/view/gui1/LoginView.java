@@ -33,12 +33,13 @@ public class LoginView extends Application {
 
         // Layout per Login e Register
         VBox loginLayout = createLoginLayout(boundary);
-        StackPane root = new StackPane(loginLayout); // StackPane permette di sovrapporre elementi
+        StackPane root = new StackPane(loginLayout);
         loginScene = new Scene(root, 400, 500);
+        loginScene.getStylesheets().add(getClass().getResource("/styles/loginView.css").toExternalForm());
 
         VBox registerLayout = createRegisterLayout(boundary);
         registerScene = new Scene(registerLayout, 400, 500);
-
+        registerScene.getStylesheets().add(getClass().getResource("/styles/loginView.css").toExternalForm());
         primaryStage.setTitle(LOGIN_KEY);
         primaryStage.setScene(loginScene);
         primaryStage.show();
@@ -48,7 +49,7 @@ public class LoginView extends Application {
         // **Logo dell'App e Nome in HBox**
         HBox logoContainer = new HBox(10);
         logoContainer.setAlignment(Pos.CENTER);
-        logoContainer.setPadding(new Insets(10, 15, 20, 15)); // Aggiunge spazio sotto il logo
+        logoContainer.getStyleClass().add("logo-container");
 
         // Carica il logo PNG
         ImageView appLogo = new ImageView(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
@@ -57,31 +58,23 @@ public class LoginView extends Application {
         appLogo.setPreserveRatio(true);
 
         Label appNameLabel = new Label("AudioTranscriptor");
-        appNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #222;");
+        appNameLabel.getStyleClass().add("app-name-label");
 
         logoContainer.getChildren().addAll(appLogo, appNameLabel);
 
 
         Label title = new Label(LOGIN_KEY);
-        title.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #222;");
+        title.getStyleClass().add("label-title");
     
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
         emailField.setMaxWidth(280);
-        emailField.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-font-size: 14px; " +
-            "-fx-border-color: #dcdcdc; " +
-            "-fx-border-radius: 10px; " +
-            "-fx-background-radius: 10px; " +
-            "-fx-padding: 12px; " +
-            "-fx-min-width: 200px;"
-        );
+        emailField.getStyleClass().add("text-field");
     
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
         passwordField.setMaxWidth(280);
-        passwordField.setStyle(emailField.getStyle());
+        passwordField.getStyleClass().add("password-field");
     
         Label errorLabel = new Label();
         errorLabel.setVisible(false);
@@ -122,45 +115,24 @@ public class LoginView extends Application {
         registerLink.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         HBox registerBox = new HBox(registerLabel, registerLink);
         registerBox.setAlignment(Pos.CENTER);
-    
-        Label modeLabel = new Label("Storage Mode:");
-        modeLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-    
-        ComboBox<AppConfig.StorageMode> modeSelector = new ComboBox<>();
-        modeSelector.getItems().addAll(AppConfig.StorageMode.values());
-        modeSelector.setValue(AppConfig.getStorageMode());
-        modeSelector.setOnAction(e -> AppConfig.setStorageMode(modeSelector.getValue()));
-        modeSelector.setStyle(
-            "-fx-font-size: 14px; " +
-            "-fx-background-color: white; " +
-            "-fx-border-color: #dcdcdc; " +
-            "-fx-border-radius: 5px; " +
-            "-fx-padding: 3px;"
-        );
 
         CustomButtonComponent settingsButton = new CustomButtonComponent("Impostazioni", "settings-outline", CustomButtonComponent.ButtonType.SECONDARY);
         settingsButton.setOnAction(e -> showSettingsModal());
     
         HBox modeBox = new HBox(10, settingsButton);
         modeBox.setAlignment(Pos.CENTER);
-        modeBox.setStyle("-fx-padding: 20px 0px 0px 0px;");
+        modeBox.getStyleClass().add("button-settings");
     
         // **BOX PER IL FORM** (stile simile a TranscriptionTitleComponent)
         VBox formBox = new VBox(15, title, emailField, passwordField, errorLabel, loginButton, orBox, googleSignInButton, registerBox);
-        formBox.setStyle(
-            "-fx-background-color: #F5F5F5; " +
-            "-fx-padding: 25px; " +
-            "-fx-background-radius: 30px; " +
-            "-fx-background-insets: 0; " +
-            "-fx-alignment: center;"
-        );
+        formBox.getStyleClass().add("form-box");
         formBox.setMaxWidth(400);
         formBox.setAlignment(Pos.CENTER);
     
         // **WRAPPER CENTRALE**
         VBox wrapper = new VBox(logoContainer, formBox, modeBox);
         wrapper.setAlignment(Pos.CENTER);
-        wrapper.setStyle("-fx-background-color: white; -fx-padding: 20px;");
+        wrapper.getStyleClass().add("root");
         
         return wrapper;
     }    
@@ -178,26 +150,18 @@ public class LoginView extends Application {
         appLogo.setPreserveRatio(true);
 
         Label appNameLabel = new Label("AudioTranscriptor");
-        appNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #222;");
+        appNameLabel.getStyleClass().add("app-name-label");
 
         logoContainer.getChildren().addAll(appLogo, appNameLabel);
 
 
         Label title = new Label(REGISTER_KEY);
-        title.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: #222;");
+        title.getStyleClass().add("label-title");
     
         TextField emailField = new TextField();
         emailField.setPromptText("Email");
         emailField.setMaxWidth(280);
-        emailField.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-font-size: 14px; " +
-            "-fx-border-color: #dcdcdc; " +
-            "-fx-border-radius: 10px; " +
-            "-fx-background-radius: 10px; " +
-            "-fx-padding: 12px; " +
-            "-fx-min-width: 200px;"
-        );
+        emailField.getStyleClass().add("text-field");
     
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
@@ -245,13 +209,7 @@ public class LoginView extends Application {
         loginBox.setAlignment(Pos.CENTER);
     
         VBox formBox = new VBox(15, title, emailField, passwordField, errorLabel, registerButton, orBox, googleSignInButton, loginBox);
-        formBox.setStyle(
-            "-fx-background-color: #F5F5F5; " +
-            "-fx-padding: 25px; " +
-            "-fx-background-radius: 30px; " +
-            "-fx-background-insets: 0; " +
-            "-fx-alignment: center;"
-        );
+        formBox.getStyleClass().add("form-box");
         formBox.setMaxWidth(400);
         formBox.setAlignment(Pos.CENTER);
     
@@ -273,13 +231,7 @@ public class LoginView extends Application {
 
         Button googleSignInButton = new Button();
         googleSignInButton.setGraphic(googleContent);
-        googleSignInButton.setStyle(
-            "-fx-background-color: #F5F5F5;" +
-            "-fx-border-color: #ccc;" +
-            "-fx-padding: 10;" + 
-            "-fx-border-radius: 10px;" +
-            "-fx-cursor-pointer: hand;"
-        );
+        googleSignInButton.getStyleClass().add("button-google");
         googleSignInButton.setCursor(Cursor.HAND);
         googleSignInButton.setOnAction(e -> boundary.loginWithGoogle(primaryStage));
         return googleSignInButton;
@@ -295,15 +247,9 @@ public class LoginView extends Application {
 
     private void showSettingsModal() {
         VBox modalBox = new VBox(25);
-        modalBox.setStyle(
-            "-fx-background-color: white; " +
-            "-fx-padding: 30px; " +
-            "-fx-border-radius: 20px; " +  // ✅ Aggiunto border-radius
-            "-fx-background-radius: 20px; " + // ✅ Per JavaFX, serve anche questa proprietà
-            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 5);"
-        );
+        modalBox.getStyleClass().add("modal-box");
         modalBox.setAlignment(Pos.CENTER);
-        modalBox.setMaxWidth(380); // Maggiore larghezza
+        modalBox.setMaxWidth(380);
     
         Label title = new Label("Impostazioni");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
@@ -321,14 +267,7 @@ public class LoginView extends Application {
         ComboBox<AppConfig.StorageMode> storageSelector = new ComboBox<>();
         storageSelector.getItems().addAll(AppConfig.StorageMode.values());
         storageSelector.setValue(AppConfig.getStorageMode());
-        storageSelector.setStyle(
-            "-fx-font-size: 14px; " +
-            "-fx-background-color: #f8f9fa; " +
-            "-fx-border-color: #ccc; " +
-            "-fx-border-radius: 8px; " +
-            "-fx-background-radius: 8px; " +  // ✅ Anche qui per sicurezza
-            "-fx-padding: 5px;"
-        );
+        storageSelector.getStyleClass().add("selector-box");
         storageSelector.setCursor(Cursor.HAND);
         GridPane.setConstraints(storageSelector, 1, 0);
     
@@ -340,14 +279,7 @@ public class LoginView extends Application {
         ComboBox<AppConfig.GuiMode> guiSelector = new ComboBox<>();
         guiSelector.getItems().addAll(AppConfig.GuiMode.values());
         guiSelector.setValue(AppConfig.getGuiMode());
-        guiSelector.setStyle(
-            "-fx-font-size: 14px; " +
-            "-fx-background-color: #f8f9fa; " +
-            "-fx-border-color: #ccc; " +
-            "-fx-border-radius: 8px; " +
-            "-fx-background-radius: 8px; " +  // ✅ Per sicurezza
-            "-fx-padding: 5px;"
-        );
+        guiSelector.getStyleClass().add("selector-box");
         guiSelector.setCursor(Cursor.HAND);
         GridPane.setConstraints(guiSelector, 1, 1);
     
@@ -365,9 +297,7 @@ public class LoginView extends Application {
     
         // **Overlay sfocato con migliorato border-radius**
         VBox overlay = new VBox();
-        overlay.setStyle(
-            "-fx-background-color: rgba(0, 0, 0, 0.5); "
-        );
+        overlay.getStyleClass().add("overlay");
         overlay.setAlignment(Pos.CENTER);
         overlay.getChildren().add(modalBox);
     
@@ -380,7 +310,7 @@ public class LoginView extends Application {
     
     private void hideSettingsModal() {
         StackPane root = (StackPane) loginScene.getRoot();
-        root.getChildren().remove(root.getChildren().size() - 1); // Rimuove il modal
+        root.getChildren().remove(root.getChildren().size() - 1);
     }    
 
     public static void main(String[] args) {

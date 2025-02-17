@@ -1,0 +1,136 @@
+.root {
+    background-color: white;
+    -fx-background-color: white;
+}
+
+/* Logo App */
+.logo-container {
+    padding: 10px 15px 20px 15px;
+    -fx-alignment: center;
+    -fx-padding: 10px 15px 20px 15px;
+}
+
+/* Titolo */
+.label-title {
+    font-size: 30px;
+    font-weight: bold;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222;
+}
+
+/* Nome dell'App */
+.app-name-label {
+    font-size: 16px;
+    font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222;
+}
+
+/* Campi di input */
+.text-field, .password-field {
+    background-color: white;
+    font-size: 14px;
+    border-color: #dcdcdc;
+    border-radius: 10px;
+    padding: 12px;
+    min-width: 200px;
+    -fx-background-color: white;
+    -fx-font-size: 14px;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 12px;
+    -fx-min-width: 200px;
+}
+
+/* Form */
+.form-box {
+    background-color: #F5F5F5;
+    padding: 25px;
+    -fx-background-color: #F5F5F5;
+    -fx-padding: 25px;
+    -fx-background-radius: 30px;
+    -fx-background-insets: 0;
+    -fx-alignment: center;
+    -fx-spacing: 15px;
+}
+
+/* Pulsante Google */
+.button-google {
+    background-color: #F5F5F5;
+    border-color: #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: hand;
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: #ccc;
+    -fx-padding: 10px;
+    -fx-border-radius: 10px;
+    -fx-cursor: hand;
+}
+
+/* Pulsante Impostazioni */
+.button-settings {
+    padding: 20px 0px 0px 0px;
+    -fx-padding: 20px 0px 0px 0px;
+}
+
+/* Separatore "or" */
+.or-box {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+
+/* Modal Impostazioni */
+.modal-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    -fx-background-color: white;
+    -fx-padding: 30px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 5);
+    -fx-alignment: center;
+    -fx-spacing: 25px;
+}
+
+/* Overlay sfocato */
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Label delle impostazioni */
+.label-settings {
+    font-size: 14px;
+    font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+/* Selettori (ComboBox) */
+.selector-box {
+    font-size: 14px;
+    background-color: #f8f9fa;
+    border-color: #ccc;
+    border-radius: 8px;
+    padding: 5px;
+    cursor: hand;
+    -fx-font-size: 14px;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 5px;
+    -fx-cursor: hand;
+}
+
+/* GridPane delle impostazioni */
+.settings-grid {
+    -fx-hgap: 10px;
+    -fx-vgap: 15px;
+}
