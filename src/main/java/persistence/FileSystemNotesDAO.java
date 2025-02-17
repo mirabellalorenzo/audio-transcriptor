@@ -19,7 +19,6 @@ import java.util.Base64;
 import java.security.SecureRandom;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.nio.file.Path;
 import java.util.Set;
 
 
@@ -41,52 +40,61 @@ public class FileSystemNotesDAO implements NotesDAO {
 
     @Override
     public void save(Note note) throws IOException {
-        if (note.getId() == null || note.getId().isBlank()) {
-            note.setId(UUID.randomUUID().toString());
-        }
-
-        String safeTitle = note.getTitle().replaceAll("[^a-zA-Z0-9]", "_");
-        File newNoteFile = new File(notesDirectory, note.getId() + "_" + note.getUid() + "_" + safeTitle + ".txt");
-
-        File[] existingFiles = notesDirectory.listFiles((dir, name) -> name.startsWith(note.getId() + "_") && name.endsWith(".txt"));
-        if (existingFiles != null) {
-            for (File existingFile : existingFiles) {
-                if (!existingFile.getName().equals(newNoteFile.getName())) {
-                    if (existingFile.delete()) {
-                        logger.info("Eliminato vecchio file della nota: {}", existingFile.getName());
-                    } else {
-                        logger.warn("Impossibile eliminare il vecchio file della nota: {}", existingFile.getName());
-                    }
-                }
-            }
-        }
+        ensureNoteHasId(note);
+        File newNoteFile = getNoteFile(note);
+        deleteOldNoteFiles(note, newNoteFile);
 
         try {
             String encryptedContent = encryptAES(note.getContent(), AES_KEY);
-            Path filePath = newNoteFile.toPath();
-
-            // Scrivi il file crittografato
-            try (OutputStream outputStream = Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
-                outputStream.write(encryptedContent.getBytes());
-            }            
-
-            // Controlla il sistema operativo e imposta i permessi adeguati
-            if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                // Windows: Disabilita lettura per tutti tranne il proprietario
-                newNoteFile.setReadable(false, false);
-                newNoteFile.setWritable(true, true);
-                newNoteFile.setExecutable(false, false);
-            } else {
-                // Linux/macOS: Usa POSIX per restringere i permessi
-                Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rw-------"); // Solo il proprietario può leggere/scrivere
-                Files.setPosixFilePermissions(filePath, perms);
-            }
-
+            writeEncryptedFile(newNoteFile, encryptedContent);
+            setFilePermissions(newNoteFile);
             logger.info("Nota salvata in formato crittografato: {}", newNoteFile.getAbsolutePath());
         } catch (Exception e) {
             throw new IOException("Errore durante la crittografia e il salvataggio della nota: " + note.getTitle(), e);
         }
     }
+
+    private void ensureNoteHasId(Note note) {
+        if (note.getId() == null || note.getId().isBlank()) {
+            note.setId(UUID.randomUUID().toString());
+        }
+    }
+
+    private File getNoteFile(Note note) {
+        String safeTitle = note.getTitle().replaceAll("[^a-zA-Z0-9]", "_");
+        return new File(notesDirectory, note.getId() + "_" + note.getUid() + "_" + safeTitle + ".txt");
+    }
+
+    private void deleteOldNoteFiles(Note note, File newNoteFile) {
+        File[] existingFiles = notesDirectory.listFiles(
+            (dir, name) -> name.startsWith(note.getId() + "_") && name.endsWith(".txt")
+        );
+    
+        if (existingFiles != null) {
+            for (File existingFile : existingFiles) {
+                if (!existingFile.getName().equals(newNoteFile.getName()) && existingFile.delete()) {
+                    logger.info("Eliminato vecchio file della nota: {}", existingFile.getName());
+                }
+            }
+        }
+    }
+
+    private void writeEncryptedFile(File file, String content) throws IOException {
+        try (OutputStream outputStream = Files.newOutputStream(file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)) {
+            outputStream.write(content.getBytes());
+        }
+    }
+
+    private void setFilePermissions(File file) throws IOException {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            file.setReadable(false, false);
+            file.setWritable(true, true);
+            file.setExecutable(false, false);
+        } else {
+            Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rw-------");
+            Files.setPosixFilePermissions(file.toPath(), perms);
+        }
+    }    
 
     @Override
     public List<Note> getAll() {
