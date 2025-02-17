@@ -6,7 +6,8 @@ import javafx.scene.image.ImageView;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -14,24 +15,24 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 public class SvgToPngConverter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SvgToPngConverter.class);
+
     public static ImageView loadSvgAsImage(String iconName, double size) {
         try {
             String path = "/icons/ionicons/" + iconName + ".svg";
             URL resourceUrl = SvgToPngConverter.class.getResource(path);
 
             if (resourceUrl == null) {
-                System.err.println("ERRORE: Icona SVG non trovata: " + path);
+                LOGGER.warn("ERRORE: Icona SVG non trovata: {}", path);
                 return new ImageView();
             }
 
-            // Carica l'SVG come InputStream
             InputStream svgInput = resourceUrl.openStream();
             if (svgInput == null) {
-                System.err.println("ERRORE: InputStream nullo per: " + path);
+                LOGGER.warn("ERRORE: InputStream nullo per: {}", path);
                 return new ImageView();
             }
 
-            // Converti l'SVG in PNG
             PNGTranscoder transcoder = new PNGTranscoder();
             transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, (float) size);
             transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, (float) size);
@@ -41,7 +42,6 @@ public class SvgToPngConverter {
             TranscoderOutput transcoderOutput = new TranscoderOutput(outputStream);
             transcoder.transcode(transcoderInput, transcoderOutput);
 
-            // Converte il PNG generato in ImageView di JavaFX
             Image image = SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(outputStream.toByteArray())), null);
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(size);
@@ -49,7 +49,7 @@ public class SvgToPngConverter {
             return imageView;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Errore durante la conversione SVG->PNG: {}", e.getMessage(), e);
             return new ImageView();
         }
     }
