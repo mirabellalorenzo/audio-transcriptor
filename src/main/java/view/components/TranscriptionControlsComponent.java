@@ -15,7 +15,12 @@ import org.slf4j.LoggerFactory;
 
 public class TranscriptionControlsComponent extends VBox {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptionControlsComponent.class);
-    private CustomButtonComponent uploadButton, editButton, saveButton, saveAndExitButton, cancelButton, restoreButton;
+    private CustomButtonComponent uploadButton;
+    private CustomButtonComponent editButton;
+    private CustomButtonComponent saveButton;
+    private CustomButtonComponent saveAndExitButton;
+    private CustomButtonComponent cancelButton;
+    private CustomButtonComponent restoreButton;
     private TranscriptionBoundary boundary;
     private TranscriptionEditorComponent editorComponent;
     private Consumer<Transcription> showSummaryPage;

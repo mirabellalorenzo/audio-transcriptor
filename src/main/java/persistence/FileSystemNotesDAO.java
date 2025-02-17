@@ -190,8 +190,9 @@ public class FileSystemNotesDAO implements NotesDAO {
     
             return Base64.getEncoder().encodeToString(iv) + ":" + Base64.getEncoder().encodeToString(encrypted);
         } catch (GeneralSecurityException e) {
-            throw e;
-        }
+            logger.error("Errore durante la crittografia AES: {}", e.getMessage(), e);
+            throw new GeneralSecurityException("Errore nella crittografia dei dati", e);
+        }        
     }    
 
     // Method for decrypting text with AES-256 GCM
@@ -214,9 +215,11 @@ public class FileSystemNotesDAO implements NotesDAO {
             return new String(decrypted);
 
         } catch (GeneralSecurityException e) {
-            throw e;
+            logger.error("Errore durante la decrittografia AES: {}", e.getMessage(), e);
+            throw new GeneralSecurityException("Errore nella decrittografia dei dati", e);
         } catch (IllegalArgumentException e) {
+            logger.error("Errore nel formato dei dati crittografati: {}", e.getMessage(), e);
             throw new GeneralSecurityException("Errore nel formato dei dati crittografati", e);
-        }
+        }        
     }
 }
