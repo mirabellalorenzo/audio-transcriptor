@@ -8,10 +8,12 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import view.components.FlatNotesListComponent;
 import view.components.NavbarComponent;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class HomeView2 {
+    private static final Logger logger = LoggerFactory.getLogger(HomeView2.class);
     private final HomeBoundary boundary = new HomeBoundary();
     private Stage primaryStage;
     
@@ -41,6 +43,6 @@ public class HomeView2 {
     }
 
     private void openNoteDetail(Note note) {
-        System.out.println("Nota selezionata: " + note.getTitle());
-    }
+        logger.info("Nota selezionata: {}", note.getTitle());
+    }    
 }

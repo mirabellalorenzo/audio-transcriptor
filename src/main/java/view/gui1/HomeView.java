@@ -6,13 +6,16 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import view.components.SidebarComponent;
+import view.gui2.HomeView2;
 import view.components.NotesListComponent;
 import view.components.NoteDetailComponent;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeView {
+    private static final Logger logger = LoggerFactory.getLogger(HomeView2.class);
     private final HomeBoundary boundary = new HomeBoundary();
     private NoteDetailComponent noteDetail;
     private NotesListComponent notesList;
@@ -42,9 +45,9 @@ public class HomeView {
             new NoteDetailComponent.NoteChangeListener() {
                 @Override
                 public void onNoteUpdated(Note note) {
-                    boundary.updateNote(note);  // Passiamo la nota aggiornata
+                    boundary.updateNote(note);
                     notesList.refreshNotesList();
-                    System.out.println("Nota aggiornata: " + note.getTitle());
+                    logger.info("Nota aggiornata: {}", note.getTitle());
                 }
 
                 @Override
