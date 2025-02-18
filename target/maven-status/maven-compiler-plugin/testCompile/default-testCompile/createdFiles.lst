@@ -1,0 +1,4 @@
+persistence/FileSystemNotesDAOTest.class
+entity/TranscriptionTest.class
+persistence/FirebaseNotesDAOTest.class
+control/TranscriptionControllerTest.class
