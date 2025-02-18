@@ -9,10 +9,15 @@ public class NotesDAOFactory {
     }
 
     public static NotesDAO getNotesDAO() {
-        if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
-            return new FirebaseNotesDAO();
-        } else {
-            return new FileSystemNotesDAO();
+        switch (AppConfig.getStorageMode()) {
+            case DEMO:
+                return new InMemoryNotesDAO();
+            case DATABASE:
+                return new FirebaseNotesDAO();
+            case FILE_SYSTEM:
+                return new FileSystemNotesDAO();
+            default:
+                throw new IllegalStateException("Storage mode non valido: " + AppConfig.getStorageMode());
         }
     }
 }

@@ -2,15 +2,15 @@ package config;
 
 public class AppConfig {
     public enum StorageMode {
-        DATABASE, FILE_SYSTEM
+        DEMO, DATABASE, FILE_SYSTEM
     }
 
     public enum GuiMode {
         GUI_1, GUI_2
     }
 
-    private static StorageMode storageMode = StorageMode.DATABASE;
-    private static GuiMode guiMode = GuiMode.GUI_1; // Default GUI 1
+    private static StorageMode storageMode = StorageMode.DATABASE; // Default: Database
+    private static GuiMode guiMode = GuiMode.GUI_1; // Default: GUI 1
 
     public static StorageMode getStorageMode() {
         return storageMode;

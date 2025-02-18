@@ -253,11 +253,11 @@ public class LoginView extends Application {
     
         Label title = new Label("Impostazioni");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-        
+    
         GridPane settingsGrid = new GridPane();
         settingsGrid.setHgap(10);
         settingsGrid.setVgap(15);
-        
+    
         Label storageModeLabel = new Label("Storage Mode:");
         storageModeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333;");
         GridPane.setConstraints(storageModeLabel, 0, 0);
@@ -282,10 +282,12 @@ public class LoginView extends Application {
     
         settingsGrid.getChildren().addAll(storageModeLabel, storageSelector, guiModeLabel, guiSelector);
     
+        // Salvataggio delle impostazioni
         CustomButtonComponent saveButton = new CustomButtonComponent("Salva", CustomButtonComponent.ButtonType.PRIMARY);
         saveButton.setOnAction(e -> {
             AppConfig.setStorageMode(storageSelector.getValue());
             AppConfig.setGuiMode(guiSelector.getValue());
+            logger.info("Storage Mode selezionato: " + AppConfig.getStorageMode());
             hideSettingsModal();
         });
     

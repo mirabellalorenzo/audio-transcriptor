@@ -30,6 +30,7 @@
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/app/MainApp.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/view/components/TranscriptionEditorComponent.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/control/HomeController.java
+/home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/persistence/InMemoryNotesDAO.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/persistence/NotesDAOFactory.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/config/FirebaseConfig.java
 /home/maverick/Scrivania/Uni/Esami da fare/ISPW/audio-transcriptor/src/main/java/persistence/FirebaseUsersDAO.java
