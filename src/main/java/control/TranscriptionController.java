@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import config.AppConfig;
@@ -196,7 +194,7 @@ public class TranscriptionController {
             process.waitFor();
     
             if (result != null) {
-                logger.info("FFprobe output: " + result);
+                logger.info("FFprobe output: {}", result);
                 String[] parts = result.split(",");
                 if (parts.length == 2) {
                     int sampleRate = Integer.parseInt(parts[0].trim());
