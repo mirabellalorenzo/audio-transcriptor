@@ -105,7 +105,7 @@ public class TranscriptionController {
             String outputPath = outputFile.getAbsolutePath();
             String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
     
-            logger.info("Running FFmpeg command: " + command);
+            logger.info(String.format("Running FFmpeg command: %s", command));
     
             ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
             processBuilder.redirectErrorStream(true);
