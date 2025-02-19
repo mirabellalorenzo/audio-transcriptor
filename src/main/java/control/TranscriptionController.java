@@ -120,10 +120,16 @@ public class TranscriptionController {
             outputFile.deleteOnExit();
 
             if (!SystemUtils.IS_OS_UNIX) {
-                outputFile.setReadable(true, true);
-                outputFile.setWritable(true, true);
-                outputFile.setExecutable(true, true);
-            }
+                if (!outputFile.setReadable(true, true)) {
+                    logger.warn("Failed to set readable permissions for file: {}", outputFile.getAbsolutePath());
+                }
+                if (!outputFile.setWritable(true, true)) {
+                    logger.warn("Failed to set writable permissions for file: {}", outputFile.getAbsolutePath());
+                }
+                if (!outputFile.setExecutable(true, true)) {
+                    logger.warn("Failed to set executable permissions for file: {}", outputFile.getAbsolutePath());
+                }
+            }            
 
             String outputPath = outputFile.getAbsolutePath();
             String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
