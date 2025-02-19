@@ -92,52 +92,78 @@ public class TranscriptionController {
         try {
             String inputPath = inputFile.getAbsolutePath();
     
-            if (inputPath.endsWith(".wav")) {
-                if (isWavCompatible(inputPath)) {
-                    logger.info("File WAV already compatible, no conversion needed.");
-                    return inputFile;
-                } else {
-                    logger.info("File WAV not compatible, proceeding with conversion.");
-                }
+            if (inputPath.endsWith(".wav") && isWavCompatible(inputPath)) {
+                logger.info("File WAV already compatible, no conversion needed.");
+                return inputFile;
             }
     
-            // Definizione di un percorso sicuro per la directory temporanea
-            File secureTempDir = new File(System.getProperty("java.io.tmpdir"), "audio_transcriptor_secure");
-            if (!secureTempDir.exists() && !secureTempDir.mkdir()) {
-                logger.error("Failed to create secure temporary directory.");
+            File secureTempDir = createSecureTempDirectory();
+            if (secureTempDir == null) return null;
+    
+            File outputFile = createTempFile(secureTempDir);
+            if (outputFile == null) return null;
+    
+            setFilePermissions(outputFile);
+    
+            if (!convertAudio(inputPath, outputFile.getAbsolutePath())) {
                 return null;
             }
     
-            Path tempDir = secureTempDir.toPath();
+            return outputFile;
     
-            // Creazione del file temporaneo all'interno della directory sicura
-            Path tempFile = Files.createTempFile(tempDir, "converted_", ".wav");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Audio conversion interrupted", e);
+        } catch (IOException e) {
+            logger.error("Error during audio conversion: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private File createSecureTempDirectory() {
+        File secureTempDir = new File(System.getProperty("java.io.tmpdir"), "audio_transcriptor_secure");
+        if (!secureTempDir.exists() && !secureTempDir.mkdir()) {
+            logger.error("Failed to create secure temporary directory.");
+            return null;
+        }
+        return secureTempDir;
+    }
+
+    private File createTempFile(File tempDir) {
+        try {
+            Path tempFile = Files.createTempFile(tempDir.toPath(), "converted_", ".wav");
             File outputFile = tempFile.toFile();
             outputFile.deleteOnExit();
-    
-            // Impostazione dei permessi su Windows
-            if (!SystemUtils.IS_OS_UNIX) {
-                if (!outputFile.setReadable(true, true)) {
-                    logger.warn("Failed to set readable permissions for file: {}", outputFile.getAbsolutePath());
-                }
-                if (!outputFile.setWritable(true, true)) {
-                    logger.warn("Failed to set writable permissions for file: {}", outputFile.getAbsolutePath());
-                }
-                if (!outputFile.setExecutable(true, true)) {
-                    logger.warn("Failed to set executable permissions for file: {}", outputFile.getAbsolutePath());
-                }
+            return outputFile;
+        } catch (IOException e) {
+            logger.error("Failed to create temp file: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void setFilePermissions(File file) {
+        if (!SystemUtils.IS_OS_UNIX) {
+            if (!file.setReadable(true, true)) {
+                logger.warn("Failed to set readable permissions for file: {}", file.getAbsolutePath());
             }
+            if (!file.setWritable(true, true)) {
+                logger.warn("Failed to set writable permissions for file: {}", file.getAbsolutePath());
+            }
+            if (!file.setExecutable(true, true)) {
+                logger.warn("Failed to set executable permissions for file: {}", file.getAbsolutePath());
+            }
+        }
+    }
+
+    private boolean convertAudio(String inputPath, String outputPath) throws IOException, InterruptedException {
+        String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
+        logger.info("Running FFmpeg command: {}", command);
     
-            String outputPath = outputFile.getAbsolutePath();
-            String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
     
-            logger.info("Running FFmpeg command: {}", command);
-    
-            ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-    
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             StringBuilder ffmpegOutput = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -149,19 +175,10 @@ public class TranscriptionController {
     
             if (exitCode != 0) {
                 logger.error("FFmpeg conversion failed. Output:\n{}", ffmpegOutput);
-                return null;
+                return false;
             }
-    
-            logger.info("Audio converted successfully to {}", outputPath);
-            return outputFile;
-    
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Audio conversion interrupted", e);
-        } catch (IOException e) {
-            logger.error("Error during audio conversion: {}", e.getMessage(), e);
-            return null;
         }
+        return true;
     }    
     
     private boolean isWavCompatible(String filePath) {
