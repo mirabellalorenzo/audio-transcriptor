@@ -74,9 +74,9 @@ public class TranscriptionController {
 
             if (!convertedFile.equals(originalFile) && convertedFile.exists()) {
                 if (!convertedFile.delete()) {
-                    logger.warn("Failed to delete temporary file: " + convertedFile.getAbsolutePath());
+                    logger.warn("Failed to delete temporary file: {}", convertedFile.getAbsolutePath());
                 } else {
-                    logger.info("Temporary file deleted: " + convertedFile.getAbsolutePath());
+                    logger.info("Temporary file deleted: {}", convertedFile.getAbsolutePath());
                 }
             }            
 
