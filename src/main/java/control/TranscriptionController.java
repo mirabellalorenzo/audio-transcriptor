@@ -20,10 +20,6 @@ import org.slf4j.LoggerFactory;
 import java.util.function.DoubleConsumer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Set;
 import org.apache.commons.lang3.SystemUtils;
 
 public class TranscriptionController {
@@ -105,16 +101,14 @@ public class TranscriptionController {
                 }
             }
     
-            // Creazione di una directory sicura per i file temporanei
-            Path tempDir;
-            if (SystemUtils.IS_OS_UNIX) {
-                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(
-                    PosixFilePermissions.fromString("rwx------")
-                );
-                tempDir = Files.createTempDirectory("audio_transcriptor_", attr); // Conforme
-            } else {
-                tempDir = Files.createTempDirectory("audio_transcriptor_"); // Conforme
+            // Definizione di un percorso sicuro per la directory temporanea
+            File secureTempDir = new File(System.getProperty("java.io.tmpdir"), "audio_transcriptor_secure");
+            if (!secureTempDir.exists() && !secureTempDir.mkdir()) {
+                logger.error("Failed to create secure temporary directory.");
+                return null;
             }
+    
+            Path tempDir = secureTempDir.toPath();
     
             // Creazione del file temporaneo all'interno della directory sicura
             Path tempFile = Files.createTempFile(tempDir, "converted_", ".wav");
