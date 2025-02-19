@@ -7,38 +7,56 @@ import persistence.NotesDAO;
 import persistence.NotesDAOFactory;
 import org.vosk.Model;
 import org.vosk.Recognizer;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.function.Consumer;
 
 public class TranscriptionController {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptionController.class);
     private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
     private Transcription transcription;
 
-    public boolean processAudio(String filePath) {
-        File audioFile = new File(filePath);
-        if (!audioFile.exists() || !audioFile.canRead()) {
+    public boolean processAudio(String filePath, Consumer<Double> progressCallback) {
+        File originalFile = new File(filePath);
+        if (!originalFile.exists() || !originalFile.canRead()) {
             logger.error("Error: The audio file does not exist or cannot be read.");
+            return false;
+        }
+
+        // 🔹 Converti il file se non è già WAV 16kHz mono
+        File convertedFile = convertToWav16KHzMono(originalFile);
+        if (convertedFile == null) {
+            logger.error("Error: Audio conversion failed.");
             return false;
         }
 
         long startTime = System.currentTimeMillis();
 
         try (Model model = new Model("src/main/resources/models/vosk-model-small-it-0.22");
-             FileInputStream audioStream = new FileInputStream(audioFile);
+             FileInputStream audioStream = new FileInputStream(convertedFile);
              Recognizer recognizer = new Recognizer(model, 16000)) {
 
-            byte[] buffer = new byte[8192];
+            byte[] buffer = new byte[16384];
+            long totalBytes = convertedFile.length();
+            long processedBytes = 0;
             int bytesRead;
             StringBuilder result = new StringBuilder();
 
             while ((bytesRead = audioStream.read(buffer)) != -1) {
+                processedBytes += bytesRead;
+                double progress = (double) processedBytes / totalBytes;
+                progressCallback.accept(progress);
+
                 if (recognizer.acceptWaveForm(buffer, bytesRead)) {
                     JsonObject jsonResult = JsonParser.parseString(recognizer.getResult()).getAsJsonObject();
                     result.append(jsonResult.get("text").getAsString()).append(" ");
@@ -53,12 +71,93 @@ public class TranscriptionController {
 
             transcription = new Transcription(result.toString().trim(), 120, System.currentTimeMillis(), processingTime);
             logger.info("Transcription completed successfully in {} ms.", processingTime);
+
+            // 🔹 Elimina il file convertito dopo la trascrizione
+            if (!convertedFile.equals(originalFile) && convertedFile.exists()) {
+                convertedFile.delete();
+            }
+
             return true;
 
         } catch (IOException e) {
             logger.error("Error during transcription: {}", e.getMessage(), e);
             return false;
         }
+    }
+
+    private File convertToWav16KHzMono(File inputFile) {
+        try {
+            String inputPath = inputFile.getAbsolutePath();
+            
+            if (inputPath.endsWith(".wav")) {
+                if (isWavCompatible(inputPath)) {
+                    logger.info("File WAV già compatibile, nessuna conversione necessaria.");
+                    return inputFile;
+                } else {
+                    logger.info("File WAV non compatibile, procedo alla conversione.");
+                }
+            }
+    
+            File outputFile = File.createTempFile("converted_", ".wav");
+            String outputPath = outputFile.getAbsolutePath();
+            String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
+    
+            logger.info("Running FFmpeg command: " + command);
+    
+            ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+    
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder ffmpegOutput = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                ffmpegOutput.append(line).append("\n");
+            }
+    
+            int exitCode = process.waitFor();
+            logger.info("FFmpeg exit code: " + exitCode);
+    
+            if (exitCode != 0) {
+                logger.error("FFmpeg conversion failed. Output:\n" + ffmpegOutput);
+                return null;
+            }
+    
+            logger.info("Audio converted successfully to " + outputPath);
+            return outputFile;
+    
+        } catch (Exception e) {
+            logger.error("Error during audio conversion: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+    
+    private boolean isWavCompatible(String filePath) {
+        try {
+            String command = String.format("ffprobe -i \"%s\" -show_entries stream=sample_rate,channels -of csv=p=0", filePath);
+            
+            ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+    
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String result = reader.readLine();
+            process.waitFor();
+    
+            if (result != null) {
+                logger.info("FFprobe output: " + result);
+                String[] parts = result.split(",");
+                if (parts.length == 2) {
+                    int sampleRate = Integer.parseInt(parts[0].trim());
+                    int channels = Integer.parseInt(parts[1].trim());
+    
+                    return sampleRate == 16000 && channels == 1;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error checking WAV compatibility: {}", e.getMessage(), e);
+        }
+        return false;
     }    
 
     public boolean saveTranscription(String title) {
@@ -66,9 +165,9 @@ public class TranscriptionController {
             logger.error("Invalid transcription or title.");
             return false;
         }
-    
+
         boolean saved = false;
-    
+
         if (AppConfig.getStorageMode() == AppConfig.StorageMode.DATABASE) {
             saved = saveTranscriptionToFirebase(title);
         } else if (AppConfig.getStorageMode() == AppConfig.StorageMode.FILE_SYSTEM) {
@@ -76,13 +175,13 @@ public class TranscriptionController {
         } else {
             logger.error("Unsupported storage mode.");
         }
-    
+
         return saved;
-    }           
+    }
 
     public void setTranscription(Transcription transcription) {
         this.transcription = transcription;
-    }    
+    }
 
     private boolean saveTranscriptionToFile(String title, String id) {
         User user = AuthController.getCurrentUser();
@@ -90,11 +189,11 @@ public class TranscriptionController {
             logger.error("Error: No authenticated user.");
             return false;
         }
-    
+
         String safeTitle = title.replaceAll("[^a-zA-Z0-9]", "_");
-    
+
         Note note = new Note(id, user.getId(), safeTitle, transcription.getText());
-    
+
         try {
             notesDAO.save(note);
             logger.info("Transcription saved as a note: {}", note.getTitle());
@@ -127,7 +226,7 @@ public class TranscriptionController {
             logger.error("Error saving note in Firebase: {}", e.getMessage(), e);
             return false;
         }
-    }    
+    }
 
     public Transcription getTranscription() {
         return transcription;

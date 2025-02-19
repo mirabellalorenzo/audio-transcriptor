@@ -3,13 +3,15 @@ package view.components;
 import boundary.TranscriptionBoundary;
 import entity.Transcription;
 import javafx.geometry.Pos;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
 import java.util.function.Consumer;
-
+import javafx.application.Platform;
+import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +24,10 @@ public class TranscriptionControlsComponent extends VBox {
     private CustomButtonComponent cancelButton;
     private CustomButtonComponent restoreButton;
     private TranscriptionBoundary boundary;
+    private ProgressBar progressBar;
     private TranscriptionEditorComponent editorComponent;
     private Consumer<Transcription> showSummaryPage;
-    private Stage primaryStage;
+    private Label uploadInfoLabel;
     
     private HBox uploadStateButtons;
     private HBox initialStateButtons;
@@ -37,10 +40,9 @@ public class TranscriptionControlsComponent extends VBox {
         this.boundary = boundary;
         this.editorComponent = editorComponent;
         this.showSummaryPage = showSummaryPage;
-        this.primaryStage = primaryStage;
         
         // Buttons
-        uploadButton = new CustomButtonComponent("Upload Audio", null, CustomButtonComponent.ButtonType.PRIMARY);
+        uploadButton = new CustomButtonComponent("Select File", null, CustomButtonComponent.ButtonType.PRIMARY);
         editButton = new CustomButtonComponent("Edit", null, CustomButtonComponent.ButtonType.SECONDARY);
         saveButton = new CustomButtonComponent("Save", null, CustomButtonComponent.ButtonType.PRIMARY);
         saveAndExitButton = new CustomButtonComponent("Save & Exit", null, CustomButtonComponent.ButtonType.PRIMARY);
@@ -56,6 +58,11 @@ public class TranscriptionControlsComponent extends VBox {
         restoreButton.setOnAction(event -> restoreOriginal());
 
         // State 0: "Upload Audio"
+        uploadInfoLabel = new Label("Accepted audio formats: MP3, WAV");
+        uploadInfoLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
+        uploadInfoLabel.setAlignment(Pos.CENTER);
+        uploadInfoLabel.setVisible(true);
+
         uploadStateButtons = new HBox(10, uploadButton);
         uploadStateButtons.setAlignment(Pos.CENTER);
         uploadStateButtons.setManaged(true);
@@ -67,42 +74,65 @@ public class TranscriptionControlsComponent extends VBox {
         initialStateButtons.setManaged(false);
         initialStateButtons.setVisible(false);
 
-        // State 2: "Salva", "Cancel" e "Reset"
+        // State 2: "Save", "Cancel" e "Reset"
         editingStateButtons = new HBox(10, saveButton, cancelButton, restoreButton);
         editingStateButtons.setAlignment(Pos.CENTER);
         editingStateButtons.setManaged(false);
         editingStateButtons.setVisible(false);
 
+        progressBar = new ProgressBar(0);
+        progressBar.setPrefWidth(300);
+        progressBar.setStyle(
+            "-fx-accent: black;" +
+            "-fx-background-radius: 10px;" +
+            "-fx-border-radius: 10px;"
+        );            
+        progressBar.setVisible(false);        
+
+
         setSpacing(15);
         setStyle("-fx-alignment: center; -fx-pref-width: 100%;");
 
-        getChildren().addAll(uploadStateButtons, initialStateButtons, editingStateButtons);
+        getChildren().addAll(uploadInfoLabel, uploadStateButtons, initialStateButtons, editingStateButtons, progressBar);
     }
 
     private void handleUpload() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleziona un file audio");
+        fileChooser.setTitle("Select an audio file");
         fileChooser.getExtensionFilters().add(
             new FileChooser.ExtensionFilter("Audio Files", "*.mp3", "*.wav", "*.ogg")
         );
-
+    
         File selectedFile = fileChooser.showOpenDialog(getScene().getWindow());
-
+    
         if (selectedFile != null) {
-            boolean success = boundary.uploadAudio(selectedFile.getAbsolutePath());
-            if (success) {
-                Transcription transcription = boundary.getTranscription();
-                editorComponent.loadTranscription(transcription);
-
-                // Cambia dallo Stato 0 (upload) allo Stato 1 (modifica e salva ed esci)
-                uploadStateButtons.setManaged(false);
-                uploadStateButtons.setVisible(false);
-
-                initialStateButtons.setManaged(true);
-                initialStateButtons.setVisible(true);
-            }
+            uploadInfoLabel.setVisible(false);
+            uploadButton.setVisible(false);
+    
+            progressBar.setProgress(0);
+            progressBar.setVisible(true);
+    
+            boundary.uploadAudioAsync(selectedFile.getAbsolutePath(), 
+                progress -> Platform.runLater(() -> progressBar.setProgress(progress)),
+                () -> Platform.runLater(() -> {
+                    progressBar.setVisible(false);
+    
+                    Transcription transcription = boundary.getTranscription();
+                    editorComponent.loadTranscription(transcription);
+    
+                    uploadStateButtons.setManaged(false);
+                    uploadStateButtons.setVisible(false);
+                    initialStateButtons.setManaged(true);
+                    initialStateButtons.setVisible(true);
+                }),
+                () -> Platform.runLater(() -> {
+                    progressBar.setVisible(false);
+                    uploadButton.setVisible(true);
+                    logger.error("Transcription failed.");
+                })
+            );
         }
-    }
+    }    
 
     private void enableEditingMode() {
         editorComponent.enableEditing();

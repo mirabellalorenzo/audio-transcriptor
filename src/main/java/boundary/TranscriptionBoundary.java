@@ -7,6 +7,9 @@ import view.gui1.TranscriptionView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.function.Consumer;
+import javafx.concurrent.Task;
+
 
 public class TranscriptionBoundary {
     private final TranscriptionController controller;
@@ -16,16 +19,32 @@ public class TranscriptionBoundary {
         this.controller = controller;
     }
 
-    public boolean uploadAudio(String filePath) {
-        boolean success = controller.processAudio(filePath);
-        if (success) {
-            logger.info("Transcription completed successfully.");
-            logger.info("Transcription text: {}", controller.getTranscription().getText());
-        } else {
-            logger.error("Error uploading the audio file.");
-        }
-        return success;
-    }
+    public void uploadAudioAsync(String filePath, Consumer<Double> progressCallback, Runnable onSuccess, Runnable onFailure) {
+        Task<Boolean> task = new Task<>() {
+            @Override
+            protected Boolean call() {
+                return controller.processAudio(filePath, progressCallback);
+            }
+        };
+    
+        task.setOnSucceeded(event -> {
+            if (task.getValue()) {
+                logger.info("Transcription completed successfully.");
+                logger.info("Transcription text: {}", controller.getTranscription().getText());
+                onSuccess.run();
+            } else {
+                logger.error("Error uploading the audio file.");
+                onFailure.run();
+            }
+        });
+    
+        task.setOnFailed(event -> {
+            logger.error("Transcription task failed.");
+            onFailure.run();
+        });
+    
+        new Thread(task).start();
+    }    
 
     public boolean saveTranscription(String title) {
         if (title == null || title.isBlank()) return false;
