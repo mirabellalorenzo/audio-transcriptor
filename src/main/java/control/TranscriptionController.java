@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import config.AppConfig;
@@ -113,7 +115,7 @@ public class TranscriptionController {
     
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Audio conversion interrupted", e);
+            throw new IllegalStateException("Audio conversion interrupted", e);
         } catch (IOException e) {
             logger.error("Error during audio conversion: {}", e.getMessage(), e);
             return null;
