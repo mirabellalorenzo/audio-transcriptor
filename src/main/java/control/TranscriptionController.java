@@ -7,20 +7,20 @@ import persistence.NotesDAO;
 import persistence.NotesDAOFactory;
 import org.vosk.Model;
 import org.vosk.Recognizer;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 public class TranscriptionController {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptionController.class);
@@ -34,7 +34,6 @@ public class TranscriptionController {
             return false;
         }
 
-        // 🔹 Converti il file se non è già WAV 16kHz mono
         File convertedFile = convertToWav16KHzMono(originalFile);
         if (convertedFile == null) {
             logger.error("Error: Audio conversion failed.");
@@ -92,7 +91,7 @@ public class TranscriptionController {
     private File convertToWav16KHzMono(File inputFile) {
         try {
             String inputPath = inputFile.getAbsolutePath();
-            
+    
             if (inputPath.endsWith(".wav")) {
                 if (isWavCompatible(inputPath)) {
                     logger.info("File WAV already compatible, no conversion needed.");
@@ -102,11 +101,15 @@ public class TranscriptionController {
                 }
             }
     
-            File outputFile = File.createTempFile("converted_", ".wav");
+            Path tempDir = Files.createTempDirectory("audio_transcriptor");
+            Path tempFile = Files.createTempFile(tempDir, "converted_", ".wav");
+            File outputFile = tempFile.toFile();
+            outputFile.deleteOnExit();
+    
             String outputPath = outputFile.getAbsolutePath();
             String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
     
-            logger.info(String.format("Running FFmpeg command: %s", command));
+            logger.info("Running FFmpeg command: {}", command);
     
             ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
             processBuilder.redirectErrorStream(true);
@@ -120,14 +123,14 @@ public class TranscriptionController {
             }
     
             int exitCode = process.waitFor();
-            logger.info("FFmpeg exit code: " + exitCode);
+            logger.info("FFmpeg exit code: {}", exitCode);
     
             if (exitCode != 0) {
-                logger.error("FFmpeg conversion failed. Output:\n" + ffmpegOutput);
+                logger.error("FFmpeg conversion failed. Output:\n{}", ffmpegOutput);
                 return null;
             }
     
-            logger.info("Audio converted successfully to " + outputPath);
+            logger.info("Audio converted successfully to {}", outputPath);
             return outputFile;
     
         } catch (InterruptedException e) {
