@@ -20,13 +20,14 @@ import config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
 
 public class TranscriptionController {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptionController.class);
     private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
     private Transcription transcription;
 
-    public boolean processAudio(String filePath, Consumer<Double> progressCallback) {
+    public boolean processAudio(String filePath, DoubleConsumer progressCallback) {
         File originalFile = new File(filePath);
         if (!originalFile.exists() || !originalFile.canRead()) {
             logger.error("Error: The audio file does not exist or cannot be read.");
@@ -160,9 +161,13 @@ public class TranscriptionController {
                     return sampleRate == 16000 && channels == 1;
                 }
             }
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione del thread
+            logger.error("WAV compatibility check interrupted: {}", e.getMessage(), e);
+            return false;
+        } catch (IOException e) {
             logger.error("Error checking WAV compatibility: {}", e.getMessage(), e);
-        }
+        }        
         return false;
     }    
 

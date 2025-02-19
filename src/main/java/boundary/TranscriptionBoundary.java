@@ -4,12 +4,10 @@ import control.TranscriptionController;
 import entity.Transcription;
 import javafx.stage.Stage;
 import view.gui1.TranscriptionView;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
 import javafx.concurrent.Task;
-
 
 public class TranscriptionBoundary {
     private final TranscriptionController controller;
@@ -19,7 +17,7 @@ public class TranscriptionBoundary {
         this.controller = controller;
     }
 
-    public void uploadAudioAsync(String filePath, Consumer<Double> progressCallback, Runnable onSuccess, Runnable onFailure) {
+    public void uploadAudioAsync(String filePath, DoubleConsumer progressCallback, Runnable onSuccess, Runnable onFailure) {
         Task<Boolean> task = new Task<>() {
             @Override
             protected Boolean call() {
