@@ -14,7 +14,7 @@ class TranscriptionControllerTest {
 
     @Test
     void testProcessAudio_ValidFile() {
-        boolean result = transcriptionController.processAudio("test_audio.wav");  // Cambiato da uploadAudio a processAudio
+        boolean result = transcriptionController.processAudio("src/test/resources/test_audio.wav");
         System.out.println("Risultato del test: " + result);
         assertTrue(result, "Il file audio dovrebbe essere elaborato correttamente.");
     }    
