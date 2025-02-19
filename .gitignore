@@ -1,6 +1,5 @@
 out/
 *.class
-*.wav
 *.txt
 serviceAccountKey.json
 target/classes/serviceAccountKey.json
