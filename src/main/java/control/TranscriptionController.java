@@ -95,7 +95,7 @@ public class TranscriptionController {
     private File convertToWav16KHzMono(File inputFile) {
         try {
             String inputPath = inputFile.getAbsolutePath();
-
+    
             if (inputPath.endsWith(".wav")) {
                 if (isWavCompatible(inputPath)) {
                     logger.info("File WAV already compatible, no conversion needed.");
@@ -104,21 +104,24 @@ public class TranscriptionController {
                     logger.info("File WAV not compatible, proceeding with conversion.");
                 }
             }
-
+    
+            // Creazione di una directory sicura per i file temporanei
             Path tempDir;
             if (SystemUtils.IS_OS_UNIX) {
                 FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(
                     PosixFilePermissions.fromString("rwx------")
                 );
-                tempDir = Files.createTempDirectory("audio_transcriptor_", attr);
+                tempDir = Files.createTempDirectory("audio_transcriptor_", attr); // Conforme
             } else {
-                tempDir = Files.createTempDirectory("audio_transcriptor_");
+                tempDir = Files.createTempDirectory("audio_transcriptor_"); // Conforme
             }
-
+    
+            // Creazione del file temporaneo all'interno della directory sicura
             Path tempFile = Files.createTempFile(tempDir, "converted_", ".wav");
             File outputFile = tempFile.toFile();
             outputFile.deleteOnExit();
-
+    
+            // Impostazione dei permessi su Windows
             if (!SystemUtils.IS_OS_UNIX) {
                 if (!outputFile.setReadable(true, true)) {
                     logger.warn("Failed to set readable permissions for file: {}", outputFile.getAbsolutePath());
@@ -129,35 +132,35 @@ public class TranscriptionController {
                 if (!outputFile.setExecutable(true, true)) {
                     logger.warn("Failed to set executable permissions for file: {}", outputFile.getAbsolutePath());
                 }
-            }            
-
+            }
+    
             String outputPath = outputFile.getAbsolutePath();
             String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
-
+    
             logger.info("Running FFmpeg command: {}", command);
-
+    
             ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-
+    
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder ffmpegOutput = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 ffmpegOutput.append(line).append("\n");
             }
-
+    
             int exitCode = process.waitFor();
             logger.info("FFmpeg exit code: {}", exitCode);
-
+    
             if (exitCode != 0) {
                 logger.error("FFmpeg conversion failed. Output:\n{}", ffmpegOutput);
                 return null;
             }
-
+    
             logger.info("Audio converted successfully to {}", outputPath);
             return outputFile;
-
+    
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Audio conversion interrupted", e);
@@ -165,7 +168,7 @@ public class TranscriptionController {
             logger.error("Error during audio conversion: {}", e.getMessage(), e);
             return null;
         }
-    }
+    }    
     
     private boolean isWavCompatible(String filePath) {
         try {
