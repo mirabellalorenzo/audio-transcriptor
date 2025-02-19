@@ -72,10 +72,13 @@ public class TranscriptionController {
             transcription = new Transcription(result.toString().trim(), 120, System.currentTimeMillis(), processingTime);
             logger.info("Transcription completed successfully in {} ms.", processingTime);
 
-            // 🔹 Elimina il file convertito dopo la trascrizione
             if (!convertedFile.equals(originalFile) && convertedFile.exists()) {
-                convertedFile.delete();
-            }
+                if (!convertedFile.delete()) {
+                    logger.warn("Failed to delete temporary file: " + convertedFile.getAbsolutePath());
+                } else {
+                    logger.info("Temporary file deleted: " + convertedFile.getAbsolutePath());
+                }
+            }            
 
             return true;
 
@@ -91,10 +94,10 @@ public class TranscriptionController {
             
             if (inputPath.endsWith(".wav")) {
                 if (isWavCompatible(inputPath)) {
-                    logger.info("File WAV già compatibile, nessuna conversione necessaria.");
+                    logger.info("File WAV already compatible, no conversion needed.");
                     return inputFile;
                 } else {
-                    logger.info("File WAV non compatibile, procedo alla conversione.");
+                    logger.info("File WAV not compatible, proceeding with conversion.");
                 }
             }
     
@@ -126,11 +129,14 @@ public class TranscriptionController {
             logger.info("Audio converted successfully to " + outputPath);
             return outputFile;
     
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Audio conversion interrupted", e);
+        } catch (IOException e) {
             logger.error("Error during audio conversion: {}", e.getMessage(), e);
             return null;
         }
-    }
+    }    
     
     private boolean isWavCompatible(String filePath) {
         try {
