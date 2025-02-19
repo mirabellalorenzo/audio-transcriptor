@@ -20,7 +20,11 @@ import org.slf4j.LoggerFactory;
 import java.util.function.DoubleConsumer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
+import org.apache.commons.lang3.SystemUtils;
 
 public class TranscriptionController {
     private static final Logger logger = LoggerFactory.getLogger(TranscriptionController.class);
@@ -91,7 +95,7 @@ public class TranscriptionController {
     private File convertToWav16KHzMono(File inputFile) {
         try {
             String inputPath = inputFile.getAbsolutePath();
-    
+
             if (inputPath.endsWith(".wav")) {
                 if (isWavCompatible(inputPath)) {
                     logger.info("File WAV already compatible, no conversion needed.");
@@ -100,39 +104,54 @@ public class TranscriptionController {
                     logger.info("File WAV not compatible, proceeding with conversion.");
                 }
             }
-    
-            Path tempDir = Files.createTempDirectory("audio_transcriptor");
+
+            Path tempDir;
+            if (SystemUtils.IS_OS_UNIX) {
+                FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(
+                    PosixFilePermissions.fromString("rwx------")
+                );
+                tempDir = Files.createTempDirectory("audio_transcriptor_", attr);
+            } else {
+                tempDir = Files.createTempDirectory("audio_transcriptor_");
+            }
+
             Path tempFile = Files.createTempFile(tempDir, "converted_", ".wav");
             File outputFile = tempFile.toFile();
             outputFile.deleteOnExit();
-    
+
+            if (!SystemUtils.IS_OS_UNIX) {
+                outputFile.setReadable(true, true);
+                outputFile.setWritable(true, true);
+                outputFile.setExecutable(true, true);
+            }
+
             String outputPath = outputFile.getAbsolutePath();
             String command = String.format("ffmpeg -i \"%s\" -ar 16000 -ac 1 \"%s\" -y", inputPath, outputPath);
-    
+
             logger.info("Running FFmpeg command: {}", command);
-    
+
             ProcessBuilder processBuilder = new ProcessBuilder("/bin/sh", "-c", command);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-    
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder ffmpegOutput = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 ffmpegOutput.append(line).append("\n");
             }
-    
+
             int exitCode = process.waitFor();
             logger.info("FFmpeg exit code: {}", exitCode);
-    
+
             if (exitCode != 0) {
                 logger.error("FFmpeg conversion failed. Output:\n{}", ffmpegOutput);
                 return null;
             }
-    
+
             logger.info("Audio converted successfully to {}", outputPath);
             return outputFile;
-    
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Audio conversion interrupted", e);
@@ -140,7 +159,7 @@ public class TranscriptionController {
             logger.error("Error during audio conversion: {}", e.getMessage(), e);
             return null;
         }
-    }    
+    }
     
     private boolean isWavCompatible(String filePath) {
         try {
@@ -165,7 +184,7 @@ public class TranscriptionController {
                 }
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione del thread
+            Thread.currentThread().interrupt();
             logger.error("WAV compatibility check interrupted: {}", e.getMessage(), e);
             return false;
         } catch (IOException e) {
