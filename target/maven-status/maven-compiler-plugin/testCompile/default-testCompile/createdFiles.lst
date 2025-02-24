@@ -1,0 +1,4 @@
+entity/TranscriptionTest.class
+persistence/FileSystemNotesDAOTest.class
+persistence/JDBCNotesDAOTest.class
+control/TranscriptionControllerTest.class

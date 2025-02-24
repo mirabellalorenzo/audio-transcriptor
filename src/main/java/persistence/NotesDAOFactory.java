@@ -13,7 +13,7 @@ public class NotesDAOFactory {
             case DEMO:
                 return new InMemoryNotesDAO();
             case DATABASE:
-                return new FirebaseNotesDAO();
+                return new JDBCNotesDAO();
             case FILE_SYSTEM:
                 return new FileSystemNotesDAO();
             default:

@@ -106,7 +106,7 @@
             <version>2.0.9</version>
         </dependency>
 
-        <!-- Implementazione con Logback -->
+        <!-- Logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -140,7 +140,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit 5 Engine (necessario per eseguire i test) -->
+        <!-- JUnit 5 Engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -148,7 +148,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit 5 Assertions (per evitare errori su assertTrue, assertFalse, ecc.) -->
+        <!-- JUnit 5 Assertions -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
@@ -156,7 +156,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit Vintage (se serve per compatibilità con JUnit 4) -->
+        <!-- JUnit Vintage -->
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
@@ -168,6 +168,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
+        </dependency>
+
+        <!-- MariaDB -->
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.2.0</version>
         </dependency>
 
 
@@ -189,11 +196,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>MainApp</mainClass>
-                    <jvmArgs>
-                        -Xms512m
-                        -Xmx2048m
-                    </jvmArgs>
+                    <mainClass>app.MainApp</mainClass>
                 </configuration>
             </plugin>
 

@@ -1,0 +1,5 @@
+/home/maverick/Scrivania/Uni/ISPW/audio-transcriptor/src/test/java/control/TranscriptionControllerTest.java
+/home/maverick/Scrivania/Uni/ISPW/audio-transcriptor/src/test/java/persistence/JDBCNotesDAOTest.java
+/home/maverick/Scrivania/Uni/ISPW/audio-transcriptor/src/test/java/persistence/FirebaseNotesDAOTest.java
+/home/maverick/Scrivania/Uni/ISPW/audio-transcriptor/src/test/java/persistence/FileSystemNotesDAOTest.java
+/home/maverick/Scrivania/Uni/ISPW/audio-transcriptor/src/test/java/entity/TranscriptionTest.java

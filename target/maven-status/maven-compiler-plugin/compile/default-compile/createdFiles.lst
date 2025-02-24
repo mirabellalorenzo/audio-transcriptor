@@ -15,6 +15,7 @@ control/HomeController.class
 entity/Note.class
 view/components/TranscriptionTitleComponent.class
 view/components/NotesListComponent$NoteSelectionListener.class
+persistence/JDBCNotesDAO.class
 persistence/NotesDAOFactory$1.class
 config/AppConfig$StorageMode.class
 view/components/FlatNotesListComponent$NoteSelectionListener.class
@@ -25,7 +26,6 @@ view/gui1/LoginView.class
 boundary/LoginBoundary.class
 boundary/TranscriptionBoundary$1.class
 view/components/NoteDetailComponent.class
-view/components/CustomButtonComponent$1.class
 view/components/NotePageComponent.class
 config/AppConfig$GuiMode.class
 view/components/NoteDetailComponent$NoteChangeListener.class
