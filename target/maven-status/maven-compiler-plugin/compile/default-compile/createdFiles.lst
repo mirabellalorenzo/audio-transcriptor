@@ -26,6 +26,7 @@ view/gui1/LoginView.class
 boundary/LoginBoundary.class
 boundary/TranscriptionBoundary$1.class
 view/components/NoteDetailComponent.class
+view/components/CustomButtonComponent$1.class
 view/components/NotePageComponent.class
 config/AppConfig$GuiMode.class
 view/components/NoteDetailComponent$NoteChangeListener.class

@@ -15,9 +15,9 @@ public class JDBCNotesDAO implements NotesDAO {
 
     public JDBCNotesDAO() {
         try {
-            Class.forName("org.mariadb.jdbc.Driver"); // Carica il driver JDBC
+            Class.forName("org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Errore nel caricamento del driver MariaDB", e);
+            throw new IllegalStateException("Driver MariaDB non trovato", e);
         }
     }
 
@@ -35,8 +35,10 @@ public class JDBCNotesDAO implements NotesDAO {
             stmt.setString(6, note.getTitle());
             stmt.setString(7, note.getContent());
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new IllegalArgumentException("Violazione di vincolo di integrità: l'ID potrebbe essere duplicato.", e);
         } catch (SQLException e) {
-            throw new RuntimeException("Errore durante il salvataggio della nota", e);
+            throw new IllegalStateException("Errore SQL durante il salvataggio della nota", e);
         }
     }
 
@@ -56,7 +58,7 @@ public class JDBCNotesDAO implements NotesDAO {
                 ));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel recupero delle note", e);
+            throw new IllegalStateException("Errore SQL nel recupero delle note", e);
         }
         return notes;
     }
@@ -77,7 +79,7 @@ public class JDBCNotesDAO implements NotesDAO {
                 );
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel recupero della nota", e);
+            throw new IllegalStateException("Errore SQL nel recupero della nota con ID: " + id, e);
         }
         return null;
     }
@@ -89,8 +91,10 @@ public class JDBCNotesDAO implements NotesDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, id);
             stmt.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new IllegalArgumentException("Tentativo di eliminare una nota inesistente con ID: " + id, e);
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nella cancellazione della nota", e);
+            throw new IllegalStateException("Errore SQL nella cancellazione della nota con ID: " + id, e);
         }
     }
 }
