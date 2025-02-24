@@ -10,8 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HomeBoundary {
-    private HomeController homeController = new HomeController();
-    private Note selectedNote;
+    private final HomeController homeController = new HomeController();
     private static final Logger logger = LoggerFactory.getLogger(HomeBoundary.class);
 
     public String getUserEmail() {
@@ -26,18 +25,6 @@ public class HomeBoundary {
         return homeController.getSavedNotes();
     }
 
-    public void loadNote(Note note, TextArea noteTextArea, Button saveNoteButton) {
-        if (note != null) {
-            this.selectedNote = note; 
-            noteTextArea.setText(note.getContent()); 
-            noteTextArea.setVisible(true);
-            saveNoteButton.setVisible(true); 
-            logger.info("Note loaded: {}", note.getTitle());
-        } else {
-            logger.warn("Attempted to load a null note.");
-        }
-    }    
-
     public Note createNewNote() {
         return homeController.createNewNote();
     }      
@@ -45,7 +32,6 @@ public class HomeBoundary {
     public void updateNote(Note note) {
         if (note != null) {
             homeController.updateNote(note);
-            selectedNote = note;
             logger.info("Note updated: {}", note.getTitle());
         } else {
             logger.warn("No note provided for update.");
