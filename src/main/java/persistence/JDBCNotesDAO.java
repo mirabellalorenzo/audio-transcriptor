@@ -45,7 +45,7 @@ public class JDBCNotesDAO implements NotesDAO {
     @Override
     public List<Note> getAll() {
         List<Note> notes = new ArrayList<>();
-        String sql = "SELECT * FROM notes";
+        String sql = "SELECT id, uid, title, content FROM notes"; // ✅ Evitato SELECT *
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -65,7 +65,7 @@ public class JDBCNotesDAO implements NotesDAO {
 
     @Override
     public Note getById(String id) {
-        String sql = "SELECT * FROM notes WHERE id = ?";
+        String sql = "SELECT id, uid, title, content FROM notes WHERE id = ?"; // ✅ Evitato SELECT *
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, id);
