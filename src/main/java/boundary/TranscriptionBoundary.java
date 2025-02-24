@@ -2,8 +2,6 @@ package boundary;
 
 import control.TranscriptionController;
 import entity.Transcription;
-import javafx.stage.Stage;
-import view.gui1.TranscriptionView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.function.DoubleConsumer;
@@ -59,11 +57,5 @@ public class TranscriptionBoundary {
 
     public Transcription getTranscription() {
         return controller.getTranscription();
-    }
-
-    public void openTranscriptionView(Stage primaryStage) {
-        logger.info("Opening Transcription View.");
-        TranscriptionView transcriptionView = new TranscriptionView();
-        transcriptionView.start(primaryStage);
     }
 }

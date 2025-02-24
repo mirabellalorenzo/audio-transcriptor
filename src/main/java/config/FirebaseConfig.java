@@ -3,7 +3,7 @@ package config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import org.slf4j.Logger;
@@ -35,9 +35,5 @@ public final class FirebaseConfig {
         } catch (IOException e) {
             logger.error("Error initializing Firebase", e);
         }
-    }
-
-    public static FirebaseAuth getAuth() {
-        return FirebaseAuth.getInstance();
     }
 }

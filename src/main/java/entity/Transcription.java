@@ -1,17 +1,15 @@
 package entity;
 
 public class Transcription {
-    private String id;
+    private final String id;
     private String text;
-    private int duration;
-    private long createdAt;
-    private long processingTime;
+    private final int duration;
+    private final long processingTime;
 
     public Transcription(String text, int duration, long createdAt, long processingTime) {
         this.id = String.valueOf(System.nanoTime()); 
         this.text = text;
         this.duration = duration;
-        this.createdAt = createdAt;
         this.processingTime = processingTime;
     }
 
@@ -29,10 +27,6 @@ public class Transcription {
 
     public int getDuration() {
         return duration;
-    }
-
-    public long getCreatedAt() {
-        return createdAt;
     }
 
     public long getProcessingTime() {
