@@ -3,8 +3,6 @@ package control;
 import entity.Note;
 import entity.User;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import config.AppConfig;
 import persistence.NotesDAO;
@@ -15,115 +13,110 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HomeController {
-    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
     private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
 
     public String getUserEmail() {
         User currentUser = AuthController.getCurrentUser();
-        return currentUser != null ? currentUser.getEmail() : "Email not available";
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user.");
+        }
+        return currentUser.getEmail();
     }
 
     public String getUserPhotoUrl() {
         User currentUser = AuthController.getCurrentUser();
-        return currentUser != null ? currentUser.getPhotoUrl() : "/images/avatar.png";
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user.");
+        }
+        return currentUser.getPhotoUrl();
     }
 
     public void openPageView(Stage primaryStage, String pageName) {
-        logger.info("Page selected: {}", pageName);
-    
+        if (primaryStage == null || pageName == null || pageName.isBlank()) {
+            throw new IllegalArgumentException("Invalid stage or page name.");
+        }
+
         if ("Transcribe Audio".equals(pageName)) {
             if (AppConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
-                view.gui1.TranscriptionView transcriptionView = new view.gui1.TranscriptionView();
-                transcriptionView.start(primaryStage);
-                logger.info("Opened TranscriptionView (GUI 1).");
+                new view.gui1.TranscriptionView().start(primaryStage);
             } else {
-                view.gui2.TranscriptionView2 transcriptionView2 = new view.gui2.TranscriptionView2();
-                transcriptionView2.start(primaryStage);
-                logger.info("Opened TranscriptionView2 (GUI 2).");
+                new view.gui2.TranscriptionView2().start(primaryStage);
             }
         } else if ("Notes".equals(pageName)) {
             if (AppConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
-                view.gui1.HomeView homeView = new view.gui1.HomeView();
-                homeView.start(primaryStage);
-                logger.info("Opened HomeView (GUI 1).");
+                new view.gui1.HomeView().start(primaryStage);
             } else {
-                view.gui2.HomeView2 homeView2 = new view.gui2.HomeView2();
-                homeView2.start(primaryStage);
-                logger.info("Opened HomeView2 (GUI 2).");
+                new view.gui2.HomeView2().start(primaryStage);
             }
         } else {
-            logger.warn("Unrecognized page: {}", pageName);
+            throw new IllegalArgumentException("Unrecognized page: " + pageName);
         }
-    }      
-    
+    }
+
     private void openLoginView(Stage primaryStage) {
-        logger.info("Opening Login View.");
-        LoginView loginView = new LoginView();
-        loginView.start(primaryStage);
+        if (primaryStage == null) {
+            throw new IllegalArgumentException("Primary stage cannot be null.");
+        }
+        new LoginView().start(primaryStage);
     }
 
     public List<Note> getSavedNotes() {
-        try {
-            User currentUser = AuthController.getCurrentUser();
-            if (currentUser == null) {
-                logger.warn("Error: No authenticated user.");
-                return List.of();
-            }
+        User currentUser = AuthController.getCurrentUser();
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user.");
+        }
 
+        try {
             String currentUserId = currentUser.getId();
             List<Note> allNotes = notesDAO.getAll();
-            
-            List<Note> userNotes = allNotes.stream()
+
+            return allNotes.stream()
                     .filter(note -> note.getUid().equals(currentUserId))
                     .collect(Collectors.toList());
-
-            logger.info("Retrieved {} notes for user: {}", userNotes.size(), currentUser.getEmail());
-            return userNotes;
-        } catch (Exception e) {
-            logger.error("Error retrieving notes: {}", e.getMessage(), e);
-            return List.of();
+        } catch (IOException e) {
+            throw new RuntimeException("Error retrieving notes: " + e.getMessage(), e);
         }
     }
 
     public Note createNewNote() {
-        try {
-            User currentUser = AuthController.getCurrentUser();
-            if (currentUser == null) {
-                logger.warn("Attempted to create a note but no user is logged in.");
-                return null;
-            }
-    
-            Note newNote = new Note(null, currentUser.getId(), "New Note", "");
-            notesDAO.save(newNote);
-            logger.info("New note created: {}", newNote.getTitle());
-            return newNote;
-        } catch (Exception e) {
-            logger.error("Error creating new note: {}", e.getMessage(), e);
-            return null;
+        User currentUser = AuthController.getCurrentUser();
+        if (currentUser == null) {
+            throw new IllegalStateException("No user is logged in.");
         }
-    }    
-    
+
+        Note newNote = new Note(null, currentUser.getId(), "New Note", "");
+        try {
+            notesDAO.save(newNote);
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving new note: " + e.getMessage(), e);
+        }
+        return newNote;
+    }
+
     public void updateNote(Note note) {
+        if (note == null) {
+            throw new IllegalArgumentException("Cannot update a null note.");
+        }
         try {
             notesDAO.save(note);
-            logger.info("Note successfully updated in Firebase: {}", note.getTitle());
-        } catch (Exception e) {
-            logger.error("Error updating note: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error updating note: " + e.getMessage(), e);
         }
-    }    
+    }
 
     public void deleteNote(Note note) {
+        if (note == null || note.getId() == null) {
+            throw new IllegalArgumentException("Cannot delete a null note or note with null ID.");
+        }
         try {
             notesDAO.delete(note.getId());
-            logger.info("Nota eliminata con successo: {}", note.getTitle());
         } catch (IOException e) {
-            logger.error("Errore durante l'eliminazione della nota: {}", e.getMessage(), e);
+            throw new RuntimeException("Error deleting note: " + e.getMessage(), e);
         }
-    } 
+    }
 
     public void logout(Stage primaryStage) {
-        logger.info("User logged out.");
         AuthController.logout();
         openLoginView(primaryStage);
-    }  
+    }
 }
