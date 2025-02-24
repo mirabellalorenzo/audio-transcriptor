@@ -2,12 +2,14 @@ package entity;
 
 public class Transcription {
     private final String id;
+    private final long createdAt;
     private String text;
     private final int duration;
     private final long processingTime;
 
     public Transcription(String text, int duration, long createdAt, long processingTime) {
-        this.id = String.valueOf(System.nanoTime()); 
+        this.createdAt = createdAt;
+        this.id = String.valueOf(System.nanoTime());
         this.text = text;
         this.duration = duration;
         this.processingTime = processingTime;
