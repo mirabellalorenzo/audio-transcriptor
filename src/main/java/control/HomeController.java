@@ -26,7 +26,7 @@ public class HomeController {
     public String getUserPhotoUrl() {
         User currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
-            throw new IllegalStateException("No authenticated user.");
+            throw new IllegalStateException("No authenticated user. ");
         }
         return currentUser.getPhotoUrl();
     }
@@ -63,7 +63,7 @@ public class HomeController {
     public List<Note> getSavedNotes() {
         User currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
-            throw new IllegalStateException("No authenticated user.");
+            throw new IllegalStateException("No authenticated user");
         }
 
         try {
@@ -74,7 +74,7 @@ public class HomeController {
                     .filter(note -> note.getUid().equals(currentUserId))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeException("Error retrieving notes: " + e.getMessage(), e);
+            throw new IllegalStateException("Error retrieving notes", e);
         }
     }
 
@@ -88,7 +88,7 @@ public class HomeController {
         try {
             notesDAO.save(newNote);
         } catch (IOException e) {
-            throw new RuntimeException("Error saving new note: " + e.getMessage(), e);
+            throw new IllegalStateException("Error saving new note", e);
         }
         return newNote;
     }
@@ -100,7 +100,7 @@ public class HomeController {
         try {
             notesDAO.save(note);
         } catch (IOException e) {
-            throw new RuntimeException("Error updating note: " + e.getMessage(), e);
+            throw new IllegalStateException("Error updating note", e);
         }
     }
 
@@ -111,7 +111,7 @@ public class HomeController {
         try {
             notesDAO.delete(note.getId());
         } catch (IOException e) {
-            throw new RuntimeException("Error deleting note: " + e.getMessage(), e);
+            throw new IllegalStateException("Error deleting note", e);
         }
     }
 
