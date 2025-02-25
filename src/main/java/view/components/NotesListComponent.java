@@ -1,6 +1,6 @@
 package view.components;
 
-import boundary.HomeBoundary;
+import control.HomeController;
 import control.NoteBean;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -25,8 +25,6 @@ public class NotesListComponent extends VBox {
         void onNoteSelected(NoteBean note);
     }
 
-    private HomeBoundary boundary;
-    private Stage primaryStage;
     private final VBox notesContainer;
     private VBox selectedNoteCard = null;
     private final NoteSelectionListener listener;
@@ -34,9 +32,7 @@ public class NotesListComponent extends VBox {
     
     private static final Logger logger = LoggerFactory.getLogger(NotesListComponent.class);
 
-    public NotesListComponent(HomeBoundary boundary, Stage primaryStage, List<NoteBean> notes, NoteSelectionListener listener) {
-        this.boundary = boundary;
-        this.primaryStage = primaryStage;
+    public NotesListComponent(HomeController homeController, Stage primaryStage, List<NoteBean> notes, NoteSelectionListener listener) {
         this.notes = notes;
         this.listener = listener;
         this.setStyle("-fx-padding: 35px 0px 0px 35px; -fx-spacing: 15; -fx-background-color: white; -fx-border-radius: 15px;");
@@ -58,7 +54,7 @@ public class NotesListComponent extends VBox {
         );
         newNoteButton.setOnAction(e -> {
             logger.info("New Note button clicked");
-            NoteBean newNote = boundary.createNewNote();
+            NoteBean newNote = homeController.createNewNote();
             if (newNote != null) {
                 notes.add(newNote);
                 addNoteAndSelect(newNote);
@@ -70,7 +66,7 @@ public class NotesListComponent extends VBox {
         
         HBox headerBox = new HBox(10, titleLabel, spacer, newNoteButton);
         headerBox.setAlignment(Pos.CENTER_LEFT);
-        
+
         TextField searchField = new TextField();
         searchField.setPromptText("Search notes...");
         searchField.setMaxWidth(Double.MAX_VALUE);

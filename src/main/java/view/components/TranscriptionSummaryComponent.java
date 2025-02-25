@@ -1,6 +1,6 @@
 package view.components;
 
-import boundary.HomeBoundary;
+import control.HomeController;
 import control.TranscriptionBean;
 import config.AppConfig;
 import javafx.geometry.Pos;
@@ -15,10 +15,10 @@ import javafx.stage.Stage;
 import util.SvgToPngConverter;
 
 public class TranscriptionSummaryComponent {
-    private final HomeBoundary boundary;
+    private final HomeController homeController;
 
     public TranscriptionSummaryComponent(AppConfig appConfig) {
-        this.boundary = new HomeBoundary(appConfig);
+        this.homeController = new HomeController(appConfig);
     }
 
     public void displaySummary(TranscriptionBean transcription, Stage primaryStage, BorderPane root) {
@@ -42,7 +42,7 @@ public class TranscriptionSummaryComponent {
         HBox characters = createSummaryItem("text-outline", "Number of Characters: " + transcription.getCharacterCount());
 
         CustomButtonComponent backToNotesButton = new CustomButtonComponent("Back to Notes", CustomButtonComponent.ButtonType.PRIMARY);
-        backToNotesButton.setOnAction(e -> boundary.openPageView(primaryStage, "Notes"));
+        backToNotesButton.setOnAction(e -> homeController.openPageView(primaryStage, "Notes"));
 
         infoBox.getChildren().addAll(duration, time, words, characters);
 

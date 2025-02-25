@@ -2,6 +2,7 @@ package view.components;
 
 import boundary.TranscriptionBoundary;
 import control.TranscriptionBean;
+import control.TranscriptionController;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -26,8 +27,8 @@ public class TranscriptionControlsComponent extends VBox {
     private final HBox initialStateButtons;
     private final HBox editingStateButtons;
 
-    public TranscriptionControlsComponent(TranscriptionBoundary boundary, 
-                                          TranscriptionEditorComponent editorComponent, 
+    public TranscriptionControlsComponent(TranscriptionController boundary,
+                                          TranscriptionEditorComponent editorComponent,
                                           Consumer<TranscriptionBean> showSummaryPage,
                                           Stage primaryStage) {
         this.boundary = boundary;

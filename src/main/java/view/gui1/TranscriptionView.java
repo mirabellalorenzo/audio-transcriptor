@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import boundary.HomeBoundary;
 import boundary.TranscriptionBoundary;
+import control.HomeController;
 import control.TranscriptionController;
 import control.TranscriptionBean;
 import config.AppConfig;
@@ -24,6 +25,7 @@ import view.components.TranscriptionTitleComponent;
 public class TranscriptionView {
     private AppConfig appConfig;
     private TranscriptionBoundary boundary;
+    private final HomeController homeController;
     private TranscriptionEditorComponent editorComponent;
     private TranscriptionControlsComponent controlsComponent;
     private TranscriptionSummaryComponent summaryComponent;
@@ -32,22 +34,22 @@ public class TranscriptionView {
     private BorderPane root;
     private Stage primaryStage;
 
-    public TranscriptionView(AppConfig appConfig) {
+    public TranscriptionView(AppConfig appConfig, HomeController homeController) {
         this.appConfig = appConfig;
+        this.homeController = homeController;
     }
 
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         boundary = new TranscriptionBoundary(new TranscriptionController(appConfig));
 
-        HomeBoundary homeBoundary = new HomeBoundary(appConfig);
-        NotesListComponent notesList = new NotesListComponent(homeBoundary, primaryStage, new ArrayList<>(), note -> {});
-        sidebar = new SidebarComponent(homeBoundary, primaryStage, homeBoundary.getUserEmail(), homeBoundary.getUserPhotoUrl(), new ArrayList<>(), notesList);
+        NotesListComponent notesList = new NotesListComponent(homeController, primaryStage, new ArrayList<>(), note -> {});
+        sidebar = new SidebarComponent(homeController, primaryStage, homeController.getUserEmail(), homeController.getUserPhotoUrl(), new ArrayList<>(), notesList);
         
-        editorComponent = new TranscriptionEditorComponent(boundary);
+        editorComponent = new TranscriptionEditorComponent(new TranscriptionController(appConfig));
         controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showTitlePage, primaryStage);
         summaryComponent = new TranscriptionSummaryComponent(appConfig);
-        titleComponent = new TranscriptionTitleComponent(boundary);
+        titleComponent = new TranscriptionTitleComponent(new TranscriptionController(appConfig));
 
         Region topSpacer = new Region();
         Region bottomSpacer = new Region();

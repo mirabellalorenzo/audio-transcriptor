@@ -1,9 +1,8 @@
 package view.gui2;
 
-import java.util.ArrayList;
-
 import boundary.HomeBoundary;
 import boundary.TranscriptionBoundary;
+import control.HomeController;
 import control.TranscriptionController;
 import control.TranscriptionBean;
 import config.AppConfig;
@@ -11,7 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import view.components.FlatNotesListComponent;
 import view.components.NavbarComponent;
 import view.components.TranscriptionControlsComponent;
 import view.components.TranscriptionEditorComponent;
@@ -19,11 +17,8 @@ import view.components.TranscriptionSummaryComponent;
 import view.components.TranscriptionTitleComponent;
 
 public class TranscriptionView2 {
-    private AppConfig appConfig;
+    private final AppConfig appConfig;
     private TranscriptionBoundary boundary;
-    private TranscriptionEditorComponent editorComponent;
-    private TranscriptionControlsComponent controlsComponent;
-    private TranscriptionSummaryComponent summaryComponent;
     private TranscriptionTitleComponent titleComponent;
     private Stage primaryStage;
     private BorderPane root;
@@ -34,18 +29,18 @@ public class TranscriptionView2 {
 
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        boundary = new TranscriptionBoundary(new TranscriptionController(appConfig));
 
-        HomeBoundary homeBoundary = new HomeBoundary(appConfig);
-        String userEmail = homeBoundary.getUserEmail();
-        String userPhotoUrl = homeBoundary.getUserPhotoUrl();
+        HomeController homeController = new HomeController(appConfig);
+        TranscriptionController transcriptionController = new TranscriptionController(appConfig);
+        String userEmail = homeController.getUserEmail();
+        String userPhotoUrl = homeController.getUserPhotoUrl();
 
-        NavbarComponent navbar = new NavbarComponent(homeBoundary, primaryStage, userEmail, userPhotoUrl);
+        NavbarComponent navbar = new NavbarComponent(homeController, primaryStage, userEmail, userPhotoUrl);
 
-        editorComponent = new TranscriptionEditorComponent(boundary);
-        controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showTitlePage, primaryStage);
-        summaryComponent = new TranscriptionSummaryComponent(appConfig);
-        titleComponent = new TranscriptionTitleComponent(boundary);
+        TranscriptionEditorComponent editorComponent = new TranscriptionEditorComponent(transcriptionController);
+        TranscriptionControlsComponent controlsComponent = new TranscriptionControlsComponent(transcriptionController, editorComponent, this::showTitlePage, primaryStage);
+        TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent(appConfig);
+        titleComponent = new TranscriptionTitleComponent(transcriptionController);
 
         Region topSpacer = new Region();
         Region bottomSpacer = new Region();

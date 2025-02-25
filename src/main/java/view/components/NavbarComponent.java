@@ -1,6 +1,6 @@
 package view.components;
 
-import boundary.HomeBoundary;
+import control.HomeController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -11,20 +11,18 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import util.SvgToPngConverter;
 
-public class NavbarComponent extends HBox {
-    private final HomeBoundary boundary;
-    private final Stage primaryStage;
+import java.util.Objects;
 
-    public NavbarComponent(HomeBoundary boundary, Stage primaryStage, String userEmail, String userPhotoUrl) {
-        this.boundary = boundary;
-        this.primaryStage = primaryStage;
+public class NavbarComponent extends HBox {
+
+    public NavbarComponent(HomeController homeController, Stage primaryStage, String userEmail, String userPhotoUrl) {
 
         setSpacing(20);
-        setPadding(new Insets(15, 30, 15, 30)); // Maggiore padding ai lati
+        setPadding(new Insets(15, 30, 15, 30));
         setAlignment(Pos.CENTER);
         setStyle("-fx-background-color: #f8f9fa; -fx-min-height: 60px;");
 
-        ImageView appLogo = new ImageView(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
+        ImageView appLogo = new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/images/logo.png")).toExternalForm()));
         appLogo.setFitWidth(40);
         appLogo.setFitHeight(40);
         appLogo.setPreserveRatio(true);
@@ -35,13 +33,13 @@ public class NavbarComponent extends HBox {
         HBox logoContainer = new HBox(10, appLogo, appNameLabel);
         logoContainer.setAlignment(Pos.CENTER_LEFT);
 
-        HBox notesItem = createNavItem("Notes", "document-text-outline", () -> boundary.openPageView(primaryStage, "Notes"));
-        HBox transcribeItem = createNavItem("Transcribe Audio", "mic-outline", () -> boundary.openPageView(primaryStage, "Transcribe Audio"));
+        HBox notesItem = createNavItem("Notes", "document-text-outline", () -> homeController.openPageView(primaryStage, "Notes"));
+        HBox transcribeItem = createNavItem("Transcribe Audio", "mic-outline", () -> homeController.openPageView(primaryStage, "Transcribe Audio"));
 
         HBox toolsContainer = new HBox(30, notesItem, transcribeItem);
         toolsContainer.setAlignment(Pos.CENTER);
 
-        HBox logoutItem = createNavItem("Logout", "log-out-outline", () -> boundary.logout(primaryStage));
+        HBox logoutItem = createNavItem("Logout", "log-out-outline", () -> homeController.logout(primaryStage));
 
         Label emailLabel = new Label(userEmail);
         emailLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #444;");

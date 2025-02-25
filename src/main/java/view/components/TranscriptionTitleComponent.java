@@ -1,8 +1,8 @@
 package view.components;
 
-import boundary.TranscriptionBoundary;
 import config.AppConfig;
 import control.TranscriptionBean;
+import control.TranscriptionController;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -11,10 +11,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class TranscriptionTitleComponent {
-    private final TranscriptionBoundary boundary;
+    private final TranscriptionController controller;
 
-    public TranscriptionTitleComponent(TranscriptionBoundary boundary) {
-        this.boundary = boundary;
+    public TranscriptionTitleComponent(TranscriptionController controller) {
+        this.controller = controller;
     }
 
     public void displayTitleInput(Stage primaryStage, BorderPane root) {
@@ -48,7 +48,7 @@ public class TranscriptionTitleComponent {
             String title = titleField.getText().trim();
 
             if (!title.isEmpty()) {
-                TranscriptionBean transcriptionBean = boundary.getTranscription();
+                TranscriptionBean transcriptionBean = controller.getTranscription();
 
                 if (transcriptionBean == null) {
                     System.err.println("Errore: nessuna trascrizione disponibile per assegnare un titolo.");
@@ -57,7 +57,7 @@ public class TranscriptionTitleComponent {
 
                 transcriptionBean.setTitle(title);
 
-                boolean saved = boundary.saveTranscription(transcriptionBean);
+                boolean saved = controller.saveTranscription(transcriptionBean);
                 if (saved) {
                     TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent(new AppConfig());
                     summaryComponent.displaySummary(transcriptionBean, primaryStage, root);

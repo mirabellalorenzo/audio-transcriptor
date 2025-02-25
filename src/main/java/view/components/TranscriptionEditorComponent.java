@@ -1,19 +1,17 @@
 package view.components;
 
-import boundary.TranscriptionBoundary;
 import control.TranscriptionBean;
+import control.TranscriptionController;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 
 public class TranscriptionEditorComponent extends VBox {
-    private TextArea transcriptionTextArea;
-    private TranscriptionBoundary boundary;
+    private final TextArea transcriptionTextArea;
     private String originalText;
     private String lastSavedText;
 
-    public TranscriptionEditorComponent(TranscriptionBoundary boundary) {
-        this.boundary = boundary;
+    public TranscriptionEditorComponent(TranscriptionController transcriptionController) {
 
         Label titleLabel = new Label("Transcribe Audio");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #222;");

@@ -1,6 +1,6 @@
 package view.components;
 
-import boundary.HomeBoundary;
+import control.HomeController;
 import control.NoteBean;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,23 +14,20 @@ import javafx.scene.shape.Circle;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Objects;
+
 public class NoteDetailComponent extends VBox {
     private final TextField titleField;
     private final TextArea contentArea;
     private final Button saveButton;
-    private final Button deleteButton;
     private NoteBean currentNote;
-    private final NoteChangeListener listener;
-    private HomeBoundary boundary;
 
     public interface NoteChangeListener {
         void onNoteUpdated(NoteBean noteBean);
         void onNoteDeleted(NoteBean noteBean);
     }
 
-    public NoteDetailComponent(NoteBean noteBean, NoteChangeListener listener, HomeBoundary boundary) {
-        this.boundary = boundary;
-        this.listener = listener;
+    public NoteDetailComponent(NoteBean noteBean, NoteChangeListener listener, HomeController homeController) {
         this.currentNote = noteBean;
         this.setStyle(
                 "-fx-padding: 40 85; " +
@@ -43,7 +40,7 @@ public class NoteDetailComponent extends VBox {
         topRightContainer.setAlignment(Pos.TOP_RIGHT);
         topRightContainer.setStyle("-fx-padding: 15px; -fx-spacing: 10px;");
 
-        ImageView profileImage = new ImageView(new Image(boundary.getUserPhotoUrl()));
+        ImageView profileImage = new ImageView(new Image(homeController.getUserPhotoUrl()));
         profileImage.setFitWidth(38);
         profileImage.setFitHeight(38);
         profileImage.setPreserveRatio(true);
@@ -66,7 +63,7 @@ public class NoteDetailComponent extends VBox {
         profileContainer.setPrefSize(40, 40);
         profileContainer.getChildren().add(profileImage);
 
-        Label emailLabel = new Label(boundary.getUserEmail());
+        Label emailLabel = new Label(homeController.getUserEmail());
         emailLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333;");
 
         topRightContainer.getChildren().addAll(emailLabel, profileContainer);
@@ -93,7 +90,7 @@ public class NoteDetailComponent extends VBox {
         titleField.setPrefWidth(400);
 
         contentArea = new TextArea(noteBean.getContent());
-        contentArea.getStylesheets().add(getClass().getResource("/styles/scrollbar.css").toExternalForm());
+        contentArea.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/scrollbar.css")).toExternalForm());
         contentArea.setWrapText(true);
         contentArea.setMaxWidth(700);
         contentArea.setMinWidth(400);
@@ -123,7 +120,7 @@ public class NoteDetailComponent extends VBox {
         saveButton = new CustomButtonComponent("Save Changes", CustomButtonComponent.ButtonType.PRIMARY);
         saveButton.setDisable(true);
 
-        deleteButton = new CustomButtonComponent("Delete", CustomButtonComponent.ButtonType.OUTLINE);
+        Button deleteButton = new CustomButtonComponent("Delete", CustomButtonComponent.ButtonType.OUTLINE);
 
 
         titleField.textProperty().addListener((obs, oldText, newText) -> {

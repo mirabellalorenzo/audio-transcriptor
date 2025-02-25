@@ -31,7 +31,6 @@ public class TranscriptionController {
             throw new IllegalArgumentException("The audio file does not exist or cannot be read.");
         }
 
-        // Usare la classe AudioConverter
         File convertedFile;
         try {
             convertedFile = AudioConverter.convertToWav16KHzMono(originalFile);
@@ -67,7 +66,6 @@ public class TranscriptionController {
 
             long processingTime = System.currentTimeMillis() - startTime;
 
-            // Eliminare il file convertito se non è il file originale
             if (!convertedFile.equals(originalFile) && convertedFile.exists()) {
                 convertedFile.delete();
             }
@@ -115,6 +113,7 @@ public class TranscriptionController {
             return null;
         }
         return new TranscriptionBean(
+                "",
                 transcription.getText(),
                 transcription.getDuration(),
                 transcription.getCreatedAt(),

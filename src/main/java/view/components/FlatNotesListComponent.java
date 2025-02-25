@@ -1,6 +1,6 @@
 package view.components;
 
-import boundary.HomeBoundary;
+import control.HomeController;
 import control.NoteBean;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,10 +22,10 @@ public class FlatNotesListComponent extends VBox {
     private final VBox notesContainer;
     private final NoteSelectionListener listener;
     private final List<NoteBean> notes;
-    private final HomeBoundary boundary;
+    private final HomeController homeController;
 
-    public FlatNotesListComponent(HomeBoundary boundary, Stage primaryStage, List<NoteBean> notes, NoteSelectionListener listener) {
-        this.boundary = boundary;
+    public FlatNotesListComponent(HomeController homeController, Stage primaryStage, List<NoteBean> notes, NoteSelectionListener listener) {
+        this.homeController = homeController;
         this.notes = notes;
         this.listener = note -> openNoteDetailModal(note, primaryStage);
         
@@ -38,7 +38,7 @@ public class FlatNotesListComponent extends VBox {
         Button newNoteButton = new Button("New Note");
         newNoteButton.getStyleClass().add("button-new-note");
         newNoteButton.setOnAction(e -> {
-            NoteBean newNote = boundary.createNewNote();
+            NoteBean newNote = homeController.createNewNote();
             if (newNote != null) {
                 notes.add(0, newNote);
                 refreshNotesList();
@@ -142,7 +142,7 @@ public class FlatNotesListComponent extends VBox {
                 refreshNotesList();
                 modalStage.close();
             }
-        }, boundary);
+        }, homeController);
 
         Scene scene = new Scene(noteDetail, 700, 550);
         modalStage.setScene(scene);

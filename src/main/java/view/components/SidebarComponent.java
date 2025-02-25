@@ -1,6 +1,7 @@
 package view.components;
 
 import boundary.HomeBoundary;
+import control.HomeController;
 import control.NoteBean;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,11 +18,11 @@ import util.SvgToPngConverter;
 import java.util.List;
 
 public class SidebarComponent extends VBox {
-    private final HomeBoundary boundary;
+    private final HomeController homeController;
     private final Stage primaryStage;
 
-    public SidebarComponent(HomeBoundary boundary, Stage primaryStage, String userEmail, String userPhotoUrl, List<NoteBean> notes, NotesListComponent notesList) {
-        this.boundary = boundary;
+    public SidebarComponent(HomeController homeController, Stage primaryStage, String userEmail, String userPhotoUrl, List<NoteBean> notes, NotesListComponent notesList) {
+        this.homeController = homeController;
         this.primaryStage = primaryStage;
 
         setSpacing(15);
@@ -45,13 +46,13 @@ public class SidebarComponent extends VBox {
         VBox menuBox = new VBox(15);
         menuBox.setPadding(new Insets(10, 0, 0, 0));
 
-        HBox notesItem = createMenuItem("Notes", "document-text-outline", () -> boundary.openPageView(primaryStage, "Notes"));
+        HBox notesItem = createMenuItem("Notes", "document-text-outline", () -> homeController.openPageView(primaryStage, "Notes"));
 
-        HBox transcribeItem = createMenuItem("Transcribe Audio", "mic-outline", () -> boundary.openPageView(primaryStage, "Transcribe Audio"));
+        HBox transcribeItem = createMenuItem("Transcribe Audio", "mic-outline", () -> homeController.openPageView(primaryStage, "Transcribe Audio"));
 
         menuBox.getChildren().addAll(notesItem, transcribeItem);
 
-        HBox logoutItem = createMenuItem("Logout", "log-out-outline", () -> boundary.logout(primaryStage));
+        HBox logoutItem = createMenuItem("Logout", "log-out-outline", () -> homeController.logout(primaryStage));
         VBox.setMargin(logoutItem, new Insets(0, 0, 20, 0));
 
         VBox spacer = new VBox();

@@ -1,6 +1,6 @@
 package view.gui2;
 
-import boundary.HomeBoundary;
+import control.HomeController;
 import control.NoteBean;
 import config.AppConfig;
 import javafx.scene.Scene;
@@ -15,22 +15,20 @@ import java.util.List;
 
 public class HomeView2 {
     private static final Logger logger = LoggerFactory.getLogger(HomeView2.class);
-    private final HomeBoundary boundary;
-    private Stage primaryStage;
+    private final HomeController homeController;
 
     public HomeView2(AppConfig appConfig) {
-        this.boundary = new HomeBoundary(appConfig);
+        this.homeController = new HomeController(appConfig);
     }
 
     public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        List<NoteBean> notes = boundary.getSavedNotes();
+        List<NoteBean> notes = homeController.getSavedNotes();
 
-        String userEmail = boundary.getUserEmail();
-        String userPhotoUrl = boundary.getUserPhotoUrl();
+        String userEmail = homeController.getUserEmail();
+        String userPhotoUrl = homeController.getUserPhotoUrl();
 
-        NavbarComponent navbar = new NavbarComponent(boundary, primaryStage, userEmail, userPhotoUrl);
-        FlatNotesListComponent flatNotesListComponent = new FlatNotesListComponent(boundary, primaryStage, notes, this::openNoteDetail);
+        NavbarComponent navbar = new NavbarComponent(homeController, primaryStage, userEmail, userPhotoUrl);
+        FlatNotesListComponent flatNotesListComponent = new FlatNotesListComponent(homeController, primaryStage, notes, this::openNoteDetail);
 
         BorderPane content = new BorderPane();
         content.setTop(navbar);
