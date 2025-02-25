@@ -1,5 +1,6 @@
 package persistence;
 
+import control.UserBean;
 import entity.Note;
 import entity.User;
 import control.AuthController;
@@ -109,7 +110,7 @@ public class FileSystemNotesDAO implements NotesDAO {
     public List<Note> getAll() {
         List<Note> notes = new ArrayList<>();
 
-        User currentUser = AuthController.getCurrentUser();
+        UserBean currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
             logger.warn("Recupero note non effettuato: utente non autenticato.");
             return notes;

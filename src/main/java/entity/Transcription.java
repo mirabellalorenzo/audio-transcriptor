@@ -35,6 +35,10 @@ public class Transcription {
         return processingTime;
     }
 
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
     public int getCharacterCount() {
         return text.length();
     }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import boundary.HomeBoundary;
 import boundary.TranscriptionBoundary;
 import control.TranscriptionController;
-import entity.Transcription;
+import control.TranscriptionBean;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -63,7 +63,7 @@ public class TranscriptionView {
         primaryStage.show();
     }
 
-    private void showTitlePage(Transcription transcription) {
+    private void showTitlePage(TranscriptionBean transcription) {
         titleComponent.displayTitleInput(primaryStage, root);
     }    
 }

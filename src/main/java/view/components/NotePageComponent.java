@@ -1,6 +1,6 @@
 package view.components;
 
-import entity.Note;
+import control.NoteBean;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 public class NotePageComponent {
     
-    public void showNoteDetail(Stage parentStage, Note note) {
+    public void showNoteDetail(Stage parentStage, NoteBean note) {
         VBox modalBox = new VBox(15);
         modalBox.setStyle(
             "-fx-background-color: white; " +

@@ -1,7 +1,7 @@
 package view.components;
 
 import boundary.TranscriptionBoundary;
-import entity.Transcription;
+import control.TranscriptionBean;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -45,16 +45,26 @@ public class TranscriptionTitleComponent {
         CustomButtonComponent continueButton = new CustomButtonComponent("Continue", CustomButtonComponent.ButtonType.PRIMARY);
         continueButton.setOnAction(e -> {
             String title = titleField.getText().trim();
-            
+
             if (!title.isEmpty()) {
-                boolean saved = boundary.saveTranscription(title);
+                TranscriptionBean transcriptionBean = boundary.getTranscription();
+
+                if (transcriptionBean == null) {
+                    System.err.println("Errore: nessuna trascrizione disponibile per assegnare un titolo.");
+                    return;
+                }
+
+                transcriptionBean.setTitle(title);
+
+                boolean saved = boundary.saveTranscription(transcriptionBean);
                 if (saved) {
-                    Transcription transcription = boundary.getTranscription();
                     TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent();
-                    summaryComponent.displaySummary(transcription, primaryStage, root);
+                    summaryComponent.displaySummary(transcriptionBean, primaryStage, root);
+                } else {
+                    System.err.println("Errore: impossibile salvare la trascrizione.");
                 }
             }
-        });              
+        });
 
         inputBox.getChildren().addAll(titleLabel, titleField, continueButton);
 

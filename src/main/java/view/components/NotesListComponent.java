@@ -1,7 +1,7 @@
 package view.components;
 
 import boundary.HomeBoundary;
-import entity.Note;
+import control.NoteBean;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class NotesListComponent extends VBox {
     public interface NoteSelectionListener {
-        void onNoteSelected(Note note);
+        void onNoteSelected(NoteBean note);
     }
 
     private HomeBoundary boundary;
@@ -30,11 +30,11 @@ public class NotesListComponent extends VBox {
     private final VBox notesContainer;
     private VBox selectedNoteCard = null;
     private final NoteSelectionListener listener;
-    private final List<Note> notes;
+    private final List<NoteBean> notes;
     
     private static final Logger logger = LoggerFactory.getLogger(NotesListComponent.class);
 
-    public NotesListComponent(HomeBoundary boundary, Stage primaryStage, List<Note> notes, NoteSelectionListener listener) {
+    public NotesListComponent(HomeBoundary boundary, Stage primaryStage, List<NoteBean> notes, NoteSelectionListener listener) {
         this.boundary = boundary;
         this.primaryStage = primaryStage;
         this.notes = notes;
@@ -58,7 +58,7 @@ public class NotesListComponent extends VBox {
         );
         newNoteButton.setOnAction(e -> {
             logger.info("New Note button clicked");
-            Note newNote = boundary.createNewNote();
+            NoteBean newNote = boundary.createNewNote();
             if (newNote != null) {
                 notes.add(newNote);
                 addNoteAndSelect(newNote);
@@ -122,7 +122,7 @@ public class NotesListComponent extends VBox {
 
 
         searchField.textProperty().addListener((obs, oldText, newText) -> {
-            List<Note> filteredNotes = notes.stream()
+            List<NoteBean> filteredNotes = notes.stream()
                 .filter(note -> note.getTitle().toLowerCase().contains(newText.toLowerCase()))
                 .collect(Collectors.toList());
             notesContainer.getChildren().clear();
@@ -130,8 +130,8 @@ public class NotesListComponent extends VBox {
         });
     }
 
-    private void loadNotes(List<Note> notes, NoteSelectionListener listener) {
-        for (Note note : notes) {
+    private void loadNotes(List<NoteBean> notes, NoteSelectionListener listener) {
+        for (NoteBean note : notes) {
             VBox noteCard = createNoteCard(note);
 
             noteCard.setOnMouseEntered(e -> {
@@ -203,7 +203,7 @@ public class NotesListComponent extends VBox {
         loadNotes(notes, listener);
     }    
 
-    public void addNoteAndSelect(Note newNote) {
+    public void addNoteAndSelect(NoteBean newNote) {
         if (!notes.contains(newNote)) {
             notes.add(0, newNote);
         }
@@ -243,7 +243,7 @@ public class NotesListComponent extends VBox {
         noteCard.getOnMouseClicked().handle(null);
     }    
     
-    private VBox createNoteCard(Note note) {
+    private VBox createNoteCard(NoteBean note) {
         VBox noteCard = new VBox();
         noteCard.setStyle(
             "-fx-background-color: #fcfbfc; " +

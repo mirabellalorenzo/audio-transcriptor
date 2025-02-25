@@ -1,7 +1,7 @@
 package view.components;
 
 import boundary.TranscriptionBoundary;
-import entity.Transcription;
+import control.TranscriptionBean;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -12,30 +12,23 @@ import java.io.File;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TranscriptionControlsComponent extends VBox {
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptionControlsComponent.class);
-    private CustomButtonComponent uploadButton;
-    private CustomButtonComponent editButton;
-    private CustomButtonComponent saveButton;
-    private CustomButtonComponent saveAndExitButton;
-    private CustomButtonComponent cancelButton;
-    private CustomButtonComponent restoreButton;
-    private TranscriptionBoundary boundary;
-    private ProgressBar progressBar;
-    private TranscriptionEditorComponent editorComponent;
-    private Consumer<Transcription> showSummaryPage;
-    private Label uploadInfoLabel;
+    private final CustomButtonComponent uploadButton;
+
+    private final TranscriptionBoundary boundary;
+    private final ProgressBar progressBar;
+    private final TranscriptionEditorComponent editorComponent;
+    private final Consumer<TranscriptionBean> showSummaryPage;
+    private final Label uploadInfoLabel;
     
-    private HBox uploadStateButtons;
-    private HBox initialStateButtons;
-    private HBox editingStateButtons;
+    private final HBox uploadStateButtons;
+    private final HBox initialStateButtons;
+    private final HBox editingStateButtons;
 
     public TranscriptionControlsComponent(TranscriptionBoundary boundary, 
                                           TranscriptionEditorComponent editorComponent, 
-                                          Consumer<Transcription> showSummaryPage,
+                                          Consumer<TranscriptionBean> showSummaryPage,
                                           Stage primaryStage) {
         this.boundary = boundary;
         this.editorComponent = editorComponent;
@@ -43,11 +36,11 @@ public class TranscriptionControlsComponent extends VBox {
         
         // Buttons
         uploadButton = new CustomButtonComponent("Select File", null, CustomButtonComponent.ButtonType.PRIMARY);
-        editButton = new CustomButtonComponent("Edit", null, CustomButtonComponent.ButtonType.SECONDARY);
-        saveButton = new CustomButtonComponent("Save", null, CustomButtonComponent.ButtonType.PRIMARY);
-        saveAndExitButton = new CustomButtonComponent("Save & Exit", null, CustomButtonComponent.ButtonType.PRIMARY);
-        cancelButton = new CustomButtonComponent("Cancel", null, CustomButtonComponent.ButtonType.OUTLINE);
-        restoreButton = new CustomButtonComponent("Reset", null, CustomButtonComponent.ButtonType.SECONDARY);
+        CustomButtonComponent editButton = new CustomButtonComponent("Edit", null, CustomButtonComponent.ButtonType.SECONDARY);
+        CustomButtonComponent saveButton = new CustomButtonComponent("Save", null, CustomButtonComponent.ButtonType.PRIMARY);
+        CustomButtonComponent saveAndExitButton = new CustomButtonComponent("Save & Exit", null, CustomButtonComponent.ButtonType.PRIMARY);
+        CustomButtonComponent cancelButton = new CustomButtonComponent("Cancel", null, CustomButtonComponent.ButtonType.OUTLINE);
+        CustomButtonComponent restoreButton = new CustomButtonComponent("Reset", null, CustomButtonComponent.ButtonType.SECONDARY);
 
         // Events
         uploadButton.setOnAction(event -> handleUpload());
@@ -111,25 +104,29 @@ public class TranscriptionControlsComponent extends VBox {
     
             progressBar.setProgress(0);
             progressBar.setVisible(true);
-    
-            boundary.uploadAudioAsync(selectedFile.getAbsolutePath(), 
-                progress -> Platform.runLater(() -> progressBar.setProgress(progress)),
-                () -> Platform.runLater(() -> {
-                    progressBar.setVisible(false);
-    
-                    Transcription transcription = boundary.getTranscription();
-                    editorComponent.loadTranscription(transcription);
-    
-                    uploadStateButtons.setManaged(false);
-                    uploadStateButtons.setVisible(false);
-                    initialStateButtons.setManaged(true);
-                    initialStateButtons.setVisible(true);
-                }),
-                () -> Platform.runLater(() -> {
-                    progressBar.setVisible(false);
-                    uploadButton.setVisible(true);
-                    logger.error("Transcription failed.");
-                })
+
+            TranscriptionBean transcriptionBean = new TranscriptionBean();
+            transcriptionBean.setFilePath(selectedFile.getAbsolutePath());
+            transcriptionBean.setText("");
+
+            boundary.uploadAudioAsync(transcriptionBean,
+                    progress -> Platform.runLater(() -> progressBar.setProgress(progress)),
+                    () -> Platform.runLater(() -> {
+                        progressBar.setVisible(false);
+
+                        TranscriptionBean transcription = boundary.getTranscription();
+                        editorComponent.loadTranscription(transcription);
+
+                        uploadStateButtons.setManaged(false);
+                        uploadStateButtons.setVisible(false);
+                        initialStateButtons.setManaged(true);
+                        initialStateButtons.setVisible(true);
+                    }),
+                    () -> Platform.runLater(() -> {
+                        progressBar.setVisible(false);
+                        uploadButton.setVisible(true);
+                        throw new IllegalStateException("Transcription process failed.");
+                    })
             );
         }
     }    
@@ -146,8 +143,8 @@ public class TranscriptionControlsComponent extends VBox {
 
     private void saveChanges() {
         editorComponent.saveChanges();
-    
-        Transcription transcription = boundary.getTranscription();
+
+        TranscriptionBean transcription = boundary.getTranscription();
         transcription.setText(editorComponent.getCurrentText());
     
         boundary.updateTranscription(transcription);
@@ -157,12 +154,11 @@ public class TranscriptionControlsComponent extends VBox {
 
     private void handleSaveAndExit() {
         saveChanges();
-        
-        Transcription transcription = boundary.getTranscription();
-    
+
+        TranscriptionBean transcription = boundary.getTranscription();
+
         if (transcription == null || transcription.getText().trim().isEmpty()) {
-            logger.warn("No transcription available to save.");
-            return;
+            throw new IllegalArgumentException("Cannot save an empty transcription.");
         }
     
         showSummaryPage.accept(transcription);

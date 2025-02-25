@@ -1,7 +1,7 @@
 package view.components;
 
 import boundary.HomeBoundary;
-import entity.Note;
+import control.NoteBean;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 public class FlatNotesListComponent extends VBox {
     public interface NoteSelectionListener {
-        void onNoteSelected(Note note);
+        void onNoteSelected(NoteBean note);
     }
 
     private final VBox notesContainer;
     private final NoteSelectionListener listener;
-    private final List<Note> notes;
+    private final List<NoteBean> notes;
 
-    public FlatNotesListComponent(HomeBoundary boundary, Stage primaryStage, List<Note> notes, NoteSelectionListener listener) {
+    public FlatNotesListComponent(HomeBoundary boundary, Stage primaryStage, List<NoteBean> notes, NoteSelectionListener listener) {
         this.notes = notes;
         this.listener = note -> openNoteDetailModal(note, primaryStage);
         
@@ -36,7 +36,7 @@ public class FlatNotesListComponent extends VBox {
         Button newNoteButton = new Button("New Note");
         newNoteButton.getStyleClass().add("button-new-note");
         newNoteButton.setOnAction(e -> {
-            Note newNote = boundary.createNewNote();
+            NoteBean newNote = boundary.createNewNote();
             if (newNote != null) {
                 notes.add(0, newNote);
                 refreshNotesList();
@@ -76,7 +76,7 @@ public class FlatNotesListComponent extends VBox {
 
         // **Filtraggio note in base alla barra di ricerca**
         searchField.textProperty().addListener((obs, oldText, newText) -> {
-            List<Note> filteredNotes = notes.stream()
+            List<NoteBean> filteredNotes = notes.stream()
                 .filter(note -> note.getTitle().toLowerCase().contains(newText.toLowerCase()))
                 .collect(Collectors.toList());
             refreshNotesList(filteredNotes);
@@ -87,16 +87,16 @@ public class FlatNotesListComponent extends VBox {
         refreshNotesList(notes);
     }
 
-    private void refreshNotesList(List<Note> noteList) {
+    private void refreshNotesList(List<NoteBean> noteList) {
         notesContainer.getChildren().clear();
         for (int i = 0; i < noteList.size(); i++) {
-            Note note = noteList.get(i);
+            NoteBean note = noteList.get(i);
             HBox noteItem = createNoteItem(note, i % 2 == 0);
             notesContainer.getChildren().add(noteItem);
         }
     }
 
-    private HBox createNoteItem(Note note, boolean isEven) {
+    private HBox createNoteItem(NoteBean note, boolean isEven) {
         HBox noteItem = new HBox();
         noteItem.setSpacing(10);
         noteItem.setPadding(new Insets(12, 15, 12, 15));
@@ -121,21 +121,21 @@ public class FlatNotesListComponent extends VBox {
         return noteItem;
     }
 
-    private void openNoteDetailModal(Note note, Stage primaryStage) {
+    private void openNoteDetailModal(NoteBean note, Stage primaryStage) {
         Stage modalStage = new Stage();
         modalStage.initOwner(primaryStage);
         modalStage.setTitle("Edit Note");
 
         NoteDetailComponent noteDetail = new NoteDetailComponent(note, new NoteDetailComponent.NoteChangeListener() {
             @Override
-            public void onNoteUpdated(Note updatedNote) {
+            public void onNoteUpdated(NoteBean updatedNote) {
                 notes.set(notes.indexOf(note), updatedNote);
                 refreshNotesList();
                 modalStage.close();
             }
 
             @Override
-            public void onNoteDeleted(Note deletedNote) {
+            public void onNoteDeleted(NoteBean deletedNote) {
                 notes.remove(deletedNote);
                 refreshNotesList();
                 modalStage.close();

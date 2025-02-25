@@ -1,7 +1,7 @@
 package boundary;
 
 import control.HomeController;
-import entity.Note;
+import control.NoteBean;
 import javafx.stage.Stage;
 import java.util.List;
 
@@ -16,24 +16,21 @@ public class HomeBoundary {
         return homeController.getUserPhotoUrl();
     }
 
-    public List<Note> getSavedNotes() {
+    public List<NoteBean> getSavedNotes() {
         return homeController.getSavedNotes();
     }
 
-    public Note createNewNote() {
+    public NoteBean createNewNote() {
         return homeController.createNewNote();
     }
 
-    public void updateNote(Note note) {
-        if (note == null) {
-            throw new IllegalArgumentException("No note provided for update.");
-        }
-        homeController.updateNote(note);
+    public void updateNote(NoteBean noteBean) {
+        homeController.updateNote(noteBean);
     }
 
-    public void deleteNote(Note note) {
-        homeController.deleteNote(note);
-    }    
+    public void deleteNote(NoteBean noteBean) {
+        homeController.deleteNote(noteBean);
+    }
 
     public void logout(Stage primaryStage) {
         homeController.logout(primaryStage);

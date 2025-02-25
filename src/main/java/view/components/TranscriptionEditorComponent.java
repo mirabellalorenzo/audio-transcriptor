@@ -1,7 +1,7 @@
 package view.components;
 
 import boundary.TranscriptionBoundary;
-import entity.Transcription;
+import control.TranscriptionBean;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
@@ -45,7 +45,7 @@ public class TranscriptionEditorComponent extends VBox {
         getChildren().addAll(titleLabel, transcriptionTextArea);
     }
 
-    public void loadTranscription(Transcription transcription) {
+    public void loadTranscription(TranscriptionBean transcription) {
         this.originalText = transcription.getText();
         this.lastSavedText = originalText;
         transcriptionTextArea.setText(originalText);

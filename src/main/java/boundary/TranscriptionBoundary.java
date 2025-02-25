@@ -1,61 +1,67 @@
 package boundary;
 
 import control.TranscriptionController;
-import entity.Transcription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import control.TranscriptionBean;
 import java.util.function.DoubleConsumer;
 import javafx.concurrent.Task;
 
 public class TranscriptionBoundary {
     private final TranscriptionController controller;
-    private static final Logger logger = LoggerFactory.getLogger(TranscriptionBoundary.class);
 
     public TranscriptionBoundary(TranscriptionController controller) {
         this.controller = controller;
     }
 
-    public void uploadAudioAsync(String filePath, DoubleConsumer progressCallback, Runnable onSuccess, Runnable onFailure) {
-        Task<Boolean> task = new Task<>() {
+    public void uploadAudioAsync(TranscriptionBean transcriptionBean, DoubleConsumer progressCallback, Runnable onSuccess, Runnable onFailure) {
+        if (transcriptionBean == null || transcriptionBean.getFilePath() == null || transcriptionBean.getFilePath().isBlank()) {
+            throw new IllegalArgumentException("Invalid transcription data: file path is missing.");
+        }
+
+        Task<TranscriptionBean> task = new Task<>() {
             @Override
-            protected Boolean call() {
-                return controller.processAudio(filePath, progressCallback);
+            protected TranscriptionBean call() {
+                return controller.processAudio(transcriptionBean, progressCallback);
             }
         };
-    
+
         task.setOnSucceeded(event -> {
-            if (task.getValue()) {
-                logger.info("Transcription completed successfully.");
-                logger.info("Transcription text: {}", controller.getTranscription().getText());
+            TranscriptionBean result = task.getValue();
+            if (result == null || result.getText() == null || result.getText().isBlank()) {
+                throw new IllegalStateException("Transcription process completed but no valid transcription was generated.");
+            }
+
+            if (result.getText() != null && !result.getText().isBlank()) {
+                controller.setTranscription(result);
                 onSuccess.run();
             } else {
-                logger.error("Error uploading the audio file.");
                 onFailure.run();
             }
         });
-    
+
         task.setOnFailed(event -> {
-            logger.error("Transcription task failed.");
-            onFailure.run();
+            throw new IllegalStateException("Audio transcription task failed.", task.getException());
         });
-    
+
         new Thread(task).start();
-    }    
+    }
 
-    public boolean saveTranscription(String title) {
-        if (title == null || title.isBlank()) return false;
-    
-        boolean saved = controller.saveTranscription(title);
-        logger.info("Transcription {} successfully", saved ? "saved" : "failed");
-    
-        return saved;
-    }     
+    public boolean saveTranscription(TranscriptionBean transcriptionBean) {
+        if (transcriptionBean == null || transcriptionBean.getTitle() == null || transcriptionBean.getTitle().isBlank()) {
+            return false;
+        }
 
-    public void updateTranscription(Transcription transcription) {
-        this.controller.setTranscription(transcription);
-    }    
+        return controller.saveTranscription(transcriptionBean);
+    }
 
-    public Transcription getTranscription() {
-        return controller.getTranscription();
+    public void updateTranscription(TranscriptionBean transcriptionBean) {
+        this.controller.setTranscription(transcriptionBean);
+    }
+
+    public TranscriptionBean getTranscription() {
+        TranscriptionBean transcription = controller.getTranscription();
+        if (transcription == null) {
+            throw new IllegalStateException("No transcription available.");
+        }
+        return transcription;
     }
 }

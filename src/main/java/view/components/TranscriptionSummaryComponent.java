@@ -1,7 +1,7 @@
 package view.components;
 
 import boundary.HomeBoundary;
-import entity.Transcription;
+import control.TranscriptionBean;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -17,7 +17,7 @@ public class TranscriptionSummaryComponent {
     private final HomeBoundary boundary = new HomeBoundary();
 
     
-    public void displaySummary(Transcription transcription, Stage primaryStage, BorderPane root) {
+    public void displaySummary(TranscriptionBean transcription, Stage primaryStage, BorderPane root) {
         VBox infoBox = new VBox(15);
         infoBox.setStyle(
             "-fx-background-color: #F5F5F5; " +

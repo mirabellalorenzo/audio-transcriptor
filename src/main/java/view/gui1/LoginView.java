@@ -1,6 +1,7 @@
 package view.gui1;
 
 import boundary.LoginBoundary;
+import control.UserBean;
 import config.AppConfig;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -89,12 +90,15 @@ public class LoginView extends Application {
                 errorLabel.setVisible(true);
                 return;
             }
-    
-            if (boundary.login(email, password, primaryStage)) {
-                logger.info("User logged in successfully.");
+
+            UserBean userBean = new UserBean();
+            userBean.setEmail(email);
+            userBean.setPassword(password);
+
+            UserBean loggedInUser = boundary.login(userBean, primaryStage);
+            if (loggedInUser != null) {
                 errorLabel.setVisible(false);
             } else {
-                logger.warn("Login failed: Incorrect email or password.");
                 errorLabel.setText("Incorrect email or password!");
                 errorLabel.setVisible(true);
             }
@@ -181,12 +185,15 @@ public class LoginView extends Application {
                 errorLabel.setVisible(true);
                 return;
             }
-    
-            if (boundary.register(email, password, primaryStage)) {
-                logger.info("User registered successfully.");
+
+            UserBean userBean = new UserBean();
+            userBean.setEmail(email);
+            userBean.setPassword(password);
+
+            UserBean registeredUser = boundary.register(userBean, primaryStage);
+            if (registeredUser != null) {
                 errorLabel.setVisible(false);
             } else {
-                logger.warn("Registration failed: Email already in use.");
                 errorLabel.setText("Registration failed! Email already in use.");
                 errorLabel.setVisible(true);
             }

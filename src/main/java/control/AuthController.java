@@ -11,11 +11,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AuthController {
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private static final Dotenv dotenv = Dotenv.load();
     private static User currentUser;
 
@@ -31,8 +28,11 @@ public class AuthController {
         throw new UnsupportedOperationException("Utility class - instantiation not allowed");
     }
 
-    public static User getCurrentUser() {
-        return currentUser;
+    public static UserBean getCurrentUser() {
+        if (currentUser == null) {
+            return null;
+        }
+        return new UserBean(currentUser.getId(), currentUser.getEmail(), currentUser.getPhotoUrl());
     }
 
     private static JSONObject sendFirebaseRequest(String url, JSONObject payload) throws IOException {
@@ -46,10 +46,8 @@ public class AuthController {
                 String responseBody = new String(response.getEntity().getContent().readAllBytes());
 
                 if (status >= 200 && status < 300) {
-                    logger.info("Firebase request successful: {}", url);
                     return responseBody;
                 } else {
-                    logger.error("Firebase request failed: {}, Response: {}", url, responseBody);
                     throw new IOException("Firebase request error: " + responseBody);
                 }
             };
@@ -58,9 +56,8 @@ public class AuthController {
         }
     }
 
-    public static boolean signUp(String email, String password) {
+    public static UserBean signUp(String email, String password) {
         try {
-            logger.info("User attempting to sign up with email: {}", email);
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + FIREBASE_API_KEY;
 
             JSONObject json = new JSONObject();
@@ -71,18 +68,16 @@ public class AuthController {
             JSONObject responseObject = sendFirebaseRequest(url, json);
 
             if (responseObject.has(ID_TOKEN_KEY)) {
-                logger.info("User registered successfully: {}", email);
                 return login(email, password);
             }
-        } catch (Exception e) {
-            logger.error("Error during registration for email: {} - {}", email, e.getMessage(), e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error during registration for email: " + email, e);
         }
-        return false;
+        return null;
     }
 
-    public static boolean login(String email, String password) {
+    public static UserBean login(String email, String password) {
         try {
-            logger.info("User attempting to log in with email: {}", email);
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + FIREBASE_API_KEY;
 
             JSONObject json = new JSONObject();
@@ -94,22 +89,20 @@ public class AuthController {
 
             if (responseObject.has(ID_TOKEN_KEY)) {
                 currentUser = new User(
-                    responseObject.getString("localId"),
-                    responseObject.getString(EMAIL_KEY),
-                    responseObject.optString("photoUrl", "/images/avatar.png")
+                        responseObject.getString("localId"),
+                        responseObject.getString(EMAIL_KEY),
+                        responseObject.optString("photoUrl", "/images/avatar.png")
                 );
-                logger.info("User logged in successfully: {}", email);
-                return true;
+                return new UserBean(currentUser.getId(), currentUser.getEmail(), currentUser.getPhotoUrl());
             }
-        } catch (Exception e) {
-            logger.error("Error during login for email: {} - {}", email, e.getMessage(), e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error during login for email: " + email, e);
         }
-        return false;
+        return null;
     }
 
     public static boolean loginWithGoogle(String idToken) {
         try {
-            logger.info("User attempting to log in with Google.");
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=" + FIREBASE_API_KEY;
 
             JSONObject json = new JSONObject();
@@ -121,18 +114,17 @@ public class AuthController {
 
             if (responseObject.has(ID_TOKEN_KEY)) {
                 currentUser = new User(
-                    responseObject.getString("localId"),
-                    responseObject.getString(EMAIL_KEY),
-                    responseObject.optString("photoUrl", "/images/avatar.png")
+                        responseObject.getString("localId"),
+                        responseObject.getString(EMAIL_KEY),
+                        responseObject.optString("photoUrl", "/images/avatar.png")
                 );
 
                 FirebaseUsersDAO userDao = new FirebaseUsersDAO();
                 userDao.saveUser(currentUser);
-                logger.info("User logged in with Google: {}", currentUser.getEmail());
                 return true;
             }
-        } catch (Exception e) {
-            logger.error("Error with Google login - {}", e.getMessage(), e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error with Google login", e);
         }
         return false;
     }
@@ -142,8 +134,8 @@ public class AuthController {
     }
 
     public static void logout() {
-        if (currentUser != null) {
-            logger.info("User logged out: {}", currentUser.getEmail());
+        if (currentUser == null) {
+            throw new IllegalStateException("No user is logged in.");
         }
         currentUser = null;
     }

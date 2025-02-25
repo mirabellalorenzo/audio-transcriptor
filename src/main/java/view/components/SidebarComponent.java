@@ -1,7 +1,7 @@
 package view.components;
 
 import boundary.HomeBoundary;
-import entity.Note;
+import control.NoteBean;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -20,7 +20,7 @@ public class SidebarComponent extends VBox {
     private final HomeBoundary boundary;
     private final Stage primaryStage;
 
-    public SidebarComponent(HomeBoundary boundary, Stage primaryStage, String userEmail, String userPhotoUrl, List<Note> notes, NotesListComponent notesList) {
+    public SidebarComponent(HomeBoundary boundary, Stage primaryStage, String userEmail, String userPhotoUrl, List<NoteBean> notes, NotesListComponent notesList) {
         this.boundary = boundary;
         this.primaryStage = primaryStage;
 
@@ -41,7 +41,6 @@ public class SidebarComponent extends VBox {
         appNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #222;");
 
         logoContainer.getChildren().addAll(appLogo, appNameLabel);
-
 
         VBox menuBox = new VBox(15);
         menuBox.setPadding(new Insets(10, 0, 0, 0));

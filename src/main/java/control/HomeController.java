@@ -16,7 +16,7 @@ public class HomeController {
     private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
 
     public String getUserEmail() {
-        User currentUser = AuthController.getCurrentUser();
+        UserBean currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
             throw new IllegalStateException("No authenticated user.");
         }
@@ -24,7 +24,7 @@ public class HomeController {
     }
 
     public String getUserPhotoUrl() {
-        User currentUser = AuthController.getCurrentUser();
+        UserBean currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
             throw new IllegalStateException("No authenticated user. ");
         }
@@ -60,8 +60,8 @@ public class HomeController {
         new LoginView().start(primaryStage);
     }
 
-    public List<Note> getSavedNotes() {
-        User currentUser = AuthController.getCurrentUser();
+    public List<NoteBean> getSavedNotes() {
+        UserBean currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
             throw new IllegalStateException("No authenticated user");
         }
@@ -72,14 +72,15 @@ public class HomeController {
 
             return allNotes.stream()
                     .filter(note -> note.getUid().equals(currentUserId))
+                    .map(note -> new NoteBean(note.getId(), note.getUid(), note.getTitle(), note.getContent()))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new IllegalStateException("Error retrieving notes", e);
         }
     }
 
-    public Note createNewNote() {
-        User currentUser = AuthController.getCurrentUser();
+    public NoteBean createNewNote() {
+        UserBean currentUser = AuthController.getCurrentUser();
         if (currentUser == null) {
             throw new IllegalStateException("No user is logged in.");
         }
@@ -87,29 +88,30 @@ public class HomeController {
         Note newNote = new Note(null, currentUser.getId(), "New Note", "");
         try {
             notesDAO.save(newNote);
+            return new NoteBean(newNote.getId(), newNote.getUid(), newNote.getTitle(), newNote.getContent());
         } catch (IOException e) {
             throw new IllegalStateException("Error saving new note", e);
         }
-        return newNote;
     }
 
-    public void updateNote(Note note) {
-        if (note == null) {
+    public void updateNote(NoteBean noteBean) {
+        if (noteBean == null) {
             throw new IllegalArgumentException("Cannot update a null note.");
         }
         try {
+            Note note = new Note(noteBean.getId(), noteBean.getUserId(), noteBean.getTitle(), noteBean.getContent());
             notesDAO.save(note);
         } catch (IOException e) {
             throw new IllegalStateException("Error updating note", e);
         }
     }
 
-    public void deleteNote(Note note) {
-        if (note == null || note.getId() == null) {
+    public void deleteNote(NoteBean noteBean) {
+        if (noteBean == null || noteBean.getId() == null) {
             throw new IllegalArgumentException("Cannot delete a null note or note with null ID.");
         }
         try {
-            notesDAO.delete(note.getId());
+            notesDAO.delete(noteBean.getId());
         } catch (IOException e) {
             throw new IllegalStateException("Error deleting note", e);
         }

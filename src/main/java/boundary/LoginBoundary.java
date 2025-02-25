@@ -3,27 +3,37 @@ package boundary;
 import control.AuthController;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import control.UserBean;
 import util.GoogleAuthProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LoginBoundary {
-    private static final Logger logger = LoggerFactory.getLogger(LoginBoundary.class);
 
-    public boolean login(String email, String password, Stage primaryStage) {
-        boolean success = AuthController.login(email, password);
-        if (success) {
-            openPageView(primaryStage);
+    public UserBean login(UserBean userBean, Stage primaryStage) {
+        if (userBean == null || userBean.getEmail() == null || userBean.getPassword() == null) {
+            throw new IllegalArgumentException("Invalid user data.");
         }
-        return success;
+
+        UserBean user = AuthController.login(userBean.getEmail(), userBean.getPassword());
+        if (user == null) {
+            throw new IllegalStateException("Login failed.");
+        }
+
+        openPageView(primaryStage);
+        return user;
     }
 
-    public boolean register(String email, String password, Stage primaryStage) {
-        boolean success = AuthController.signUp(email, password);
-        if (success) {
-            openPageView(primaryStage);
+    public UserBean register(UserBean userBean, Stage primaryStage) {
+        if (userBean == null || userBean.getEmail() == null || userBean.getPassword() == null) {
+            throw new IllegalArgumentException("Invalid user data.");
         }
-        return success;
+
+        UserBean user = AuthController.signUp(userBean.getEmail(), userBean.getPassword());
+        if (user == null) {
+            throw new IllegalStateException("Registration failed.");
+        }
+
+        openPageView(primaryStage);
+        return user;
     }
 
     public void loginWithGoogle(Stage primaryStage) {
@@ -36,13 +46,16 @@ public class LoginBoundary {
                 Platform.runLater(() -> openPageView(primaryStage));
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                logger.error("Login thread interrupted: {}", ex.getMessage(), ex);
+                throw new IllegalStateException("Login process interrupted.", ex);
             }
         }).start();
-    }    
+    }
 
     public void openPageView(Stage primaryStage) {
+        if (primaryStage == null) {
+            throw new IllegalArgumentException("Primary stage cannot be null.");
+        }
         HomeBoundary homeBoundary = new HomeBoundary();
         homeBoundary.openPageView(primaryStage, "Notes");
-    }    
+    }
 }

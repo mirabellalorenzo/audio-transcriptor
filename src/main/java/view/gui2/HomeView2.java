@@ -1,7 +1,7 @@
 package view.gui2;
 
 import boundary.HomeBoundary;
-import entity.Note;
+import control.NoteBean;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -19,7 +19,7 @@ public class HomeView2 {
     
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        List<Note> notes = boundary.getSavedNotes();
+        List<NoteBean> notes = boundary.getSavedNotes();
 
         String userEmail = boundary.getUserEmail();
         String userPhotoUrl = boundary.getUserPhotoUrl();
@@ -41,7 +41,7 @@ public class HomeView2 {
         primaryStage.show();
     }
 
-    private void openNoteDetail(Note note) {
+    private void openNoteDetail(NoteBean note) {
         logger.info("Nota selezionata: {}", note.getTitle());
     }    
 }

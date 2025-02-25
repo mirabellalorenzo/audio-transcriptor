@@ -4,6 +4,7 @@ view/components/NavbarComponent.class
 view/components/TranscriptionEditorComponent.class
 view/gui1/HomeView$1.class
 boundary/HomeBoundary.class
+control/UserBean.class
 boundary/TranscriptionBoundary.class
 persistence/FirebaseNotesDAO.class
 view/components/TranscriptionControlsComponent.class
@@ -14,8 +15,10 @@ view/components/TranscriptionSummaryComponent.class
 control/HomeController.class
 entity/Note.class
 view/components/TranscriptionTitleComponent.class
+control/TranscriptionBean.class
 view/components/NotesListComponent$NoteSelectionListener.class
 persistence/JDBCNotesDAO.class
+control/NoteBean.class
 persistence/NotesDAOFactory$1.class
 config/AppConfig$StorageMode.class
 view/components/FlatNotesListComponent$NoteSelectionListener.class
