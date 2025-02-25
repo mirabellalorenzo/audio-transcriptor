@@ -1,16 +1,18 @@
 package entity;
 
+import java.util.UUID;
+
 public class Transcription {
     private final String id;
     private final long createdAt;
-    private String text;
+    private final String text;
     private final int duration;
     private final long processingTime;
 
     public Transcription(String text, int duration, long createdAt, long processingTime) {
-        this.createdAt = createdAt;
-        this.id = String.valueOf(System.nanoTime());
+        this.id = UUID.randomUUID().toString();
         this.text = text;
+        this.createdAt = createdAt;
         this.duration = duration;
         this.processingTime = processingTime;
     }
@@ -22,10 +24,6 @@ public class Transcription {
     public String getText() {
         return text;
     }
-
-    public void setText(String text) {
-        this.text = text;
-    }    
 
     public int getDuration() {
         return duration;

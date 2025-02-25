@@ -14,13 +14,6 @@ public class UserBean {
         this.photoUrl = photoUrl;
     }
 
-    public UserBean(String id, String email, String password, String photoUrl) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.photoUrl = photoUrl;
-    }
-
     public String getId() {
         return id;
     }

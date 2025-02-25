@@ -114,7 +114,7 @@ public class TranscriptionControlsComponent extends VBox {
                     () -> Platform.runLater(() -> {
                         progressBar.setVisible(false);
 
-                        TranscriptionBean transcription = boundary.getTranscription();
+                        TranscriptionBean transcription = transcriptionController.getTranscription();
                         editorComponent.loadTranscription(transcription);
 
                         uploadStateButtons.setManaged(false);

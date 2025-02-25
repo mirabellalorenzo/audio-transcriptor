@@ -1,16 +1,15 @@
 package control;
 
 public class TranscriptionBean {
+    private String title;
     private String text;
     private String filePath;
-    private int duration;
-    private long createdAt;
-    private long processingTime;
-    private String title;
+    private final int duration;
+    private final long createdAt;
+    private final long processingTime;
 
-    public TranscriptionBean() {}
-
-    public TranscriptionBean(String text, int duration, long createdAt, long processingTime) {
+    public TranscriptionBean(String title, String text, int duration, long createdAt, long processingTime) {
+        this.title = title;
         this.text = text;
         this.duration = duration;
         this.createdAt = createdAt;
@@ -37,24 +36,12 @@ public class TranscriptionBean {
         return duration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public long getProcessingTime() {
         return processingTime;
-    }
-
-    public void setProcessingTime(long processingTime) {
-        this.processingTime = processingTime;
     }
 
     public String getTitle() {

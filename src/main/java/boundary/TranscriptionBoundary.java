@@ -44,24 +44,4 @@ public class TranscriptionBoundary {
 
         new Thread(task).start();
     }
-
-    public boolean saveTranscription(TranscriptionBean transcriptionBean) {
-        if (transcriptionBean == null || transcriptionBean.getTitle() == null || transcriptionBean.getTitle().isBlank()) {
-            return false;
-        }
-
-        return controller.saveTranscription(transcriptionBean);
-    }
-
-    public void updateTranscription(TranscriptionBean transcriptionBean) {
-        this.controller.setTranscription(transcriptionBean);
-    }
-
-    public TranscriptionBean getTranscription() {
-        TranscriptionBean transcription = controller.getTranscription();
-        if (transcription == null) {
-            throw new IllegalStateException("No transcription available.");
-        }
-        return transcription;
-    }
 }
