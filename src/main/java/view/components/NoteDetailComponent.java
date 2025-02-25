@@ -21,14 +21,15 @@ public class NoteDetailComponent extends VBox {
     private final Button deleteButton;
     private NoteBean currentNote;
     private final NoteChangeListener listener;
-    private final HomeBoundary boundary = new HomeBoundary();
+    private HomeBoundary boundary;
 
     public interface NoteChangeListener {
         void onNoteUpdated(NoteBean noteBean);
         void onNoteDeleted(NoteBean noteBean);
     }
 
-    public NoteDetailComponent(NoteBean noteBean, NoteChangeListener listener) {
+    public NoteDetailComponent(NoteBean noteBean, NoteChangeListener listener, HomeBoundary boundary) {
+        this.boundary = boundary;
         this.listener = listener;
         this.currentNote = noteBean;
         this.setStyle(

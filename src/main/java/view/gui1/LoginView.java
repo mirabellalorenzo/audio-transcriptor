@@ -23,6 +23,7 @@ public class LoginView extends Application {
     private Stage primaryStage;
     private Scene loginScene;
     private Scene registerScene;
+    private final AppConfig appConfig = new AppConfig();
     private static final String LOGIN_KEY = "Login";
     private static final String REGISTER_KEY = "Register";
     private static final Logger logger = LoggerFactory.getLogger(LoginView.class);
@@ -30,7 +31,7 @@ public class LoginView extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        LoginBoundary boundary = new LoginBoundary();
+        LoginBoundary boundary = new LoginBoundary(appConfig);
 
         // Layout per Login e Register
         VBox loginLayout = createLoginLayout(boundary);
@@ -257,59 +258,59 @@ public class LoginView extends Application {
         modalBox.getStyleClass().add("modal-box");
         modalBox.setAlignment(Pos.CENTER);
         modalBox.setMaxWidth(380);
-    
+
         Label title = new Label("Impostazioni");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-    
+
         GridPane settingsGrid = new GridPane();
         settingsGrid.setHgap(10);
         settingsGrid.setVgap(15);
-    
+
         Label storageModeLabel = new Label("Storage Mode:");
         storageModeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333;");
         GridPane.setConstraints(storageModeLabel, 0, 0);
-    
+
         ComboBox<AppConfig.StorageMode> storageSelector = new ComboBox<>();
         storageSelector.getItems().addAll(AppConfig.StorageMode.values());
-        storageSelector.setValue(AppConfig.getStorageMode());
+        storageSelector.setValue(appConfig.getStorageMode()); // Usa l'istanza
         storageSelector.getStyleClass().add("selector-box");
         storageSelector.setCursor(Cursor.HAND);
         GridPane.setConstraints(storageSelector, 1, 0);
-    
+
         Label guiModeLabel = new Label("GUI Mode:");
         guiModeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333;");
         GridPane.setConstraints(guiModeLabel, 0, 1);
-    
+
         ComboBox<AppConfig.GuiMode> guiSelector = new ComboBox<>();
         guiSelector.getItems().addAll(AppConfig.GuiMode.values());
-        guiSelector.setValue(AppConfig.getGuiMode());
+        guiSelector.setValue(appConfig.getGuiMode()); // Usa l'istanza
         guiSelector.getStyleClass().add("selector-box");
         guiSelector.setCursor(Cursor.HAND);
         GridPane.setConstraints(guiSelector, 1, 1);
-    
+
         settingsGrid.getChildren().addAll(storageModeLabel, storageSelector, guiModeLabel, guiSelector);
-    
+
         // Salvataggio delle impostazioni
         CustomButtonComponent saveButton = new CustomButtonComponent("Salva", CustomButtonComponent.ButtonType.PRIMARY);
         saveButton.setOnAction(e -> {
-            AppConfig.setStorageMode(storageSelector.getValue());
-            AppConfig.setGuiMode(guiSelector.getValue());
-            logger.info("Storage Mode selezionato: " + AppConfig.getStorageMode());
+            appConfig.setStorageMode(storageSelector.getValue()); // Usa l'istanza
+            appConfig.setGuiMode(guiSelector.getValue()); // Usa l'istanza
+            logger.info("Storage Mode selezionato: " + appConfig.getStorageMode());
             hideSettingsModal();
         });
-    
+
         modalBox.getChildren().addAll(title, settingsGrid, saveButton);
-    
+
         VBox overlay = new VBox();
         overlay.getStyleClass().add("overlay");
         overlay.setAlignment(Pos.CENTER);
         overlay.getChildren().add(modalBox);
-    
+
         ((StackPane) loginScene.getRoot()).getChildren().add(overlay);
-    
+
         overlay.setOnMouseClicked(e -> hideSettingsModal());
-    }    
-    
+    }
+
     private void hideSettingsModal() {
         StackPane root = (StackPane) loginScene.getRoot();
         root.getChildren().remove(root.getChildren().size() - 1);

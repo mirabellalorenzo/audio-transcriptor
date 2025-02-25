@@ -6,6 +6,7 @@ import boundary.HomeBoundary;
 import boundary.TranscriptionBoundary;
 import control.TranscriptionController;
 import control.TranscriptionBean;
+import config.AppConfig;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
@@ -18,6 +19,7 @@ import view.components.TranscriptionSummaryComponent;
 import view.components.TranscriptionTitleComponent;
 
 public class TranscriptionView2 {
+    private AppConfig appConfig;
     private TranscriptionBoundary boundary;
     private TranscriptionEditorComponent editorComponent;
     private TranscriptionControlsComponent controlsComponent;
@@ -26,11 +28,15 @@ public class TranscriptionView2 {
     private Stage primaryStage;
     private BorderPane root;
 
+    public TranscriptionView2(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
+
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        boundary = new TranscriptionBoundary(new TranscriptionController());
+        boundary = new TranscriptionBoundary(new TranscriptionController(appConfig));
 
-        HomeBoundary homeBoundary = new HomeBoundary();
+        HomeBoundary homeBoundary = new HomeBoundary(appConfig);
         String userEmail = homeBoundary.getUserEmail();
         String userPhotoUrl = homeBoundary.getUserPhotoUrl();
 
@@ -38,7 +44,7 @@ public class TranscriptionView2 {
 
         editorComponent = new TranscriptionEditorComponent(boundary);
         controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showTitlePage, primaryStage);
-        summaryComponent = new TranscriptionSummaryComponent();
+        summaryComponent = new TranscriptionSummaryComponent(appConfig);
         titleComponent = new TranscriptionTitleComponent(boundary);
 
         Region topSpacer = new Region();

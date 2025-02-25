@@ -2,11 +2,19 @@ package boundary;
 
 import control.HomeController;
 import control.NoteBean;
+import config.AppConfig;
 import javafx.stage.Stage;
 import java.util.List;
 
 public class HomeBoundary {
-    private final HomeController homeController = new HomeController();
+    private final HomeController homeController;
+
+    public HomeBoundary(AppConfig appConfig) {
+        if (appConfig == null) {
+            throw new IllegalArgumentException("AppConfig cannot be null");
+        }
+        this.homeController = new HomeController(appConfig);
+    }
 
     public String getUserEmail() {
         return homeController.getUserEmail();

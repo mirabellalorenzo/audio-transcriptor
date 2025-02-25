@@ -1,6 +1,7 @@
 package view.components;
 
 import boundary.TranscriptionBoundary;
+import config.AppConfig;
 import control.TranscriptionBean;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -58,7 +59,7 @@ public class TranscriptionTitleComponent {
 
                 boolean saved = boundary.saveTranscription(transcriptionBean);
                 if (saved) {
-                    TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent();
+                    TranscriptionSummaryComponent summaryComponent = new TranscriptionSummaryComponent(new AppConfig());
                     summaryComponent.displaySummary(transcriptionBean, primaryStage, root);
                 } else {
                     System.err.println("Errore: impossibile salvare la trascrizione.");

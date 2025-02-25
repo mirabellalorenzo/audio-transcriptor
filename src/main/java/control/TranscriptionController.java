@@ -17,8 +17,16 @@ import java.nio.file.Path;
 import org.apache.commons.lang3.SystemUtils;
 
 public class TranscriptionController {
-    private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
+    private final NotesDAO notesDAO;
     private Transcription transcription;
+
+    public TranscriptionController(AppConfig appConfig) {
+        if (appConfig == null) {
+            throw new IllegalArgumentException("AppConfig cannot be null");
+        }
+        this.notesDAO = NotesDAOFactory.getNotesDAO(appConfig);
+    }
+
 
     public TranscriptionBean processAudio(TranscriptionBean transcriptionBean, DoubleConsumer progressCallback) {
 

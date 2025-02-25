@@ -2,6 +2,7 @@ package view.gui2;
 
 import boundary.HomeBoundary;
 import control.NoteBean;
+import config.AppConfig;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -14,9 +15,13 @@ import java.util.List;
 
 public class HomeView2 {
     private static final Logger logger = LoggerFactory.getLogger(HomeView2.class);
-    private final HomeBoundary boundary = new HomeBoundary();
+    private final HomeBoundary boundary;
     private Stage primaryStage;
-    
+
+    public HomeView2(AppConfig appConfig) {
+        this.boundary = new HomeBoundary(appConfig);
+    }
+
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         List<NoteBean> notes = boundary.getSavedNotes();

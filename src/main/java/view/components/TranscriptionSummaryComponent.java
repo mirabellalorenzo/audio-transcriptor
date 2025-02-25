@@ -2,6 +2,7 @@ package view.components;
 
 import boundary.HomeBoundary;
 import control.TranscriptionBean;
+import config.AppConfig;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -14,9 +15,12 @@ import javafx.stage.Stage;
 import util.SvgToPngConverter;
 
 public class TranscriptionSummaryComponent {
-    private final HomeBoundary boundary = new HomeBoundary();
+    private final HomeBoundary boundary;
 
-    
+    public TranscriptionSummaryComponent(AppConfig appConfig) {
+        this.boundary = new HomeBoundary(appConfig);
+    }
+
     public void displaySummary(TranscriptionBean transcription, Stage primaryStage, BorderPane root) {
         VBox infoBox = new VBox(15);
         infoBox.setStyle(

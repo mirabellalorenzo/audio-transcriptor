@@ -2,6 +2,7 @@ package view.gui1;
 
 import boundary.HomeBoundary;
 import control.NoteBean;
+import config.AppConfig;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -12,15 +13,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeView {
-    private final HomeBoundary boundary = new HomeBoundary();
+    private HomeBoundary boundary;
     private NoteDetailComponent noteDetail;
     private NotesListComponent notesList;
     private List<NoteBean> notes = new ArrayList<>();
     private Stage primaryStage;
 
+    public HomeView(AppConfig appConfig) {
+        this.boundary = new HomeBoundary(appConfig);
+    }
+
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+
+        AppConfig appConfig = new AppConfig();
+        boundary = new HomeBoundary(appConfig);
+
         notes = boundary.getSavedNotes();
+
         if (notes == null) {
             notes = new ArrayList<>();
         }
@@ -51,7 +61,8 @@ public class HomeView {
                         boundary.deleteNote(noteBean);
                         notesList.refreshNotesList();
                     }
-                }
+                },
+                boundary
         );
 
         BorderPane root = new BorderPane();

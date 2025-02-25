@@ -1,12 +1,18 @@
 package boundary;
 
 import control.AuthController;
+import config.AppConfig;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import control.UserBean;
 import util.GoogleAuthProvider;
 
 public class LoginBoundary {
+    private final AppConfig appConfig;
+
+    public LoginBoundary(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
 
     public UserBean login(UserBean userBean, Stage primaryStage) {
         if (userBean == null || userBean.getEmail() == null || userBean.getPassword() == null) {
@@ -55,7 +61,9 @@ public class LoginBoundary {
         if (primaryStage == null) {
             throw new IllegalArgumentException("Primary stage cannot be null.");
         }
-        HomeBoundary homeBoundary = new HomeBoundary();
+
+        AppConfig appConfig = new AppConfig();
+        HomeBoundary homeBoundary = new HomeBoundary(appConfig);
         homeBoundary.openPageView(primaryStage, "Notes");
     }
 }

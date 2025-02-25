@@ -9,22 +9,27 @@ public class AppConfig {
         GUI_1, GUI_2
     }
 
-    private static StorageMode storageMode = StorageMode.DATABASE; // Default: Database
-    private static GuiMode guiMode = GuiMode.GUI_1; // Default: GUI 1
+    private StorageMode storageMode;
+    private GuiMode guiMode;
 
-    public static StorageMode getStorageMode() {
+    public AppConfig() {
+        this.storageMode = StorageMode.DATABASE;
+        this.guiMode = GuiMode.GUI_1;
+    }
+
+    public StorageMode getStorageMode() {
         return storageMode;
     }
 
-    public static void setStorageMode(StorageMode mode) {
-        storageMode = mode;
+    public void setStorageMode(StorageMode mode) {
+        this.storageMode = mode;
     }
 
-    public static GuiMode getGuiMode() {
+    public GuiMode getGuiMode() {
         return guiMode;
     }
 
-    public static void setGuiMode(GuiMode mode) {
-        guiMode = mode;
+    public void setGuiMode(GuiMode mode) {
+        this.guiMode = mode;
     }
 }

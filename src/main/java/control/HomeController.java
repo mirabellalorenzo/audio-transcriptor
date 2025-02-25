@@ -1,7 +1,6 @@
 package control;
 
 import entity.Note;
-import entity.User;
 import javafx.stage.Stage;
 
 import config.AppConfig;
@@ -13,7 +12,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HomeController {
-    private final NotesDAO notesDAO = NotesDAOFactory.getNotesDAO();
+    private final NotesDAO notesDAO;
+    private final AppConfig appConfig;
+
+    public HomeController(AppConfig appConfig) {
+        if (appConfig == null) {
+            throw new IllegalArgumentException("AppConfig cannot be null");
+        }
+        this.appConfig = appConfig;
+        this.notesDAO = NotesDAOFactory.getNotesDAO(appConfig);
+    }
 
     public String getUserEmail() {
         UserBean currentUser = AuthController.getCurrentUser();
@@ -37,16 +45,16 @@ public class HomeController {
         }
 
         if ("Transcribe Audio".equals(pageName)) {
-            if (AppConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
-                new view.gui1.TranscriptionView().start(primaryStage);
+            if (appConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
+                new view.gui1.TranscriptionView(appConfig).start(primaryStage);
             } else {
-                new view.gui2.TranscriptionView2().start(primaryStage);
+                new view.gui2.TranscriptionView2(appConfig).start(primaryStage);
             }
         } else if ("Notes".equals(pageName)) {
-            if (AppConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
-                new view.gui1.HomeView().start(primaryStage);
+            if (appConfig.getGuiMode() == AppConfig.GuiMode.GUI_1) {
+                new view.gui1.HomeView(appConfig).start(primaryStage);
             } else {
-                new view.gui2.HomeView2().start(primaryStage);
+                new view.gui2.HomeView2(appConfig).start(primaryStage);
             }
         } else {
             throw new IllegalArgumentException("Unrecognized page: " + pageName);

@@ -6,6 +6,7 @@ import boundary.HomeBoundary;
 import boundary.TranscriptionBoundary;
 import control.TranscriptionController;
 import control.TranscriptionBean;
+import config.AppConfig;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -21,6 +22,7 @@ import view.components.TranscriptionSummaryComponent;
 import view.components.TranscriptionTitleComponent;
 
 public class TranscriptionView {
+    private AppConfig appConfig;
     private TranscriptionBoundary boundary;
     private TranscriptionEditorComponent editorComponent;
     private TranscriptionControlsComponent controlsComponent;
@@ -30,17 +32,21 @@ public class TranscriptionView {
     private BorderPane root;
     private Stage primaryStage;
 
+    public TranscriptionView(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
+
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        boundary = new TranscriptionBoundary(new TranscriptionController());
+        boundary = new TranscriptionBoundary(new TranscriptionController(appConfig));
 
-        HomeBoundary homeBoundary = new HomeBoundary();
+        HomeBoundary homeBoundary = new HomeBoundary(appConfig);
         NotesListComponent notesList = new NotesListComponent(homeBoundary, primaryStage, new ArrayList<>(), note -> {});
         sidebar = new SidebarComponent(homeBoundary, primaryStage, homeBoundary.getUserEmail(), homeBoundary.getUserPhotoUrl(), new ArrayList<>(), notesList);
         
         editorComponent = new TranscriptionEditorComponent(boundary);
         controlsComponent = new TranscriptionControlsComponent(boundary, editorComponent, this::showTitlePage, primaryStage);
-        summaryComponent = new TranscriptionSummaryComponent();
+        summaryComponent = new TranscriptionSummaryComponent(appConfig);
         titleComponent = new TranscriptionTitleComponent(boundary);
 
         Region topSpacer = new Region();

@@ -22,8 +22,10 @@ public class FlatNotesListComponent extends VBox {
     private final VBox notesContainer;
     private final NoteSelectionListener listener;
     private final List<NoteBean> notes;
+    private final HomeBoundary boundary;
 
     public FlatNotesListComponent(HomeBoundary boundary, Stage primaryStage, List<NoteBean> notes, NoteSelectionListener listener) {
+        this.boundary = boundary;
         this.notes = notes;
         this.listener = note -> openNoteDetailModal(note, primaryStage);
         
@@ -140,7 +142,7 @@ public class FlatNotesListComponent extends VBox {
                 refreshNotesList();
                 modalStage.close();
             }
-        });
+        }, boundary);
 
         Scene scene = new Scene(noteDetail, 700, 550);
         modalStage.setScene(scene);
